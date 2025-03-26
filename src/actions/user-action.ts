@@ -15,6 +15,7 @@ export async function createUser(prevState: unknown, formData: FormData) {
     const validatedData = RegisterUserSchema.safeParse(rawData);
 
     if (!validatedData.success) {
+      console.log(validatedData.error.flatten().fieldErrors);
       return {
         success: false,
         message: "Please fix the errors in the form.",
@@ -96,6 +97,7 @@ export async function updatePassword(prevState: unknown, formData: FormData) {
       return {
         success: false,
         errors: { email: ["User not found"] },
+        user: null,
       };
     }
 
@@ -109,6 +111,7 @@ export async function updatePassword(prevState: unknown, formData: FormData) {
       return {
         success: false,
         errors: { email: ["User not found"] },
+        user: null,
       };
     }
 
@@ -119,6 +122,7 @@ export async function updatePassword(prevState: unknown, formData: FormData) {
       return {
         success: false,
         errors: validatedData.error.flatten().fieldErrors,
+        user: null,
       };
     }
 
@@ -136,20 +140,29 @@ export async function updatePassword(prevState: unknown, formData: FormData) {
       return {
         success: false,
         errors: { password: ["Invalid crendentials"] },
+        user: null,
       };
     }
 
-    await prisma.user.update({
+    const updatedUser = await prisma.user.update({
       where: {
         email: user.email,
       },
       data: {
         password: hashedPassword,
       },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        image: true,
+        role: { select: { id: true, name: true } },
+      },
     });
 
     return {
       success: true,
+      user: updatedUser,
     };
   } catch (error) {
     if (error instanceof Error) {
@@ -157,6 +170,7 @@ export async function updatePassword(prevState: unknown, formData: FormData) {
         success: false,
         message: error.message,
         errors: null,
+        user: null,
       };
     }
 
@@ -164,6 +178,7 @@ export async function updatePassword(prevState: unknown, formData: FormData) {
       success: false,
       message: "Something went wrong",
       errors: null,
+      user: null,
     };
   }
 }

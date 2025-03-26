@@ -18,6 +18,7 @@ import { UpdatePasswordSchema } from "@/validations/user-validation";
 import { useFormState } from "react-dom";
 import LoadingButton from "./loading-button";
 import { updatePassword } from "@/actions/user-action";
+// import { useSession } from "next-auth/react";
 
 const updatePasswordFormSchema = UpdatePasswordSchema;
 type UpdatePasswordFormSchema = z.infer<typeof updatePasswordFormSchema>;
@@ -26,9 +27,11 @@ const initialState = {
   success: false,
   message: "",
   errors: null,
+  user: null,
 };
 
 export default function UpdatePasswordForm() {
+  // const { update } = useSession();
   const [state, formAction, pending] = useFormState(
     updatePassword,
     initialState
@@ -44,13 +47,72 @@ export default function UpdatePasswordForm() {
     if (state.errors) {
       Object.entries(state.errors).forEach(([field, errors]) => {
         if (errors && errors.length > 0) {
-          setError(field as "password" | "new_password" | "confirm", {
+          setError(field as keyof UpdatePasswordFormSchema, {
             message: errors[0],
           });
         }
       });
     }
   }, [setError, state]);
+
+  // const [sessionUpdated, setSessionUpdated] = React.useState(false);
+  // React.useEffect(() => {
+  //   if (state?.success && state.user && !sessionUpdated) {
+  //     setSessionUpdated(true);
+
+  //     toast.success("Success", {
+  //       description: "Password updated successfully",
+  //     });
+
+  //     reset({
+  //       password: "",
+  //       new_password: "",
+  //       confirm: "",
+  //     });
+
+  //     async function updateSessionUser(
+  //       user: { role: { name: string; id: number } } & {
+  //         name: string;
+  //         email: string;
+  //         image: string | null;
+  //         id: number;
+  //       }
+  //     ) {
+  //       await update({
+  //         user: {
+  //           ...user, // Spread the full user object
+  //           name: user.name,
+  //           image: user.image,
+  //           email: user.email,
+  //           role: user.role,
+  //         },
+  //       });
+  //     }
+
+  //     console.log(`Updated user ${state.user}`);
+  //     updateSessionUser(state.user);
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [state?.success, state.user, reset, sessionUpdated]);
+
+  // const [sessionUpdated, setSessionUpdated] = React.useState(false);
+  // React.useEffect(() => {
+  //   if (state?.success && state.user && !sessionUpdated) {
+  //     setSessionUpdated(true);
+
+  //     toast.success("Succes", {
+  //       description: "Password updated successfully",
+  //     });
+
+  //     reset({
+  //       password: "",
+  //       new_password: "",
+  //       confirm: "",
+  //     });
+
+  //     update();
+  //   }
+  // }, [state?.success, reset, update, state.user, sessionUpdated]);
 
   React.useEffect(() => {
     if (state?.success) {
@@ -64,7 +126,7 @@ export default function UpdatePasswordForm() {
         confirm: "",
       });
     }
-  }, [state, reset]);
+  }, [state?.success, reset]);
 
   return (
     <Form {...form}>

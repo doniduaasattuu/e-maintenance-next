@@ -4,8 +4,8 @@ const MAX_FILE_IN_MB: number = 5;
 const MAX_FILE_SIZE: number = MAX_FILE_IN_MB * 1024 * 1024;
 
 export const BaseUserSchema = z.object({
-  nik: z.string({ message: "NIK is required" }),
-  name: z.string({ message: "Name is required" }).min(3).max(100),
+  nik: z.string({ message: "NIK is required" }).min(3).max(8).trim(),
+  name: z.string({ message: "Name is required" }).min(3).max(100).trim(),
   email: z.coerce
     .string()
     .email()

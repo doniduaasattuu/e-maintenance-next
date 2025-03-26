@@ -46,25 +46,19 @@ export default function RegisterPage() {
   const form = useForm<RegisterFormSchema>({
     resolver: zodResolver(registerFormSchema),
   });
-  const { control, setError, clearErrors } = form;
+  const { control, setError, handleSubmit } = form;
 
   React.useEffect(() => {
     if (state.errors) {
       Object.entries(state.errors).forEach(([field, errors]) => {
         if (errors && errors.length > 0) {
-          setError(field as "nik" | "name" | "email" | "password" | "confirm", {
+          setError(field as keyof RegisterFormSchema, {
             message: errors[0],
           });
         }
       });
     }
   }, [setError, state]);
-
-  const handleClearError: React.FocusEventHandler<HTMLInputElement> = (e) => {
-    clearErrors(
-      e.target.name as "nik" | "name" | "email" | "password" | "confirm"
-    );
-  };
 
   React.useEffect(() => {
     if (state.success) {
@@ -75,9 +69,19 @@ export default function RegisterPage() {
     }
   }, [state, router]);
 
+  const onSubmit = handleSubmit((values) => {
+    const formData = new FormData();
+
+    Object.entries(values).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
+
+    formAction(formData);
+  });
+
   return (
     <Form {...form}>
-      <form action={formAction}>
+      <form onSubmit={onSubmit}>
         <Card className="min-w-[350px] max-w-[400px] mx-auto">
           <CardHeader>
             <CardTitle className="font-bold text-lg">Sign Up</CardTitle>
@@ -100,11 +104,7 @@ export default function RegisterPage() {
                   <FormItem>
                     <FormLabel>NIK</FormLabel>
                     <FormControl>
-                      <Input
-                        inputMode="numeric"
-                        {...field}
-                        onFocus={(e) => handleClearError(e)}
-                      />
+                      <Input inputMode="numeric" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -117,11 +117,7 @@ export default function RegisterPage() {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input
-                        inputMode="email"
-                        {...field}
-                        onFocus={(e) => handleClearError(e)}
-                      />
+                      <Input inputMode="email" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -134,7 +130,7 @@ export default function RegisterPage() {
                   <FormItem>
                     <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <Input {...field} onFocus={(e) => handleClearError(e)} />
+                      <Input {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -147,11 +143,7 @@ export default function RegisterPage() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input
-                        type="password"
-                        {...field}
-                        onFocus={(e) => handleClearError(e)}
-                      />
+                      <Input type="password" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -164,11 +156,7 @@ export default function RegisterPage() {
                   <FormItem>
                     <FormLabel>Confirm password</FormLabel>
                     <FormControl>
-                      <Input
-                        type="password"
-                        {...field}
-                        onFocus={(e) => handleClearError(e)}
-                      />
+                      <Input type="password" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
