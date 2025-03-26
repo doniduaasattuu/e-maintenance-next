@@ -10,50 +10,52 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { UpdatePasswordSchema } from "@/validations/user-validation";
+import { useFormState } from "react-dom";
+import LoadingButton from "./loading-button";
+import { updatePassword } from "@/actions/user-action";
 
 const updatePasswordFormSchema = UpdatePasswordSchema;
 type UpdatePasswordFormSchema = z.infer<typeof updatePasswordFormSchema>;
 
+const initialState = {
+  success: false,
+  message: "",
+  errors: null,
+};
+
 export default function UpdatePasswordForm() {
-  // UPDATE USER FORM
-  const updatePasswordForm = useForm<UpdatePasswordFormSchema>({
+  const [state, formAction, pending] = useFormState(
+    updatePassword,
+    initialState
+  );
+
+  const form = useForm<UpdatePasswordFormSchema>({
     resolver: zodResolver(updatePasswordFormSchema),
-    defaultValues: {
-      password: "",
-      new_password: "",
-      confirm: "",
-    },
   });
 
-  const { handleSubmit, control, setError, reset } = updatePasswordForm;
+  const { control, setError, reset } = form;
 
-  const onSubmit = handleSubmit(async (values) => {
-    try {
-      const response = await fetch("/api/auth/password", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        if (result.field) {
-          setError(result.field, { type: "server", message: result.message });
+  React.useEffect(() => {
+    if (state.errors) {
+      Object.entries(state.errors).forEach(([field, errors]) => {
+        if (errors && errors.length > 0) {
+          setError(field as "password" | "new_password" | "confirm", {
+            message: errors[0],
+          });
         }
-        return;
-      }
+      });
+    }
+  }, [setError, state]);
 
-      toast.success("Success", {
-        description: "Password successfully updated",
+  React.useEffect(() => {
+    if (state?.success) {
+      toast.success("Succes", {
+        description: "Password updated successfully",
       });
 
       reset({
@@ -61,18 +63,12 @@ export default function UpdatePasswordForm() {
         new_password: "",
         confirm: "",
       });
-    } catch (error) {
-      if (error instanceof Error) {
-        toast.error("Error", {
-          description: error.message,
-        });
-      }
     }
-  });
+  }, [state, reset]);
 
   return (
-    <Form {...updatePasswordForm}>
-      <form onSubmit={onSubmit} className="space-y-4">
+    <Form {...form}>
+      <form action={formAction} className="space-y-4">
         <FormField
           control={control}
           name="password"
@@ -114,7 +110,7 @@ export default function UpdatePasswordForm() {
         />
 
         <div className="pt-3">
-          <Button type="submit">Save</Button>
+          <LoadingButton processing={pending} label="Save" />
         </div>
       </form>
     </Form>

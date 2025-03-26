@@ -1,9 +1,13 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { RegisterUserSchema } from "@/validations/user-validation";
+import {
+  RegisterUserSchema,
+  UpdatePasswordSchema,
+} from "@/validations/user-validation";
 import bcrypt from "bcrypt";
 import { getRoleByName } from "./role-action";
+import { getServerSession } from "next-auth";
 
 export async function createUser(prevState: unknown, formData: FormData) {
   try {
@@ -67,6 +71,85 @@ export async function createUser(prevState: unknown, formData: FormData) {
       success: true,
       message: "User created successfully",
       errors: null,
+    };
+  } catch (error) {
+    if (error instanceof Error) {
+      return {
+        success: false,
+        message: error.message,
+        errors: null,
+      };
+    }
+
+    return {
+      success: false,
+      message: "Something went wrong",
+      errors: null,
+    };
+  }
+}
+
+export async function updatePassword(prevState: unknown, formData: FormData) {
+  try {
+    const session = await getServerSession();
+    if (!session?.user) {
+      return {
+        success: false,
+        errors: { email: ["User not found"] },
+      };
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        email: session.user.email as string,
+      },
+    });
+
+    if (!user) {
+      return {
+        success: false,
+        errors: { email: ["User not found"] },
+      };
+    }
+
+    const rawData = Object.fromEntries(formData.entries());
+    const validatedData = UpdatePasswordSchema.safeParse(rawData);
+
+    if (!validatedData.success) {
+      return {
+        success: false,
+        errors: validatedData.error.flatten().fieldErrors,
+      };
+    }
+
+    const isPasswordValid = await bcrypt.compare(
+      validatedData.data.password,
+      user.password
+    );
+
+    const hashedPassword = await bcrypt.hash(
+      validatedData.data.new_password,
+      10
+    );
+
+    if (!isPasswordValid) {
+      return {
+        success: false,
+        errors: { password: ["Invalid crendentials"] },
+      };
+    }
+
+    await prisma.user.update({
+      where: {
+        email: user.email,
+      },
+      data: {
+        password: hashedPassword,
+      },
+    });
+
+    return {
+      success: true,
     };
   } catch (error) {
     if (error instanceof Error) {

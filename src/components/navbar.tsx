@@ -17,6 +17,7 @@ import { Avatar, AvatarImage } from "./ui/avatar";
 import { usePathname } from "next/navigation";
 import { Separator } from "./ui/separator";
 import Navlink from "./nav-link";
+import { APP_NAME } from "@/lib/config";
 
 export default function Navbar({ className }: { className: unknown }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -52,7 +53,7 @@ export default function Navbar({ className }: { className: unknown }) {
         className={`${className} container mx-auto flex items-center justify-between`}
       >
         <Link href="/home" className="text-xl font-bold">
-          TodoApp
+          {APP_NAME}
         </Link>
 
         <div className="hidden md:flex items-center space-x-4">

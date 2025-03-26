@@ -10,13 +10,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { UpdateUserSchema } from "@/validations/user-validation";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useSession } from "next-auth/react";
 import { toast } from "sonner";
+import LoadingButton from "./loading-button";
 
 const updateFormSchema = UpdateUserSchema;
 
@@ -54,38 +53,39 @@ export default function UpdateUserForm({ user }: updateUserProps) {
   const { handleSubmit, control } = updateUserForm;
 
   const onSubmit = handleSubmit(async (values) => {
-    // try {
-    //   const formData = new FormData();
-    //   formData.append("email", values.email);
-    //   formData.append("name", values.name);
-    //   if (values.image) {
-    //     formData.append("image", values.image);
-    //   }
-    //   const response = await fetch("/api/auth/profile", {
-    //     method: "PATCH",
-    //     body: formData,
-    //   });
-    //   const result = await response.json();
-    //   if (!response.ok) {
-    //     throw new Error("An unexpected error occured");
-    //   }
-    //   toast.success("Success", {
-    //     description: "Profile successfully updated",
-    //   });
-    //   await update({
-    //     user: {
-    //       ...data?.user,
-    //       name: result.data.name,
-    //       image: result.data.image,
-    //     },
-    //   });
-    // } catch (error) {
-    //   if (error instanceof Error) {
-    //     toast.error("Error", {
-    //       description: error.message,
-    //     });
-    //   }
-    // }
+    try {
+      console.log(values);
+      // const formData = new FormData();
+      // formData.append("email", values.email);
+      // formData.append("name", values.name);
+      // if (values.image) {
+      //   formData.append("image", values.image);
+      // }
+      // const response = await fetch("/api/auth/profile", {
+      //   method: "PATCH",
+      //   body: formData,
+      // });
+      // const result = await response.json();
+      // if (!response.ok) {
+      //   throw new Error("An unexpected error occured");
+      // }
+      // toast.success("Success", {
+      //   description: "Profile successfully updated",
+      // });
+      // await update({
+      //   user: {
+      //     ...data?.user,
+      //     name: result.data.name,
+      //     image: result.data.image,
+      //   },
+      // });
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error("Error", {
+          description: error.message,
+        });
+      }
+    }
   });
 
   return (
@@ -155,7 +155,7 @@ export default function UpdateUserForm({ user }: updateUserProps) {
         />
 
         <div className="pt-3">
-          <Button type="submit">Save</Button>
+          <LoadingButton label="Save" />
         </div>
       </form>
     </Form>

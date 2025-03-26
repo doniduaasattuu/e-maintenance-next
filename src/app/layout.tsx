@@ -5,11 +5,12 @@ import { ThemeProvider } from "next-themes";
 import ToasterWrapper from "@/components/toast-wrapper";
 import { getServerSession } from "next-auth";
 import AuthProvider from "@/context/AuthProvider";
+import { APP_NAME } from "@/lib/config";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "E-Maintenance",
-  description: "E-Maintenance Next",
+  title: APP_NAME,
+  description: APP_NAME,
 };
 
 export default async function RootLayout({
