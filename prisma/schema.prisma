@@ -49,6 +49,7 @@ model FunctionalLocation {
 
   user User? @relation(fields: [userId], references: [id])
 
+  @@index([id, description])
   @@map("functional_locations")
 }
 

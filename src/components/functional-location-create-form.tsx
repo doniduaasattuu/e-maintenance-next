@@ -55,7 +55,7 @@ export default function FunctionalLocationCreateForm() {
 
   React.useEffect(() => {
     if (state.success) {
-      toast.success("Succes", {
+      toast.success("Success", {
         description: state.message,
       });
 
@@ -73,7 +73,9 @@ export default function FunctionalLocationCreateForm() {
       formData.append(key, value);
     });
 
-    formAction(formData);
+    React.startTransition(() => {
+      formAction(formData);
+    });
   });
 
   return (
@@ -113,7 +115,7 @@ export default function FunctionalLocationCreateForm() {
         />
 
         <div className="pt-3">
-          <LoadingButton processing={pending} label="Submit" />
+          <LoadingButton processing={pending} label="Submit" type="submit" />
         </div>
       </form>
     </Form>

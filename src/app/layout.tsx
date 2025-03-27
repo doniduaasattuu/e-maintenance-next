@@ -6,6 +6,7 @@ import ToasterWrapper from "@/components/toast-wrapper";
 import { getServerSession } from "next-auth";
 import AuthProvider from "@/context/AuthProvider";
 import { APP_NAME } from "@/lib/config";
+import ProgressBar from "@/components/progress-bar";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -31,6 +32,7 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             <ToasterWrapper />
+            <ProgressBar />
             <main>{children}</main>
           </ThemeProvider>
         </AuthProvider>

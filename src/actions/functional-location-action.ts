@@ -1,22 +1,38 @@
+"use server";
+
 import prisma from "@/lib/prisma";
 import { CreateFunctionalLocationSchema } from "@/validations/functional-location-validation";
 
 type getFunclocParams = {
-  page?: number;
+  destinationPage?: number;
   perPage?: number;
+  orderBy?: string;
+  sortBy?: "id" | "description" | string;
+  query?: string;
 };
 
 export async function getFunctionalLocations({
-  page = 1,
+  destinationPage = 1,
   perPage = 10,
+  orderBy = "desc",
+  sortBy = "id",
+  query,
 }: getFunclocParams) {
-  const skip = (page - 1) * perPage;
+  const skip = (destinationPage - 1) * perPage;
 
   const [functionalLocations, total] = await Promise.all([
     prisma.functionalLocation.findMany({
       skip,
       take: perPage,
-      orderBy: { createdAt: "desc" },
+      orderBy: { [sortBy]: orderBy as "asc" | "desc" },
+      ...(query && {
+        where: {
+          OR: [
+            { id: { contains: query, mode: "insensitive" } },
+            { description: { contains: query, mode: "insensitive" } },
+          ],
+        },
+      }),
     }),
     prisma.functionalLocation.count(),
   ]);
@@ -24,7 +40,7 @@ export async function getFunctionalLocations({
   return {
     functionalLocations,
     total,
-    page,
+    destinationPage,
     perPage,
     totalPages: Math.ceil(total / perPage),
   };
@@ -45,22 +61,26 @@ export async function createFunctionalLocation(
         errors: validatedData.error.flatten().fieldErrors,
       };
     }
+    const { id, description } = validatedData.data;
 
-    const funclocExist = await prisma.functionalLocation.findUnique({
+    const funclocExist = await prisma.functionalLocation.findFirst({
       where: {
-        id: validatedData.data.id,
+        id: id,
       },
     });
 
     if (funclocExist) {
       return {
-        success: true,
-        message: null,
-        errors: { id: ["Functional location is exists"] },
+        success: false,
+        message: "Functional location already exists",
+        errors: {
+          id:
+            funclocExist.id === id
+              ? ["Functional location already exists"]
+              : undefined,
+        },
       };
     }
-
-    const { id, description } = validatedData.data;
 
     await prisma.functionalLocation.create({
       data: {

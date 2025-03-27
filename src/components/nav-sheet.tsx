@@ -2,7 +2,12 @@
 import React from "react";
 
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import ModeToggle from "@/components/mode-toggle";
 import { Menu } from "lucide-react";
 import Navlink from "./nav-link";
@@ -27,12 +32,9 @@ export default function NavSheet({
       <SheetContent side="left" className="p-6">
         <div className="flex flex-col space-y-3 mt-6">
           {filteredRoutes.map((route: Route, index: number) => (
-            <Navlink
-              isMobile={true}
-              key={index}
-              route={route}
-              pathname={pathname}
-            />
+            <SheetClose key={index} asChild>
+              <Navlink isMobile={true} route={route} pathname={pathname} />
+            </SheetClose>
           ))}
         </div>
 

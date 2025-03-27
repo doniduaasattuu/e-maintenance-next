@@ -19,24 +19,25 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import FunctionalLocationHeader from "@/components/functional-location-header";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
+import GeneratePagination from "@/components/paginatinon";
 
-export default async function FunctionalLocationIndexPage() {
-  const { functionalLocations, page, perPage, total, totalPages } =
-    await getFunctionalLocations({ page: 1, perPage: 10 });
-
+export default async function FunctionalLocationIndexPage({
+  searchParams,
+}: {
+  searchParams: { query: string; order: string; sortBy: string; page: string };
+}) {
+  const { query, order, sortBy, page } = await searchParams;
   console.log(page);
-  console.log(perPage);
-  console.log(total);
-  console.log(totalPages);
+
+  const { functionalLocations, perPage, total, totalPages } =
+    await getFunctionalLocations({
+      destinationPage: Number(page ?? 1),
+      perPage: 2,
+      orderBy: order,
+      query: query,
+      sortBy: sortBy,
+    });
+
   return (
     <div className="space-y-4">
       <Breadcrumb>
@@ -52,7 +53,9 @@ export default async function FunctionalLocationIndexPage() {
       <FunctionalLocationHeader />
 
       <Table>
-        <TableCaption>A list of data functional locations.</TableCaption>
+        <TableCaption className="mb-3">
+          A list of data functional locations.
+        </TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead className="w-[300px] text-muted-foreground">
@@ -90,30 +93,11 @@ export default async function FunctionalLocationIndexPage() {
         </TableBody>
       </Table>
 
-      <Pagination>
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious href="#" />
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="#">1</PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="#" isActive>
-              2
-            </PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="#">3</PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationEllipsis />
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationNext href="#" />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+      <GeneratePagination
+        perPage={perPage}
+        total={total}
+        totalPages={totalPages}
+      />
     </div>
   );
 }

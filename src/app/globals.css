@@ -112,6 +112,31 @@
   --sidebar-ring: oklch(0.552 0.016 285.938);
 }
 
+/* #nprogress {
+  pointer-events: none;
+}
+
+#nprogress .bar {
+  background: #4f46e5;
+  height: 4px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1031;
+}
+
+#nprogress .peg {
+  box-shadow: 0 0 10px #4f46e5, 0 0 5px #4f46e5;
+  height: 100%;
+  opacity: 1;
+  transform: rotate(3deg) translate(0px, -4px);
+} */
+
+#nprogress .bar {
+  background: #f13d30 !important;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

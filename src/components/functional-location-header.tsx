@@ -14,42 +14,51 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import Link from "next/link";
-// import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export default function FunctionalLocationHeader() {
-  const [order, setOrder] = React.useState<"asc" | "desc" | string>("desc");
+  const [order, setOrder] = React.useState<"asc" | "desc" | string | null>(
+    null
+  );
+  const [sort, setSort] = React.useState<"id" | "description" | string | null>(
+    null
+  );
 
-  // const [isCreateTodo, setIsCreateTodo] = React.useState<boolean>(false);
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
 
-  // const handleCreateDialog = () => {
-  //   setIsCreateTodo(true);
-  // };
+  React.useEffect(() => {
+    const params = new URLSearchParams(searchParams);
 
-  // const handleCloseDialog = () => {
-  //   setIsCreateTodo(false);
-  // };
+    if (order) {
+      const handleOrder = (order: string) => {
+        if (order) {
+          params.set("order", order);
+        } else {
+          params.delete("order");
+        }
 
-  // const searchParams = useSearchParams();
-  // const pathname = usePathname();
-  // const { replace } = useRouter();
+        replace(`${pathname}?${params.toString()}`);
+      };
 
-  // useEffect(() => {
-  //   if (order) {
-  //     const handleOrder = (order: string) => {
-  //       const params = new URLSearchParams(searchParams);
+      handleOrder(order);
+    }
 
-  //       if (order) {
-  //         params.set("order", order);
-  //       } else {
-  //         params.delete("order");
-  //       }
+    if (sort) {
+      const handleSort = (sort: string) => {
+        if (sort) {
+          params.set("sortBy", sort);
+        } else {
+          params.delete("sortBy");
+        }
 
-  //       replace(`${pathname}?${params.toString()}`);
-  //     };
+        replace(`${pathname}?${params.toString()}`);
+      };
 
-  //     handleOrder(order);
-  //   }
-  // }, [order, pathname, replace, searchParams]);
+      handleSort(sort);
+    }
+  }, [order, pathname, replace, searchParams, sort]);
 
   return (
     <div className="flex justify-between items-center space-x-2">
@@ -62,11 +71,30 @@ export default function FunctionalLocationHeader() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Sort by</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuRadioGroup
+              value={sort ?? "id"}
+              onValueChange={setSort}
+            >
+              <DropdownMenuRadioItem value="id">ID</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="description">
+                Description
+              </DropdownMenuRadioItem>
+            </DropdownMenuRadioGroup>
+            <DropdownMenuSeparator />
             <DropdownMenuLabel>Order by</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuRadioGroup value={order} onValueChange={setOrder}>
-              <DropdownMenuRadioItem value="desc">Latest</DropdownMenuRadioItem>
-              <DropdownMenuRadioItem value="asc">Oldest</DropdownMenuRadioItem>
+            <DropdownMenuRadioGroup
+              value={order ?? "desc"}
+              onValueChange={setOrder}
+            >
+              <DropdownMenuRadioItem value="desc">
+                Descending
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="asc">
+                Ascending
+              </DropdownMenuRadioItem>
             </DropdownMenuRadioGroup>
           </DropdownMenuContent>
         </DropdownMenu>

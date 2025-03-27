@@ -76,7 +76,9 @@ export default function RegisterPage() {
       formData.append(key, value);
     });
 
-    formAction(formData);
+    React.startTransition(() => {
+      formAction(formData);
+    });
   });
 
   return (
