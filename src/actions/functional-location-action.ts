@@ -13,7 +13,7 @@ type getFunclocParams = {
 
 export async function getFunctionalLocations({
   destinationPage = 1,
-  perPage = 10,
+  perPage = 15,
   orderBy = "desc",
   sortBy = "id",
   query,

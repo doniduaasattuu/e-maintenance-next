@@ -23,7 +23,7 @@ export default async function ProfilePage() {
   }
 
   return (
-    <div className="space-y-8 mb-4">
+    <div className="space-y-8">
       <Card className="py-8 px-5 md:p-8 rounded-md">
         <div className="mb-2">
           <div className="font-semibold text-lg">Profile Information</div>

@@ -53,6 +53,162 @@ async function main() {
         id: "FP-01-PM3-CUT-RWD1",
         description: "REWINDER #1 BM3",
       },
+      {
+        id: "FP-01-PM3-APS-SR12",
+        description: "SCREENER #12",
+      },
+      {
+        id: "FP-01-PM3-APS-SR13",
+        description: "SCREENER #13",
+      },
+      {
+        id: "FP-01-PM3-APS-SR14",
+        description: "SCREENER #14",
+      },
+      {
+        id: "FP-01-PM3-APS-T030",
+        description: "WHITE WATER SILO",
+      },
+      {
+        id: "FP-01-PM3-APS-T030-P044",
+        description: "PUMP #44",
+      },
+      {
+        id: "FP-01-PM3-APS-T031",
+        description: "EXCESS WHITE WATER CHEST",
+      },
+      {
+        id: "FP-01-PM3-APS-T031-P045",
+        description: "PUMP #45",
+      },
+      {
+        id: "FP-01-PM3-APS-T031-P046",
+        description: "PUMP #46",
+      },
+      {
+        id: "FP-01-PM3-APS-T031-P047",
+        description: "PUMP #47",
+      },
+      {
+        id: "FP-01-PM3-APS-T031-P048",
+        description: "PUMP #48",
+      },
+      {
+        id: "FP-01-PM3-OCC-CL01",
+        description: "CLEANER #1",
+      },
+      {
+        id: "FP-01-PM3-OCC-CL02",
+        description: "CLEANER #2",
+      },
+      {
+        id: "FP-01-PM3-OCC-CL03",
+        description: "CLEANER #3",
+      },
+      {
+        id: "FP-01-PM3-OCC-CL04",
+        description: "CLEANER #4",
+      },
+      {
+        id: "FP-01-PM3-OCC-CL05",
+        description: "CLEANER #5",
+      },
+      {
+        id: "FP-01-PM3-OCC-CL06",
+        description: "CLEANER #6",
+      },
+      {
+        id: "FP-01-PM3-OCC-CL07",
+        description: "CLEANER #7",
+      },
+      {
+        id: "FP-01-PM3-OCC-CL11",
+        description: "PROTECTOR HD-CLEANER #1",
+      },
+      {
+        id: "FP-01-PM3-OCC-CL12",
+        description: "PROTECTOR HD-CLEANER #2",
+      },
+      {
+        id: "FP-01-PM3-OCC-CN01",
+        description: "CONVEYOR #1",
+      },
+      {
+        id: "FP-01-PM3-OCC-CN02",
+        description: "CONVEYOR #2",
+      },
+      {
+        id: "FP-01-PM3-OCC-DP01-AP01",
+        description: "AGITATOR #1",
+      },
+      {
+        id: "FP-01-PM3-OCC-DP01-AP02",
+        description: "AGITATOR #2",
+      },
+      {
+        id: "FP-01-PM3-OCC-DP01-CN12",
+        description: "DRUM BALE FEEDING CONVEYOR #1",
+      },
+      {
+        id: "FP-01-PM3-OCC-DP01-CN13",
+        description: "DRUM BALE FEEDING CONVEYOR #2",
+      },
+      {
+        id: "FP-01-PM3-OCC-DP01-CN14",
+        description: "NEW REJECT CONVEYOR #1",
+      },
+      {
+        id: "FP-01-PM3-OCC-DP01-CN15",
+        description: "NEW REJECT CONVEYOR #2",
+      },
+      {
+        id: "FP-01-PM3-OCC-DP01-CN16",
+        description: "NEW REJECT CONVEYOR #3",
+      },
+      {
+        id: "FP-01-PM3-OCC-DP01-CN17",
+        description: "NEW REJECT CONVEYOR #4",
+      },
+      {
+        id: "FP-01-SP3-OCC-DP01-LRC1",
+        description: "LIGHT REJECT COMPACTOR #1",
+      },
+      {
+        id: "FP-01-SP3-OCC-DP01-LRC1-HD10",
+        description: "HYDRAULIC UNIT REJECT COMPACTOR 1",
+      },
+      {
+        id: "FP-01-SP3-OCC-DP01-LRC2",
+        description: "LIGHT REJECT COMPACTOR #2",
+      },
+      {
+        id: "FP-01-SP3-OCC-DP01-LRC2-HD11",
+        description: "HYDRAULIC UNIT REJECT COMPACTOR 2",
+      },
+      {
+        id: "FP-01-SP3-OCC-DP01-MD01",
+        description: "DRIVE 1 DRUM PULPER FFD450EE",
+      },
+      {
+        id: "FP-01-SP3-OCC-DP01-MD02",
+        description: "DRIVE 2 DRUM PULPER FFD450EE",
+      },
+      {
+        id: "FP-01-SP3-OCC-DP01-OU11",
+        description: "OIL UNIT DRIVE 1 PULPER FFD450EE",
+      },
+      {
+        id: "FP-01-SP3-OCC-DP01-OU12",
+        description: "OIL UNIT DRIVE 2 PULPER FFD450EE",
+      },
+      {
+        id: "FP-01-SP3-OCC-DP01-PP15",
+        description: "PUMP 1 DISCHARGE DRUM PULPER",
+      },
+      {
+        id: "FP-01-SP3-OCC-DP01-PP16",
+        description: "PUMP 2 DISCHARGE DRUM PULPER",
+      },
     ],
   });
 
@@ -186,6 +342,57 @@ async function main() {
         equipmentStatusId: installed.id,
         sortField: "PM3.REW.MOVEMENT.MOTOR/M",
         description: "MOTOR,R.73WD100L-6-2,0,75/1,6KW,2,4/4,3A",
+      },
+      // SCREENER #12
+      {
+        id: "ELP001073",
+        functionalLocationId: "FP-01-PM3-APS-SR12",
+        classificationId: panel.id,
+        equipmentStatusId: installed.id,
+        sortField: "PM3.AP01/E",
+        description: "ELEC PANEL",
+      },
+      {
+        id: "EMO004984",
+        functionalLocationId: "FP-01-PM3-APS-SR12",
+        classificationId: motor.id,
+        equipmentStatusId: installed.id,
+        sortField: "PM3.AP01/M",
+        description: "AC MOTOR;380V,50Hz,22kW,4P,180L,B3",
+      },
+      // SCREENER #13
+      {
+        id: "ELP001074",
+        functionalLocationId: "FP-01-PM3-APS-SR13",
+        classificationId: panel.id,
+        equipmentStatusId: installed.id,
+        sortField: "PM3.AP02/E",
+        description: "ELEC PANEL",
+      },
+      {
+        id: "EMO000879",
+        functionalLocationId: "FP-01-PM3-APS-SR13",
+        classificationId: motor.id,
+        equipmentStatusId: installed.id,
+        sortField: "PM3.AP02/M",
+        description: "AC MOTOR;380V,50HZ,30KW,6P,200M/L,B",
+      },
+      // SCREENER #14
+      {
+        id: "ELP001075",
+        functionalLocationId: "FP-01-PM3-APS-SR14",
+        classificationId: panel.id,
+        equipmentStatusId: installed.id,
+        sortField: "PM3.AP03/E",
+        description: "ELEC PANEL",
+      },
+      {
+        id: "EMO001628",
+        functionalLocationId: "FP-01-PM3-APS-SR14",
+        classificationId: motor.id,
+        equipmentStatusId: installed.id,
+        sortField: "PM3.AP03/M",
+        description: "AC MOTOR;380V,50Hz,132kW,6P,315MC,B3",
       },
     ],
   });

@@ -27,16 +27,13 @@ export default async function FunctionalLocationIndexPage({
   searchParams: { query: string; order: string; sortBy: string; page: string };
 }) {
   const { query, order, sortBy, page } = await searchParams;
-  console.log(page);
 
-  const { functionalLocations, perPage, total, totalPages } =
-    await getFunctionalLocations({
-      destinationPage: Number(page ?? 1),
-      perPage: 2,
-      orderBy: order,
-      query: query,
-      sortBy: sortBy,
-    });
+  const { functionalLocations, totalPages } = await getFunctionalLocations({
+    destinationPage: Number(page ?? 1),
+    orderBy: order,
+    query: query,
+    sortBy: sortBy,
+  });
 
   return (
     <div className="space-y-4">
@@ -93,11 +90,7 @@ export default async function FunctionalLocationIndexPage({
         </TableBody>
       </Table>
 
-      <GeneratePagination
-        perPage={perPage}
-        total={total}
-        totalPages={totalPages}
-      />
+      <GeneratePagination totalPages={totalPages} />
     </div>
   );
 }
