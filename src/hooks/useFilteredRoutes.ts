@@ -24,7 +24,6 @@ export const routes: Route[] = [
 ];
 
 export function useFilteredRoutes(user: SessionUser): Route[] {
-  console.log(user?.role);
   return routes.filter((route) => {
     return !route.restricted || user?.role?.name === "Admin";
   });

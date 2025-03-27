@@ -22,7 +22,9 @@ export default function Navlink({ route, pathname, isMobile }: NavlinkProps) {
       <Link
         href={route.url}
         className={`${
-          route.url === pathname ? "text-foreground" : "text-muted-foreground"
+          route.url === pathname || String(pathname).includes(route.url)
+            ? "text-foreground"
+            : "text-muted-foreground"
         } text-sm hover:text-foreground transition`}
       >
         {route.label}

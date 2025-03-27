@@ -8,3 +8,14 @@ export function cn(...inputs: ClassValue[]) {
 export async function sleep(time: number = 3000): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
+
+export function formatDate(date: Date | null): string | null {
+  if (!date) {
+    return null;
+  }
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+  });
+}

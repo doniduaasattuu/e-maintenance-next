@@ -31,7 +31,8 @@ export default function NavDropdownDesktop({
               <Link
                 href={nestedRoute.url ?? "/"}
                 className={`${
-                  nestedRoute.url === pathname
+                  route.url === pathname ||
+                  String(pathname).includes(nestedRoute.url as string)
                     ? "text-foreground"
                     : "text-muted-foreground"
                 } text-sm hover:text-foreground transition`}

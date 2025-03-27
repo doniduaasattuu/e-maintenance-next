@@ -15,7 +15,6 @@ export async function createUser(prevState: unknown, formData: FormData) {
     const validatedData = RegisterUserSchema.safeParse(rawData);
 
     if (!validatedData.success) {
-      console.log(validatedData.error.flatten().fieldErrors);
       return {
         success: false,
         message: "Please fix the errors in the form.",
@@ -162,6 +161,7 @@ export async function updatePassword(prevState: unknown, formData: FormData) {
 
     return {
       success: true,
+      message: "Password updated successfully",
       user: updatedUser,
     };
   } catch (error) {
