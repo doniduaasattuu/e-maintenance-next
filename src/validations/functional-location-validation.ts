@@ -10,6 +10,7 @@ export const BaseFunctionalLocationSchema = z.object({
 });
 
 export const CreateFunctionalLocationSchema = BaseFunctionalLocationSchema;
+export const EditFunctionalLocationSchema = BaseFunctionalLocationSchema;
 
 export class FunctionalLocationValidation {
   static readonly CREATE: z.ZodType = CreateFunctionalLocationSchema;

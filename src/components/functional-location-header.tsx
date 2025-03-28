@@ -70,7 +70,7 @@ export default function FunctionalLocationHeader() {
               <Settings2 />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent align="end" className="min-w-[160px]">
             <DropdownMenuLabel>Sort by</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuRadioGroup
@@ -80,6 +80,12 @@ export default function FunctionalLocationHeader() {
               <DropdownMenuRadioItem value="id">ID</DropdownMenuRadioItem>
               <DropdownMenuRadioItem value="description">
                 Description
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="createdAt">
+                Created at
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="updatedAt">
+                Updated at
               </DropdownMenuRadioItem>
             </DropdownMenuRadioGroup>
             <DropdownMenuSeparator />

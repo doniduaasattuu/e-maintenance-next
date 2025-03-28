@@ -1,15 +1,5 @@
 import { getFunctionalLocations } from "@/actions/functional-location-action";
 import * as React from "react";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { formatDate } from "@/lib/utils";
 import Link from "next/link";
 import {
   Breadcrumb,
@@ -19,7 +9,8 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import FunctionalLocationHeader from "@/components/functional-location-header";
-import GeneratePagination from "@/components/paginatinon";
+import GeneratePagination from "@/components/pagination";
+import FunctionalLocationTable from "@/components/functional-location-table";
 
 export default async function FunctionalLocationIndexPage({
   searchParams,
@@ -49,10 +40,10 @@ export default async function FunctionalLocationIndexPage({
 
       <FunctionalLocationHeader />
 
-      <Table>
-        <TableCaption className="mb-3">
-          A list of data functional locations.
-        </TableCaption>
+      <FunctionalLocationTable functionalLocations={functionalLocations} />
+
+      {/* <Table>
+        <TableCaption>A list of data functional locations.</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead className="w-[300px] text-muted-foreground">
@@ -60,9 +51,8 @@ export default async function FunctionalLocationIndexPage({
             </TableHead>
             <TableHead className="text-muted-foreground">Description</TableHead>
             <TableHead className="text-muted-foreground">Created at</TableHead>
-            <TableHead className="text-right text-muted-foreground">
-              Updated at
-            </TableHead>
+            <TableHead className="text-muted-foreground">Updated at</TableHead>
+            <TableHead className="text-right text-muted-foreground"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -81,14 +71,15 @@ export default async function FunctionalLocationIndexPage({
                   </TableCell>
                   <TableCell>{funcloc.description}</TableCell>
                   <TableCell>{formatDate(funcloc.createdAt)}</TableCell>
-                  <TableCell className="text-right">
-                    {formatDate(funcloc.updatedAt)}
+                  <TableCell>{formatDate(funcloc.updatedAt)}</TableCell>
+                  <TableCell className="text-right text-muted-foreground hover:underline underline-offset-2">
+                    <Link href={"/"}>Edit</Link>
                   </TableCell>
                 </TableRow>
               );
             })}
         </TableBody>
-      </Table>
+      </Table> */}
 
       <GeneratePagination totalPages={totalPages} />
     </div>

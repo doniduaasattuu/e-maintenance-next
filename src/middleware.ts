@@ -8,7 +8,7 @@ export async function middleware(req: NextRequest) {
 
   // Redirect logged-in users away from /login and /register to homepage
   if (token && (pathname === "/login" || pathname === "/register")) {
-    return NextResponse.redirect(new URL("/", req.url));
+    return NextResponse.redirect(new URL("/home", req.url));
   }
 
   // Redirect unauthenticated users trying to access protected routes

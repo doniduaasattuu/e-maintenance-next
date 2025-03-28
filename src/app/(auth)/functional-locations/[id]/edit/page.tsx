@@ -8,10 +8,23 @@ import {
 } from "@/components/ui/breadcrumb";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
-import FunctionalLocationCreateForm from "@/components/functional-location-create-form";
+import FunctionalLocationEditForm from "@/components/functional-location-edit-form";
+import { getFunctionalLocation } from "@/actions/functional-location-action";
 import HeaderCard from "@/components/header-card";
 
-export default function FunctionalLocationCreatePage() {
+export default async function FunctionalLocationEditPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+
+  const functionalLocation = await getFunctionalLocation({ id });
+
+  if (!functionalLocation) {
+    return;
+  }
+
   return (
     <div className="space-y-4">
       <Breadcrumb>
@@ -24,17 +37,16 @@ export default function FunctionalLocationCreatePage() {
             <Link href="/functional-locations">Functional Locations</Link>
           </BreadcrumbLink>
           <BreadcrumbSeparator />
-          <BreadcrumbPage>Create</BreadcrumbPage>
+          {id}
+          <BreadcrumbSeparator />
+          <BreadcrumbPage>Edit</BreadcrumbPage>
         </BreadcrumbList>
       </Breadcrumb>
 
       <div className="space-y-8 mb-4">
         <Card className="py-8 px-5 md:p-8 rounded-md">
-          <HeaderCard
-            header="Create"
-            content="Insert new functional location"
-          />
-          <FunctionalLocationCreateForm />
+          <HeaderCard header="Edit" content="Update functional location data" />
+          <FunctionalLocationEditForm functionalLocation={functionalLocation} />
         </Card>
       </div>
     </div>
