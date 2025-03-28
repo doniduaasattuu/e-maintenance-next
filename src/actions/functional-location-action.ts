@@ -67,29 +67,25 @@ export async function getFunctionalLocations({
 
 type getFunctionalLocationProps = {
   id: string;
-  withEquipments?: boolean;
 };
 
 export async function getFunctionalLocation({
   id,
-  withEquipments = false,
 }: getFunctionalLocationProps) {
   const functionalLocation = await prisma.functionalLocation.findUnique({
     where: {
       id: id,
     },
-    ...(withEquipments && {
-      select: {
-        id: true,
-        description: true,
-        equipments: {
-          select: {
-            id: true,
-            description: true,
-          },
+    select: {
+      id: true,
+      description: true,
+      equipments: {
+        select: {
+          id: true,
+          description: true,
         },
       },
-    }),
+    },
   });
 
   return functionalLocation;

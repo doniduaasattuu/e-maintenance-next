@@ -1,4 +1,5 @@
 import { getFunctionalLocation } from "@/actions/functional-location-action";
+import EquipmentList from "@/components/equipment-list";
 import HeaderCard from "@/components/header-card";
 import {
   Breadcrumb,
@@ -21,11 +22,10 @@ export default async function FunctionalLocationPage({
   const { id } = await params;
   const functionalLocation = await getFunctionalLocation({
     id,
-    withEquipments: true,
   });
 
   if (!functionalLocation) {
-    return;
+    return <p>Functinoal location is not exists</p>;
   }
 
   return (
@@ -62,27 +62,16 @@ export default async function FunctionalLocationPage({
             </div>
           </div>
         </Card>
-        <Card className="py-8 px-5 md:p-8 rounded-md">
-          <HeaderCard
-            header="Equipments"
-            content="List of installed equipment"
-          />
 
-          {/* <EquipmentList equipments={functionalLocation.equipments} /> */}
-
-          {/* <div className="space-y-3">
-            <div className="flex justify-between text-sm max-w-md space-x-3">
-              <div>EMO000123</div>
-              <div className="truncate">
-                OIL UNIT DRIVE 2 PULPER FFD450EE 2 PULPER FFD450EE
-              </div>
-            </div>
-            <div className="flex justify-between text-sm max-w-md">
-              <div>EMO000123</div>
-              <div>OIL UNIT DRIVE 2 PULPER FFD450EE</div>
-            </div>
-          </div> */}
-        </Card>
+        {functionalLocation.equipments.length >= 1 && (
+          <Card className="py-8 px-5 md:p-8 rounded-md">
+            <HeaderCard
+              header="Equipments"
+              content="List of installed equipment"
+            />
+            <EquipmentList equipments={functionalLocation.equipments} />
+          </Card>
+        )}
       </div>
     </div>
   );
