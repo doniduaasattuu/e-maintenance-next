@@ -5,7 +5,7 @@ import { CreateFunctionalLocationSchema } from "@/validations/functional-locatio
 
 type getFunclocParams = {
   destinationPage?: number;
-  perPage?: number;
+  perPage?: string;
   orderBy?: string;
   sortBy?: "id" | "description" | string;
   query?: string;
@@ -13,17 +13,17 @@ type getFunclocParams = {
 
 export async function getFunctionalLocations({
   destinationPage = 1,
-  perPage = 15,
+  perPage = "15",
   orderBy = "desc",
   sortBy = "id",
   query,
 }: getFunclocParams) {
-  const skip = (destinationPage - 1) * perPage;
+  const skip = (destinationPage - 1) * Number(perPage);
 
   // const [functionalLocations, total] = await Promise.all([
   //   prisma.functionalLocation.findMany({
   //     skip,
-  //     take: perPage,
+  //     take: Number(perPage),
   //     orderBy: { [sortBy]: orderBy as "asc" | "desc" },
   //     ...(query && {
   //       where: {
@@ -53,7 +53,7 @@ export async function getFunctionalLocations({
 
   const paginatedFunctionalLocations = allFunctionalLocations.slice(
     skip,
-    skip + perPage
+    skip + Number(perPage)
   );
 
   return {
@@ -61,7 +61,7 @@ export async function getFunctionalLocations({
     total,
     destinationPage,
     perPage,
-    totalPages: Math.ceil(total / perPage),
+    totalPages: Math.ceil(total / Number(perPage)),
   };
 }
 

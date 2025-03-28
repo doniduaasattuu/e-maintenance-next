@@ -15,15 +15,23 @@ import FunctionalLocationTable from "@/components/functional-location-table";
 export default async function FunctionalLocationIndexPage({
   searchParams,
 }: {
-  searchParams: { query: string; order: string; sortBy: string; page: string };
+  searchParams: {
+    query: string;
+    order: string;
+    sortBy: string;
+    page: string;
+    perPage: string;
+  };
 }) {
-  const { query, order, sortBy, page } = await searchParams;
+  const { query, order, sortBy, page, perPage } = await searchParams;
+  console.log(perPage);
 
   const { functionalLocations, totalPages } = await getFunctionalLocations({
     destinationPage: Number(page ?? 1),
     orderBy: order,
     query: query,
     sortBy: sortBy,
+    perPage: perPage,
   });
 
   return (
