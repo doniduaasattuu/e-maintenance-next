@@ -46,11 +46,15 @@ export default function RegisterPage() {
   const form = useForm<RegisterFormSchema>({
     resolver: zodResolver(registerFormSchema),
   });
-  const { control, setError, handleSubmit } = form;
+  const { control, setError, setFocus, handleSubmit } = form;
 
   React.useEffect(() => {
     if (state.errors) {
-      Object.entries(state.errors).forEach(([field, errors]) => {
+      Object.entries(state.errors).forEach(([field, errors], index: number) => {
+        if (index === 0) {
+          setFocus(field as keyof RegisterFormSchema);
+        }
+
         if (errors && errors.length > 0) {
           setError(field as keyof RegisterFormSchema, {
             message: errors[0],
@@ -58,7 +62,7 @@ export default function RegisterPage() {
         }
       });
     }
-  }, [setError, state]);
+  }, [setError, setFocus, state]);
 
   React.useEffect(() => {
     if (state.success) {

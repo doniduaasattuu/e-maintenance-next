@@ -1,10 +1,15 @@
 import DynamicBreadcrumb from "@/components/dynamic-breadcrumb";
 import React from "react";
 
-export default function EquipmentPage() {
+export default function TableLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <div className="space-y-4">
       <DynamicBreadcrumb />
+      {children}
     </div>
   );
 }

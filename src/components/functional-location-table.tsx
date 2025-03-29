@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 
 import {
@@ -13,16 +12,12 @@ import {
 import { formatDate } from "@/lib/utils";
 import { FunctionalLocation } from "@/types/functional-location";
 import Link from "next/link";
-import { useAuth } from "@/hooks/useAuth";
 
 export default function FunctionalLocationTable({
   functionalLocations,
 }: {
   functionalLocations: FunctionalLocation[];
 }) {
-  const { user } = useAuth();
-  const isAdmin: boolean = user?.role?.name === "Admin";
-
   return (
     <Table>
       <TableCaption>A list of data functional locations.</TableCaption>
@@ -30,18 +25,15 @@ export default function FunctionalLocationTable({
         <TableRow>
           <TableHead className="w-[300px] text-muted-foreground">ID</TableHead>
           <TableHead className="text-muted-foreground">Description</TableHead>
-          <TableHead className="text-muted-foreground">Created at</TableHead>
-          <TableHead
-            className={`${!isAdmin && "text-right"} text-muted-foreground`}
-          >
+          <TableHead className="w-[110px] text-muted-foreground">
+            Created at
+          </TableHead>
+          <TableHead className="w-[110px] text-right text-muted-foreground">
             Updated at
           </TableHead>
-          {isAdmin && (
-            <TableHead className="text-right text-muted-foreground"></TableHead>
-          )}
         </TableRow>
       </TableHeader>
-      <TableBody>
+      <TableBody className="overflow-x-scroll scrollbar-hide">
         {functionalLocations &&
           functionalLocations.length >= 1 &&
           functionalLocations.map((funcloc) => {
@@ -55,21 +47,15 @@ export default function FunctionalLocationTable({
                     {funcloc.id}
                   </Link>
                 </TableCell>
-                <TableCell>{funcloc.description}</TableCell>
-                <TableCell>{formatDate(funcloc.createdAt)}</TableCell>
-                <TableCell className={`${!isAdmin && "text-right"}`}>
+                <TableCell className="font-light">
+                  {funcloc.description}
+                </TableCell>
+                <TableCell className="font-light">
+                  {formatDate(funcloc.createdAt)}
+                </TableCell>
+                <TableCell className="text-right font-light">
                   {formatDate(funcloc.updatedAt)}
                 </TableCell>
-                {isAdmin && (
-                  <TableCell className="text-right">
-                    <Link
-                      href={`functional-locations/${funcloc.id}/edit`}
-                      className="text-muted-foreground hover:underline underline-offset-2 hover:text-blue-400 transition-colors"
-                    >
-                      Edit
-                    </Link>
-                  </TableCell>
-                )}
               </TableRow>
             );
           })}

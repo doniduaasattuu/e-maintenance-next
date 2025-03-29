@@ -137,6 +137,15 @@
   background: #f13d30 !important;
 }
 
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Webkit browsers */
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

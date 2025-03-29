@@ -4,6 +4,7 @@ import React from "react";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -18,6 +19,7 @@ import LoadingButton from "./loading-button";
 import { CreateFunctionalLocationSchema } from "@/validations/functional-location-validation";
 import { useFormState } from "react-dom";
 import { createFunctionalLocation } from "@/actions/functional-location-action";
+import Link from "next/link";
 
 const createFunctionalLocationFormSchema = CreateFunctionalLocationSchema;
 type CreateFunctionalLocationSchema = z.infer<
@@ -31,6 +33,7 @@ const initialState = {
 };
 
 export default function FunctionalLocationCreateForm() {
+  const [lastInserted, setLastInserted] = React.useState<string | null>(null);
   const [state, formAction, pending] = useFormState(
     createFunctionalLocation,
     initialState
@@ -39,11 +42,15 @@ export default function FunctionalLocationCreateForm() {
     resolver: zodResolver(createFunctionalLocationFormSchema),
   });
 
-  const { control, setError, reset, handleSubmit } = form;
+  const { control, setError, setFocus, reset, handleSubmit, getValues } = form;
 
   React.useEffect(() => {
     if (state.errors) {
-      Object.entries(state.errors).forEach(([field, errors]) => {
+      Object.entries(state.errors).forEach(([field, errors], index: number) => {
+        if (index === 0) {
+          setFocus(field as keyof CreateFunctionalLocationSchema);
+        }
+
         if (errors && errors.length > 0) {
           setError(field as keyof CreateFunctionalLocationSchema, {
             message: errors[0],
@@ -51,7 +58,7 @@ export default function FunctionalLocationCreateForm() {
         }
       });
     }
-  }, [setError, state]);
+  }, [setError, setFocus, state]);
 
   React.useEffect(() => {
     if (state.success) {
@@ -59,12 +66,14 @@ export default function FunctionalLocationCreateForm() {
         description: state.message,
       });
 
+      setLastInserted(getValues("id"));
+
       reset({
         id: "",
         description: "",
       });
     }
-  }, [state, reset]);
+  }, [state, reset, getValues]);
 
   const onCreate = handleSubmit((values) => {
     const formData = new FormData();
@@ -96,6 +105,17 @@ export default function FunctionalLocationCreateForm() {
                   }}
                 />
               </FormControl>
+              {lastInserted && (
+                <FormDescription>
+                  <span>Last inserted: </span>
+                  <Link
+                    className="hover:text-foreground"
+                    href={`/functional-locations/${lastInserted}`}
+                  >
+                    {lastInserted}
+                  </Link>
+                </FormDescription>
+              )}
               <FormMessage />
             </FormItem>
           )}

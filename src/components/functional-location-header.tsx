@@ -15,27 +15,17 @@ import {
 } from "./ui/dropdown-menu";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 export default function FunctionalLocationHeader() {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
   const [order, setOrder] = React.useState<"asc" | "desc" | string | null>(
     null
   );
   const [sort, setSort] = React.useState<"id" | "description" | string | null>(
     null
   );
-  const [perPage, setPerPage] = React.useState<string | null>(null);
-
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
-  const { replace } = useRouter();
 
   React.useEffect(() => {
     const params = new URLSearchParams(searchParams);
@@ -67,21 +57,7 @@ export default function FunctionalLocationHeader() {
 
       handleSort(sort);
     }
-
-    if (perPage) {
-      const handlePerPage = (perPage: string) => {
-        if (perPage) {
-          params.set("perPage", perPage);
-        } else {
-          params.delete("perPage");
-        }
-
-        replace(`${pathname}?${params.toString()}`);
-      };
-
-      handlePerPage(perPage);
-    }
-  }, [order, pathname, perPage, replace, searchParams, sort]);
+  }, [order, pathname, replace, searchParams, sort]);
 
   return (
     <div className="flex justify-between items-center space-x-2">
@@ -125,27 +101,6 @@ export default function FunctionalLocationHeader() {
                 Ascending
               </DropdownMenuRadioItem>
             </DropdownMenuRadioGroup>
-            <DropdownMenuSeparator />
-            <Select
-              onValueChange={(e) => setPerPage(e)}
-              defaultValue={perPage ?? "15"}
-            >
-              <div className="w-full flex justify-between space-x-2 items-center">
-                <div className="text-sm font-normal ms-3">Per page:</div>
-                <SelectTrigger>
-                  <SelectValue placeholder="Number of row" />
-                </SelectTrigger>
-              </div>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="15">15</SelectItem>
-                  <SelectItem value="25">25</SelectItem>
-                  <SelectItem value="50">50</SelectItem>
-                  <SelectItem value="100">100</SelectItem>
-                  <SelectItem value="500">500</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
           </DropdownMenuContent>
         </DropdownMenu>
         <Button asChild className="cursor-pointer" variant="outline">

@@ -1,3 +1,5 @@
+import { Roboto_Mono } from "next/font/google";
+import Link from "next/link";
 import React from "react";
 
 type Equipment = {
@@ -9,6 +11,8 @@ type EquipmentListProps = {
   equipments: Equipment[];
 };
 
+const robotoMono = Roboto_Mono({ subsets: ["latin"] });
+
 export default function EquipmentList({ equipments }: EquipmentListProps) {
   return (
     <div className="space-y-3">
@@ -17,8 +21,15 @@ export default function EquipmentList({ equipments }: EquipmentListProps) {
           key={equipment.id}
           className="flex justify-between text-sm max-w-md space-x-3"
         >
-          <div>{equipment.id}</div>
-          <div className="truncate">{equipment.description}</div>
+          <Link
+            href={`/equipments/${equipment.id}`}
+            className={robotoMono.className}
+          >
+            {equipment.id}
+          </Link>
+          <div className="truncate text-muted-foreground">
+            {equipment.description}
+          </div>
         </div>
       ))}
     </div>
