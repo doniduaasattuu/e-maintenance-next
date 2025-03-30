@@ -16,10 +16,6 @@ export default function Navbar({ className }: { className: unknown }) {
   const pathname = usePathname();
   const filteredRoutes = useFilteredRoutes(user);
 
-  if (!user) {
-    return <p>Your&apos;e not logged in</p>;
-  }
-
   return (
     <nav className="w-full py-3 bg-background shadow-md">
       <div

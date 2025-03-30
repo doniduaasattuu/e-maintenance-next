@@ -76,8 +76,8 @@ model EquipmentStatus {
 model Equipment {
   id                   String   @id @db.Char(9)
   classificationId     Int
-  functionalLocationId String?
   equipmentStatusId    Int
+  functionalLocationId String?
   sortField            String   @db.VarChar(50)
   description          String   @db.VarChar(100)
   userId               Int?
@@ -89,6 +89,6 @@ model Equipment {
   functionalLocation FunctionalLocation? @relation(fields: [functionalLocationId], references: [id])
   classification     Classification      @relation(fields: [classificationId], references: [id])
 
-  @@index([sortField])
+  @@index([id, sortField, description])
   @@map("equipments")
 }

@@ -20,23 +20,6 @@ export async function getFunctionalLocations({
 }: getFunclocParams) {
   const skip = (destinationPage - 1) * Number(perPage);
 
-  // const [functionalLocations, total] = await Promise.all([
-  //   prisma.functionalLocation.findMany({
-  //     skip,
-  //     take: Number(perPage),
-  //     orderBy: { [sortBy]: orderBy as "asc" | "desc" },
-  //     ...(query && {
-  //       where: {
-  //         OR: [
-  //           { id: { contains: query, mode: "insensitive" } },
-  //           { description: { contains: query, mode: "insensitive" } },
-  //         ],
-  //       },
-  //     }),
-  //   }),
-  //   prisma.functionalLocation.count(),
-  // ]);
-
   const allFunctionalLocations = await prisma.functionalLocation.findMany({
     orderBy: { [sortBy]: orderBy as "asc" | "desc" },
     ...(query && {
@@ -108,19 +91,19 @@ export async function createFunctionalLocation(
     }
     const { id, description } = validatedData.data;
 
-    const funclocExist = await prisma.functionalLocation.findFirst({
+    const funclocExists = await prisma.functionalLocation.findFirst({
       where: {
         id: id,
       },
     });
 
-    if (funclocExist) {
+    if (funclocExists) {
       return {
         success: false,
         message: "Functional location already exists",
         errors: {
           id:
-            funclocExist.id === id
+            funclocExists.id === id
               ? ["Functional location already exists"]
               : undefined,
         },
@@ -173,18 +156,18 @@ export async function editFunctionalLocation(
     }
     const { id, description } = validatedData.data;
 
-    const funclocExist = await prisma.functionalLocation.findFirst({
+    const funclocExists = await prisma.functionalLocation.findFirst({
       where: {
         id: id,
       },
     });
 
-    if (!funclocExist) {
+    if (!funclocExists) {
       return {
         success: false,
-        message: "Functional location not exists",
+        message: "Functional location is not exists",
         errors: {
-          id: ["Functional location not exists"],
+          id: ["Functional location is not exists"],
         },
       };
     }

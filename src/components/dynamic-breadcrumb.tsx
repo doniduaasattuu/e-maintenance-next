@@ -49,7 +49,7 @@ export default function DynamicBreadcrumb() {
           </BreadcrumbLink>
 
           {breadcrumbItems.map((item, index) => (
-            <>
+            <React.Fragment key={index}>
               <BreadcrumbSeparator />
               {index === breadcrumbItems.length - 1 ? (
                 <BreadcrumbPage>{item.name}</BreadcrumbPage>
@@ -58,7 +58,7 @@ export default function DynamicBreadcrumb() {
                   <Link href={item.href}>{item.name}</Link>
                 </BreadcrumbLink>
               )}
-            </>
+            </React.Fragment>
           ))}
         </BreadcrumbList>
       </Breadcrumb>

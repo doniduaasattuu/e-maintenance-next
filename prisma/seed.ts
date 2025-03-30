@@ -46,6 +46,16 @@ async function main() {
     ],
   });
 
+  const doni = await prisma.user.findUnique({
+    where: {
+      email: "doni@gmail.com",
+    },
+  });
+
+  if (!doni) {
+    throw new Error("User not found");
+  }
+
   // FUNCTIONAL LOCATION CREATION
   await prisma.functionalLocation.createMany({
     data: [
@@ -259,13 +269,31 @@ async function main() {
     throw new Error("Motor classification is not found");
   }
 
-  const installed = await prisma.equipmentStatus.findFirst({
-    where: {
-      description: "Installed",
-    },
-  });
+  // const installed = await prisma.equipmentStatus.findFirst({
+  //   where: {
+  //     description: "Installed",
+  //   },
+  // });
 
-  if (!installed) {
+  const [available, installed, repaired] = await Promise.all([
+    await prisma.equipmentStatus.findFirst({
+      where: {
+        description: "Available",
+      },
+    }),
+    await prisma.equipmentStatus.findFirst({
+      where: {
+        description: "Installed",
+      },
+    }),
+    await prisma.equipmentStatus.findFirst({
+      where: {
+        description: "Repaired",
+      },
+    }),
+  ]);
+
+  if (!installed || !available || !repaired) {
     throw new Error("Equipment status is not found");
   }
 
@@ -359,6 +387,7 @@ async function main() {
         equipmentStatusId: installed.id,
         sortField: "PM3.AP01/M",
         description: "AC MOTOR;380V,50Hz,22kW,4P,180L,B3",
+        userId: doni.id,
       },
       // SCREENER #13
       {
@@ -391,6 +420,20 @@ async function main() {
         functionalLocationId: "FP-01-PM3-APS-SR14",
         classificationId: motor.id,
         equipmentStatusId: installed.id,
+        sortField: "PM3.AP03/M",
+        description: "AC MOTOR;380V,50Hz,132kW,6P,315MC,B3",
+      },
+      {
+        id: "EMO000123",
+        classificationId: motor.id,
+        equipmentStatusId: repaired.id,
+        sortField: "PM3.AP03/M",
+        description: "AC MOTOR;380V,50Hz,132kW,6P,315MC,B3",
+      },
+      {
+        id: "EMO000999",
+        classificationId: motor.id,
+        equipmentStatusId: available.id,
         sortField: "PM3.AP03/M",
         description: "AC MOTOR;380V,50Hz,132kW,6P,315MC,B3",
       },
