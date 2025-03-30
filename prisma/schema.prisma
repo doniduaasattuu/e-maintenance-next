@@ -84,6 +84,7 @@ model Equipment {
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 
+  equipmentMaterials EquipmentMaterial[]
   user               User?               @relation(fields: [userId], references: [id])
   equipmentStatus    EquipmentStatus     @relation(fields: [equipmentStatusId], references: [id])
   functionalLocation FunctionalLocation? @relation(fields: [functionalLocationId], references: [id])
@@ -91,4 +92,40 @@ model Equipment {
 
   @@index([id, sortField, description])
   @@map("equipments")
+}
+
+model EquipmentMaterial {
+  equipmentId String
+  materialId  String
+  quantity    Int
+
+  equipment Equipment @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+  material  Material  @relation(fields: [materialId], references: [id], onDelete: Cascade)
+
+  @@id([equipmentId, materialId])
+  @@map("equipment_material")
+}
+
+model Unit {
+  id          Int      @id @default(autoincrement())
+  description String   @db.VarChar(50)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  materials Material[]
+}
+
+model Material {
+  id                 String              @id @db.Char(8)
+  name               String
+  price              Int
+  equipmentMaterials EquipmentMaterial[]
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  unitId             Int?
+
+  unit Unit? @relation(fields: [unitId], references: [id], onDelete: SetNull)
+
+  @@index([id, name, price])
+  @@map("materials")
 }

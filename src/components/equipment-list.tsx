@@ -23,7 +23,7 @@ export default function EquipmentList({ equipments }: EquipmentListProps) {
         >
           <Link
             href={`/equipments/${equipment.id}`}
-            className={robotoMono.className}
+            className={`link ${robotoMono.className}`}
           >
             {equipment.id}
           </Link>

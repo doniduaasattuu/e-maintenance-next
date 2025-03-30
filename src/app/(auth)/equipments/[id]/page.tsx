@@ -6,6 +6,7 @@ import Link from "next/link";
 import React from "react";
 import TableLayout from "@/layouts/table-layout";
 import { getEquipment } from "@/actions/equipment-action";
+import MaterialList from "@/components/material-list";
 
 export default async function EquipmentPage({
   params,
@@ -79,10 +80,13 @@ export default async function EquipmentPage({
           </div>
         </Card>
 
-        {false ? (
+        {equipment.equipmentMaterials.length >= 1 ? (
           <Card className="py-8 px-5 md:p-8 rounded-md">
-            <HeaderCard header="Materials" content="List of material used" />
-            {/* <MaterialList materials={equipment.materials} /> */}
+            <HeaderCard
+              header="Materials"
+              content="A list of materials that used in this equipment."
+            />
+            <MaterialList items={equipment?.equipmentMaterials} />
           </Card>
         ) : (
           <p className="text-sm font-normal text-muted-foreground">

@@ -44,7 +44,7 @@ export default function EquipmentTable({
               <TableRow key={equipment.id}>
                 <TableCell className="font-medium flex-col">
                   <Link
-                    className={`hover:underline underline-offset-3 ${robotoMono.className}`}
+                    className={`link ${robotoMono.className}`}
                     href={`/equipments/${equipment.id}`}
                   >
                     {equipment.id}
@@ -61,7 +61,7 @@ export default function EquipmentTable({
                   <div>
                     <Link
                       href={`/functional-locations/${equipment.functionalLocation?.id}`}
-                      className="hover:underline underline-offset-3"
+                      className="link"
                     >
                       {equipment.functionalLocation?.id}
                     </Link>

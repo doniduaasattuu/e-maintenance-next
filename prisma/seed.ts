@@ -439,6 +439,135 @@ async function main() {
       },
     ],
   });
+
+  await prisma.unit.createMany({
+    data: [
+      { description: "PCS" },
+      { description: "Meter" },
+      { description: "Kilogram" },
+      { description: "Liter" },
+      { description: "Pack" },
+      { description: "Box" },
+      { description: "Roll" },
+      { description: "Set" },
+      { description: "Pair" },
+      { description: "Bottle" },
+    ],
+    skipDuplicates: true,
+  });
+
+  // 🔹 Ambil semua Unit yang telah dibuat
+  const unitData = await prisma.unit.findMany();
+
+  await prisma.material.createMany({
+    data: [
+      {
+        id: "10019920",
+        name: "Bearing",
+        price: 50000,
+        unitId: unitData[0]?.id,
+      },
+      {
+        id: "10019921",
+        name: "Motor Induksi",
+        price: 750000,
+        unitId: unitData[3]?.id,
+      },
+      {
+        id: "10019922",
+        name: "Kabel Daya",
+        price: 15000,
+        unitId: unitData[1]?.id,
+      },
+      {
+        id: "10019923",
+        name: "Stick Mixer",
+        price: 100000,
+        unitId: unitData[0]?.id,
+      },
+      { id: "10019924", name: "Grease", price: 20000, unitId: unitData[9]?.id },
+      { id: "10019925", name: "Pulley", price: 85000, unitId: unitData[0]?.id },
+      { id: "10019926", name: "Belt", price: 45000, unitId: unitData[1]?.id },
+      {
+        id: "10019927",
+        name: "Bearing Cover",
+        price: 30000,
+        unitId: unitData[0]?.id,
+      },
+      {
+        id: "10019928",
+        name: "Sensor Suhu",
+        price: 120000,
+        unitId: unitData[3]?.id,
+      },
+      { id: "10019929", name: "Fuse", price: 5000, unitId: unitData[0]?.id },
+      { id: "10019930", name: "Switch", price: 40000, unitId: unitData[0]?.id },
+      { id: "10019931", name: "Relay", price: 60000, unitId: unitData[0]?.id },
+      {
+        id: "10019932",
+        name: "Panel Listrik",
+        price: 250000,
+        unitId: unitData[5]?.id,
+      },
+      {
+        id: "10019933",
+        name: "Fan Belt",
+        price: 55000,
+        unitId: unitData[1]?.id,
+      },
+      {
+        id: "10019934",
+        name: "Terminal Block",
+        price: 20000,
+        unitId: unitData[0]?.id,
+      },
+      {
+        id: "10019935",
+        name: "Din Rail",
+        price: 15000,
+        unitId: unitData[1]?.id,
+      },
+      { id: "10019936", name: "MCB", price: 120000, unitId: unitData[0]?.id },
+      {
+        id: "10019937",
+        name: "Contactors",
+        price: 140000,
+        unitId: unitData[0]?.id,
+      },
+      { id: "10019938", name: "PLC", price: 850000, unitId: unitData[0]?.id },
+      { id: "10019939", name: "HMI", price: 1200000, unitId: unitData[0]?.id },
+    ],
+    skipDuplicates: true,
+  });
+
+  const materialData = await prisma.material.findMany();
+
+  // 🔹 Equipment IDs
+  const equipmentIds = [
+    "ELP003787",
+    "ELP003788",
+    "ELP003789",
+    "EMO002807",
+    "EMO002834",
+    "EMO003218",
+    "ELP001073",
+    "EMO004984",
+    "ELP001074",
+    "EMO000879",
+  ];
+
+  await prisma.equipmentMaterial.createMany({
+    data: equipmentIds.flatMap((equipmentId) =>
+      materialData.map((material) => ({
+        equipmentId,
+        materialId: material.id,
+        quantity: Math.floor(Math.random() * 10) + 1, // Jumlah random antara 1-10
+      }))
+    ),
+    skipDuplicates: true,
+  });
+
+  console.log("Seeding selesai!");
 }
 
 main()
