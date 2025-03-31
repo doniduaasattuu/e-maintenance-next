@@ -2,10 +2,13 @@ import { z } from "zod";
 
 export const BaseMaterialSchema = z.object({
   id: z
-    .string({ message: "Material id is required" })
-    .min(8)
-    .max(8)
-    .toUpperCase(),
+    .string()
+    .length(8, {
+      message: "The ID must be exactly 8 characters long",
+    })
+    .refine((val) => /^\d+$/.test(val), {
+      message: "The ID must be numeric",
+    }),
   name: z.string({ message: "Material name is required" }).min(3).max(100),
   price: z
     .union([z.number(), z.string()])

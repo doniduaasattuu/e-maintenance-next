@@ -2,7 +2,10 @@
 
 import prisma from "@/lib/prisma";
 import { MaterialWithEquipments } from "@/types/prisma-types";
-import { CreateMaterialSchema } from "@/validations/material-validation";
+import {
+  CreateMaterialSchema,
+  EditMateriaSchema,
+} from "@/validations/material-validation";
 
 type getMaterialParams = {
   page?: number;
@@ -101,7 +104,7 @@ export async function getMaterial({
 export async function editMaterial(prevState: unknown, formData: FormData) {
   try {
     const rawData = Object.fromEntries(formData.entries());
-    const validatedData = CreateMaterialSchema.safeParse(rawData);
+    const validatedData = EditMateriaSchema.safeParse(rawData);
 
     if (!validatedData.success) {
       return {
@@ -143,6 +146,42 @@ export async function editMaterial(prevState: unknown, formData: FormData) {
     return {
       success: true,
       message: "Material updated successfully",
+      errors: null,
+    };
+  } catch (error) {
+    if (error instanceof Error) {
+      return {
+        success: false,
+        message: error.message,
+        errors: null,
+      };
+    }
+
+    return {
+      success: false,
+      message: "Something went wrong",
+      errors: null,
+    };
+  }
+}
+
+export async function createMaterial(prevState: unknown, formData: FormData) {
+  try {
+    const rawData = Object.fromEntries(formData.entries());
+    const validatedData = CreateMaterialSchema.safeParse(rawData);
+
+    if (!validatedData.success) {
+      console.log(validatedData.error.flatten().fieldErrors);
+      return {
+        success: false,
+        message: null,
+        errors: validatedData.error.flatten().fieldErrors,
+      };
+    }
+
+    return {
+      success: true,
+      message: "Material created successfully",
       errors: null,
     };
   } catch (error) {
