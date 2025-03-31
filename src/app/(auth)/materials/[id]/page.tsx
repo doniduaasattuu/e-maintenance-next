@@ -7,6 +7,8 @@ import React from "react";
 import TableLayout from "@/layouts/table-layout";
 import { getMaterial } from "@/actions/material-action";
 import { formatCurrency } from "@/lib/utils";
+import EquipmentList from "@/components/equipment-list";
+import { Material } from "@/types/material";
 
 export default async function MaterialPage({
   params,
@@ -16,11 +18,18 @@ export default async function MaterialPage({
   const { id } = await params;
   const material = await getMaterial({
     id: id,
+    includeEquipments: true,
   });
 
   if (!material) {
     return <p>Material is not exists</p>;
   }
+
+  const data = material as unknown as Material;
+  const equipments =
+    data.equipmentMaterials.map((item) => {
+      return item.equipment;
+    }) || [];
 
   return (
     <TableLayout>
@@ -42,29 +51,37 @@ export default async function MaterialPage({
               <Input readOnly id="name" defaultValue={material.name} />
             </div>
             <div className="grid w-full max-w-md items-center gap-2">
-              <Label htmlFor="name">Price</Label>
+              <Label htmlFor="price">Price</Label>
               <Input
                 readOnly
-                id="name"
+                id="price"
                 defaultValue={formatCurrency({ number: material.price })}
+              />
+            </div>
+            <div className="grid w-full max-w-md items-center gap-2">
+              <Label htmlFor="unitId">Unit</Label>
+              <Input
+                readOnly
+                id="unitId"
+                defaultValue={material.unit?.description}
               />
             </div>
           </div>
         </Card>
 
-        {/* {false ? (
+        {equipments && equipments.length >= 1 ? (
           <Card className="py-8 px-5 md:p-8 rounded-md">
             <HeaderCard
               header="Equipments"
               content="List of equipment that uses this material"
             />
-            <EquipmentList equipments={material.equipmentMaterials} />
+            <EquipmentList equipments={equipments} />
           </Card>
         ) : (
           <p className="text-sm font-normal text-muted-foreground">
             This material doesn&apos;t have any relations.
           </p>
-        )} */}
+        )}
       </div>
     </TableLayout>
   );

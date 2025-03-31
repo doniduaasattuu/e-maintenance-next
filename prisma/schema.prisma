@@ -98,9 +98,8 @@ model EquipmentMaterial {
   equipmentId String
   materialId  String
   quantity    Int
-
-  equipment Equipment @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
-  material  Material  @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  equipment   Equipment @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+  material    Material  @relation(fields: [materialId], references: [id], onDelete: Cascade)
 
   @@id([equipmentId, materialId])
   @@map("equipment_material")
@@ -113,6 +112,8 @@ model Unit {
   updatedAt   DateTime @updatedAt
 
   materials Material[]
+
+  @@map("units")
 }
 
 model Material {
