@@ -42,15 +42,15 @@ export default async function MaterialPage({
           </HeaderCard>
 
           <div className="space-y-4">
-            <div className="grid w-full max-w-md items-center gap-2">
+            <div className="grid w-full max-w-xl items-center gap-2">
               <Label htmlFor="id">ID</Label>
               <Input readOnly id="id" defaultValue={material?.id} />
             </div>
-            <div className="grid w-full max-w-md items-center gap-2">
+            <div className="grid w-full max-w-xl items-center gap-2">
               <Label htmlFor="name">Name</Label>
               <Input readOnly id="name" defaultValue={material.name} />
             </div>
-            <div className="grid w-full max-w-md items-center gap-2">
+            <div className="grid w-full max-w-xl items-center gap-2">
               <Label htmlFor="price">Price</Label>
               <Input
                 readOnly
@@ -58,7 +58,7 @@ export default async function MaterialPage({
                 defaultValue={formatCurrency({ number: material.price })}
               />
             </div>
-            <div className="grid w-full max-w-md items-center gap-2">
+            <div className="grid w-full max-w-xl items-center gap-2">
               <Label htmlFor="unitId">Unit</Label>
               <Input
                 readOnly

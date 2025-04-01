@@ -9,7 +9,7 @@ export const materialWithEquipments =
         {
           select: {
             equipment: {
-              select: { id: true, description: true },
+              select: { id: true, sortField: true, description: true },
             },
             quantity: true,
           },

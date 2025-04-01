@@ -111,7 +111,7 @@ export default function EquipmentCreateForm({
           control={control}
           name="id"
           render={({ field }) => (
-            <FormItem className="max-w-md">
+            <FormItem className="max-w-xl">
               <FormLabel>ID</FormLabel>
               <FormControl>
                 <Input
@@ -141,7 +141,7 @@ export default function EquipmentCreateForm({
           control={control}
           name="classificationId"
           render={({ field }) => (
-            <FormItem className="max-w-md">
+            <FormItem className="max-w-xl">
               <FormLabel>Classification</FormLabel>
               <FormControl>
                 <Select
@@ -171,7 +171,7 @@ export default function EquipmentCreateForm({
           control={control}
           name="equipmentStatusId"
           render={({ field }) => (
-            <FormItem className="max-w-md">
+            <FormItem className="max-w-xl">
               <FormLabel>Status</FormLabel>
               <FormControl>
                 <Select
@@ -201,10 +201,16 @@ export default function EquipmentCreateForm({
           control={control}
           name="functionalLocationId"
           render={({ field }) => (
-            <FormItem className="max-w-md">
+            <FormItem className="max-w-xl">
               <FormLabel>Functional location</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input
+                  {...field}
+                  onChange={(e) => {
+                    const upperValue = e.target.value.toUpperCase();
+                    field.onChange(upperValue);
+                  }}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -214,7 +220,7 @@ export default function EquipmentCreateForm({
           control={control}
           name="sortField"
           render={({ field }) => (
-            <FormItem className="max-w-md">
+            <FormItem className="max-w-xl">
               <FormLabel>Sort field</FormLabel>
               <FormControl>
                 <Input {...field} />
@@ -227,7 +233,7 @@ export default function EquipmentCreateForm({
           control={control}
           name="description"
           render={({ field }) => (
-            <FormItem className="max-w-md">
+            <FormItem className="max-w-xl">
               <FormLabel>Description</FormLabel>
               <FormControl>
                 <Input {...field} />

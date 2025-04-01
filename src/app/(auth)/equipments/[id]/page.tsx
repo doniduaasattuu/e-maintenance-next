@@ -33,11 +33,11 @@ export default async function EquipmentPage({
           </HeaderCard>
 
           <div className="space-y-4">
-            <div className="grid w-full max-w-md items-center gap-2">
+            <div className="grid w-full max-w-xl items-center gap-2">
               <Label htmlFor="id">ID</Label>
               <Input readOnly id="id" defaultValue={equipment.id} />
             </div>
-            <div className="grid w-full max-w-md items-center gap-2">
+            <div className="grid w-full max-w-xl items-center gap-2">
               <Label htmlFor="classification">Classification</Label>
               <Input
                 readOnly
@@ -45,7 +45,7 @@ export default async function EquipmentPage({
                 defaultValue={equipment.classification.description}
               />
             </div>
-            <div className="grid w-full max-w-md items-center gap-2">
+            <div className="grid w-full max-w-xl items-center gap-2">
               <Label htmlFor="status">Status</Label>
               <Input
                 readOnly
@@ -53,7 +53,7 @@ export default async function EquipmentPage({
                 defaultValue={equipment.equipmentStatus.description}
               />
             </div>
-            <div className="grid w-full max-w-md items-center gap-2">
+            <div className="grid w-full max-w-xl items-center gap-2">
               <Label htmlFor="functional_location">Functional location</Label>
               <Input
                 readOnly
@@ -61,7 +61,7 @@ export default async function EquipmentPage({
                 defaultValue={equipment.functionalLocation?.id}
               />
             </div>
-            <div className="grid w-full max-w-md items-center gap-2">
+            <div className="grid w-full max-w-xl items-center gap-2">
               <Label htmlFor="sort_field">Sort field</Label>
               <Input
                 readOnly
@@ -69,7 +69,7 @@ export default async function EquipmentPage({
                 defaultValue={equipment.sortField}
               />
             </div>
-            <div className="grid w-full max-w-md items-center gap-2">
+            <div className="grid w-full max-w-xl items-center gap-2">
               <Label htmlFor="description">Description</Label>
               <Input
                 readOnly

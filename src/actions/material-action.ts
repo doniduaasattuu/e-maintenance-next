@@ -88,6 +88,7 @@ export async function getMaterial({
               equipment: {
                 select: {
                   id: true,
+                  sortField: true,
                   description: true,
                 },
               },
@@ -171,13 +172,39 @@ export async function createMaterial(prevState: unknown, formData: FormData) {
     const validatedData = CreateMaterialSchema.safeParse(rawData);
 
     if (!validatedData.success) {
-      console.log(validatedData.error.flatten().fieldErrors);
       return {
         success: false,
         message: null,
         errors: validatedData.error.flatten().fieldErrors,
       };
     }
+
+    const { id, name, price, unitId } = validatedData.data;
+
+    const materialExists = await prisma.material.findFirst({
+      where: {
+        id: id,
+      },
+    });
+
+    if (materialExists) {
+      return {
+        success: false,
+        message: "Material already exists",
+        errors: {
+          id: ["Material already exists"],
+        },
+      };
+    }
+
+    await prisma.material.create({
+      data: {
+        id: id,
+        name: name,
+        price: Number(price),
+        unitId: unitId === "undefined" ? null : Number(unitId),
+      },
+    });
 
     return {
       success: true,

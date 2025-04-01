@@ -65,6 +65,7 @@ export async function getFunctionalLocation({
       equipments: {
         select: {
           id: true,
+          sortField: true,
           description: true,
         },
       },

@@ -107,7 +107,7 @@ export default function MaterialEditForm({
           control={control}
           name="id"
           render={({ field }) => (
-            <FormItem className="max-w-md">
+            <FormItem className="max-w-xl">
               <FormLabel>ID</FormLabel>
               <FormControl>
                 <Input {...field} disabled />
@@ -120,7 +120,7 @@ export default function MaterialEditForm({
           control={control}
           name="name"
           render={({ field }) => (
-            <FormItem className="max-w-md">
+            <FormItem className="max-w-xl">
               <FormLabel>Name</FormLabel>
               <FormControl>
                 <Input {...field} />
@@ -133,7 +133,7 @@ export default function MaterialEditForm({
           control={control}
           name="price"
           render={({ field }) => (
-            <FormItem className="max-w-md">
+            <FormItem className="max-w-xl">
               <FormLabel>Price</FormLabel>
               <FormControl>
                 <Input {...field} type="number" />
@@ -146,7 +146,7 @@ export default function MaterialEditForm({
           control={control}
           name="unitId"
           render={({ field }) => (
-            <FormItem className="max-w-md">
+            <FormItem className="max-w-xl">
               <FormLabel>Unit</FormLabel>
               <FormControl>
                 <Select

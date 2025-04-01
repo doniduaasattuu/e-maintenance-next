@@ -4,6 +4,7 @@ import React from "react";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -26,6 +27,7 @@ import {
   SelectValue,
 } from "./ui/select";
 import { createMaterial } from "@/actions/material-action";
+import Link from "next/link";
 
 const createMaterialFormSchema = CreateMaterialSchema;
 type CreateMaterialSchema = z.infer<typeof createMaterialFormSchema>;
@@ -41,6 +43,7 @@ type MaterialEditProps = {
 };
 
 export default function MaterialCreateForm({ units }: MaterialEditProps) {
+  const [lastInserted, setLastInserted] = React.useState<string | null>(null);
   const [state, formAction, pending] = useFormState(
     createMaterial,
     initialState
@@ -49,7 +52,7 @@ export default function MaterialCreateForm({ units }: MaterialEditProps) {
     resolver: zodResolver(createMaterialFormSchema),
   });
 
-  const { control, setError, reset, handleSubmit } = form;
+  const { control, setError, reset, handleSubmit, getValues } = form;
 
   React.useEffect(() => {
     if (state.errors) {
@@ -69,7 +72,16 @@ export default function MaterialCreateForm({ units }: MaterialEditProps) {
         description: state.message,
       });
     }
-  }, [state, reset]);
+
+    setLastInserted(getValues("id"));
+
+    reset({
+      id: "",
+      name: "",
+      price: 0,
+      unitId: "",
+    });
+  }, [state, reset, getValues]);
 
   const onCreate = handleSubmit((values) => {
     const formData = new FormData();
@@ -90,11 +102,22 @@ export default function MaterialCreateForm({ units }: MaterialEditProps) {
           control={control}
           name="id"
           render={({ field }) => (
-            <FormItem className="max-w-md">
+            <FormItem className="max-w-xl">
               <FormLabel>ID</FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>
+              {lastInserted && (
+                <FormDescription>
+                  <span>Last inserted: </span>
+                  <Link
+                    className="hover:text-foreground"
+                    href={`/materials/${lastInserted}`}
+                  >
+                    {lastInserted}
+                  </Link>
+                </FormDescription>
+              )}
               <FormMessage />
             </FormItem>
           )}
@@ -103,7 +126,7 @@ export default function MaterialCreateForm({ units }: MaterialEditProps) {
           control={control}
           name="name"
           render={({ field }) => (
-            <FormItem className="max-w-md">
+            <FormItem className="max-w-xl">
               <FormLabel>Name</FormLabel>
               <FormControl>
                 <Input {...field} />
@@ -116,7 +139,7 @@ export default function MaterialCreateForm({ units }: MaterialEditProps) {
           control={control}
           name="price"
           render={({ field }) => (
-            <FormItem className="max-w-md">
+            <FormItem className="max-w-xl">
               <FormLabel>Price</FormLabel>
               <FormControl>
                 <Input {...field} type="number" />
@@ -129,7 +152,7 @@ export default function MaterialCreateForm({ units }: MaterialEditProps) {
           control={control}
           name="unitId"
           render={({ field }) => (
-            <FormItem className="max-w-md">
+            <FormItem className="max-w-xl">
               <FormLabel>Unit</FormLabel>
               <FormControl>
                 <Select
@@ -158,7 +181,7 @@ export default function MaterialCreateForm({ units }: MaterialEditProps) {
         />
 
         <div className="pt-3">
-          <LoadingButton processing={pending} label="Update" type="submit" />
+          <LoadingButton processing={pending} label="Submit" type="submit" />
         </div>
       </form>
     </Form>

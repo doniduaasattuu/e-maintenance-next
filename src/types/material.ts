@@ -11,6 +11,7 @@ export type Material = {
   equipmentMaterials: {
     equipment: {
       id: string;
+      sortField: string;
       description: string;
     };
     quantity: number;
