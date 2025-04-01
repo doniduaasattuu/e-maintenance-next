@@ -71,7 +71,9 @@ export default function MaterialTable({
                     {material.id}
                   </Link>
                 </TableCell>
-                <TableCell className="font-light">{material.name}</TableCell>
+                <TableCell className="font-light max-w-xl truncate">
+                  {material.name}
+                </TableCell>
                 <TableCell className="font-light text-muted-foreground">
                   {formatCurrency({ number: material?.price })}
                 </TableCell>

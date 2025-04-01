@@ -227,3 +227,29 @@ export async function createMaterial(prevState: unknown, formData: FormData) {
     };
   }
 }
+
+export type MaterialSearchResult = {
+  id: string;
+  name: string;
+  price: number;
+};
+
+export async function getMaterialsByKeyword(
+  keyword: string
+): Promise<MaterialSearchResult[] | null> {
+  const materials = await prisma.material.findMany({
+    where: {
+      OR: [
+        { id: { contains: keyword, mode: "insensitive" } },
+        { name: { contains: keyword, mode: "insensitive" } },
+      ],
+    },
+    select: {
+      id: true,
+      name: true,
+      price: true,
+    },
+  });
+
+  return materials;
+}

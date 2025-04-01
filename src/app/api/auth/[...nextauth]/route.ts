@@ -75,21 +75,14 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }: SessionProps) {
-      session.user.id = (token.sub as string) ?? (token.id as string);
-      session.user.email = token.email;
-      session.user.name = token.name;
-      session.user.role = token.role;
-      session.user.image = token.image;
-
+      if (session.user) {
+        session.user.id = (token.sub as string) ?? (token.id as string);
+        session.user.email = token.email;
+        session.user.name = token.name;
+        session.user.role = token.role;
+        session.user.image = token.image;
+      }
       return session;
-      // if (session.user) {
-      //   session.user.id = (token.sub as string) ?? (token.id as string);
-      //   session.user.email = token.email;
-      //   session.user.name = token.name;
-      //   session.user.role = token.role;
-      //   session.user.image = token.image;
-      // }
-      // return session;
     },
   },
   secret: process.env.NEXTAUTH_SECRET,

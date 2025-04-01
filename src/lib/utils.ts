@@ -34,3 +34,12 @@ export function formatCurrency({
     currency: currency,
   }).format(number);
 }
+
+export function handleScrollToBottom() {
+  setTimeout(() => {
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: "smooth",
+    });
+  }, 100);
+}
