@@ -12,7 +12,7 @@ import { usePathname } from "next/navigation";
 import Navlink from "./nav-link";
 
 export default function Navbar({ className }: { className: unknown }) {
-  const { user } = useAuth();
+  const { user, status } = useAuth();
   const pathname = usePathname();
   const filteredRoutes = useFilteredRoutes(user);
 
@@ -33,14 +33,16 @@ export default function Navbar({ className }: { className: unknown }) {
 
         <div className="hidden lg:flex items-center space-x-4">
           <div className="space-x-6 items-center text-sm flex">
-            {filteredRoutes.map((route: Route, index: number) => (
-              <Navlink
-                key={index}
-                route={route}
-                pathname={pathname}
-                isMobile={false}
-              />
-            ))}
+            {status === "authenticated" &&
+              user &&
+              filteredRoutes.map((route: Route, index: number) => (
+                <Navlink
+                  key={index}
+                  route={route}
+                  pathname={pathname}
+                  isMobile={false}
+                />
+              ))}
           </div>
           <div className="flex h-5 items-center space-x-4 text-sm">
             <Separator orientation="vertical" />

@@ -12,14 +12,15 @@ export function useAuth(redirect = "/login") {
   const router = useRouter();
 
   useEffect(() => {
-    if (status === "authenticated" && session.user !== null) {
-      setUser(session.user);
+    if (status !== "loading" && user?.role == null) {
+      if (status === "authenticated" && session.user !== null) {
+        setUser(session.user);
+      } else if (status === "unauthenticated") {
+        setUser(null);
+        router.replace(redirect);
+      }
     }
-    // else if (status === "unauthenticated") {
-    //   setUser(null);
-    //   router.replace(redirect);
-    // }
-  }, [status, session?.user, setUser, router, redirect]);
+  }, [status, session?.user, setUser, router, redirect, user?.role]);
 
   return { user, status, isLoading: status === "loading" };
 }

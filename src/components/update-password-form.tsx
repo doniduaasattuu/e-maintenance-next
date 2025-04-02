@@ -74,7 +74,7 @@ export default function UpdatePasswordForm() {
           control={control}
           name="password"
           render={({ field }) => (
-            <FormItem className="max-w-md">
+            <FormItem className="max-w-xl">
               <FormLabel>Current Password</FormLabel>
               <FormControl>
                 <Input {...field} type="password" />
@@ -87,7 +87,7 @@ export default function UpdatePasswordForm() {
           control={control}
           name="new_password"
           render={({ field }) => (
-            <FormItem className="max-w-md">
+            <FormItem className="max-w-xl">
               <FormLabel>New Password</FormLabel>
               <FormControl>
                 <Input {...field} type="password" />
@@ -100,7 +100,7 @@ export default function UpdatePasswordForm() {
           control={control}
           name="confirm"
           render={({ field }) => (
-            <FormItem className="max-w-md">
+            <FormItem className="max-w-xl">
               <FormLabel>Confirm Password</FormLabel>
               <FormControl>
                 <Input {...field} type="password" />
