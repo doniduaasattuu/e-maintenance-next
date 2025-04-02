@@ -315,3 +315,24 @@ export async function createEquipment(prevState: unknown, formData: FormData) {
     };
   }
 }
+
+export type EquipmentExistsResponse = { success: boolean; message: string };
+
+export async function isEquipmentExist(
+  equipmentId: string
+): Promise<EquipmentExistsResponse> {
+  const isEquipmentExist = await prisma.equipment.findUnique({
+    where: {
+      id: equipmentId,
+    },
+  });
+
+  if (isEquipmentExist) {
+    return {
+      success: true,
+      message: "Equipment is found",
+    };
+  } else {
+    return { success: false, message: "Equipment is not found" };
+  }
+}

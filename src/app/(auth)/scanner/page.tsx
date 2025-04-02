@@ -1,5 +1,8 @@
+"use client";
+
+import QRScanner from "@/components/qr-scanner";
 import React from "react";
 
 export default function ScannerPage() {
-  return <div>Scanner Page</div>;
+  return <QRScanner />;
 }

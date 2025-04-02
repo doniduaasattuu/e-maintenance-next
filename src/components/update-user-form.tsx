@@ -95,7 +95,7 @@ export default function UpdateUserForm({ user }: updateUserProps) {
           control={control}
           name="email"
           render={({ field }) => (
-            <FormItem className="max-w-md">
+            <FormItem className="max-w-xl">
               <FormLabel>Email</FormLabel>
               <FormControl>
                 <Input {...field} readOnly disabled />
@@ -108,7 +108,7 @@ export default function UpdateUserForm({ user }: updateUserProps) {
           control={control}
           name="nik"
           render={({ field }) => (
-            <FormItem className="max-w-md">
+            <FormItem className="max-w-xl">
               <FormLabel>NIK</FormLabel>
               <FormControl>
                 <Input inputMode="numeric" {...field} />
@@ -121,7 +121,7 @@ export default function UpdateUserForm({ user }: updateUserProps) {
           control={control}
           name="name"
           render={({ field }) => (
-            <FormItem className="max-w-md">
+            <FormItem className="max-w-xl">
               <FormLabel>Name</FormLabel>
               <FormControl>
                 <Input {...field} />
@@ -135,7 +135,7 @@ export default function UpdateUserForm({ user }: updateUserProps) {
           name="image"
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           render={({ field: { onChange, value, ref, ...rest } }) => (
-            <FormItem className="max-w-md">
+            <FormItem className="max-w-xl">
               <FormLabel>Image</FormLabel>
               <FormControl>
                 <Input

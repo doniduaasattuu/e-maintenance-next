@@ -1,6 +1,6 @@
 export type SessionUser = IntrinsicAttributes & {
   id: string;
-  role: { name: string; id: number };
+  role: { id: number; name: string };
 } & {
   name?: string | null | undefined;
   email?: string | null | undefined;
