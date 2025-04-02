@@ -36,11 +36,11 @@ export default async function FunctionalLocationPage({
           </HeaderCard>
 
           <div className="space-y-4">
-            <div className="grid w-full max-w-md items-center gap-2">
+            <div className="grid w-full max-w-xl items-center gap-2">
               <Label htmlFor="id">ID</Label>
               <Input readOnly id="id" defaultValue={functionalLocation?.id} />
             </div>
-            <div className="grid w-full max-w-md items-center gap-2">
+            <div className="grid w-full max-w-xl items-center gap-2">
               <Label htmlFor="description">Description</Label>
               <Input
                 readOnly

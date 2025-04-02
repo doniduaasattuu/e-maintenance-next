@@ -94,7 +94,7 @@ export default function FunctionalLocationCreateForm() {
           control={control}
           name="id"
           render={({ field }) => (
-            <FormItem className="max-w-md">
+            <FormItem className="max-w-xl">
               <FormLabel>ID</FormLabel>
               <FormControl>
                 <Input
@@ -124,7 +124,7 @@ export default function FunctionalLocationCreateForm() {
           control={control}
           name="description"
           render={({ field }) => (
-            <FormItem className="max-w-md">
+            <FormItem className="max-w-xl">
               <FormLabel>Description</FormLabel>
               <FormControl>
                 <Input {...field} />

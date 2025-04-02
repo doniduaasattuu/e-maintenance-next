@@ -4,6 +4,7 @@ import React from "react";
 
 type Equipment = {
   id: string;
+  sortField: string;
   description: string;
 };
 
@@ -19,14 +20,19 @@ export default function EquipmentList({ equipments }: EquipmentListProps) {
       {equipments.map((equipment: Equipment) => (
         <div
           key={equipment.id}
-          className="flex justify-between text-sm max-w-md space-x-3"
+          className="flex justify-between text-sm max-w-xl space-x-3"
         >
-          <Link
-            href={`/equipments/${equipment.id}`}
-            className={robotoMono.className}
-          >
-            {equipment.id}
-          </Link>
+          <div className="flex justify-start space-x-3">
+            <Link
+              href={`/equipments/${equipment.id}`}
+              className={`link ${robotoMono.className}`}
+            >
+              {equipment.id}
+            </Link>
+            <div className="max-w-[150px] text-muted-foreground truncate">
+              {equipment.sortField}
+            </div>
+          </div>
           <div className="truncate text-muted-foreground">
             {equipment.description}
           </div>

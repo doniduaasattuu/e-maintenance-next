@@ -3,9 +3,9 @@ import { z } from "zod";
 
 export const BaseEquipmentSchema = z.object({
   id: z
-    .string({ message: "Equipment is required" })
+    .string({ message: "Equipment id is required" })
     .min(9)
-    .max(100)
+    .max(9)
     .toUpperCase(),
   classificationId: z
     .union([z.string(), z.number()])

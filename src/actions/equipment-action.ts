@@ -59,6 +59,18 @@ export async function getEquipments({
           name: true,
         },
       },
+      equipmentMaterials: {
+        select: {
+          material: {
+            select: {
+              id: true,
+              name: true,
+              price: true,
+            },
+          },
+          quantity: true,
+        },
+      },
     },
   });
 
@@ -94,6 +106,18 @@ export async function getEquipment({
         select: {
           id: true,
           name: true,
+        },
+      },
+      equipmentMaterials: {
+        select: {
+          material: {
+            select: {
+              id: true,
+              name: true,
+              price: true,
+            },
+          },
+          quantity: true,
         },
       },
     },

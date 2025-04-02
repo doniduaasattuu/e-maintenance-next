@@ -41,7 +41,7 @@ export default function FunctionalLocationTable({
               <TableRow key={funcloc.id}>
                 <TableCell className="font-medium">
                   <Link
-                    className="hover:underline underline-offset-3"
+                    className="link"
                     href={`/functional-locations/${funcloc.id}`}
                   >
                     {funcloc.id}

@@ -14,7 +14,7 @@ export default function HeaderCard({
 }) {
   const { user } = useAuth();
   return (
-    <div className="mb-2 flex justify-between max-w-md items-center">
+    <div className="mb-2 flex justify-between max-w-xl items-center">
       <div>
         <div className="font-semibold text-lg">{header}</div>
         <p className="text-sm text-muted-foreground">{content}</p>

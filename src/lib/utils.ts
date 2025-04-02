@@ -19,3 +19,27 @@ export function formatDate(date: Date | null): string | null {
     day: "2-digit",
   });
 }
+
+export function formatCurrency({
+  number,
+  format = "id-ID",
+  currency = "IDR",
+}: {
+  number: number;
+  format?: string;
+  currency?: string;
+}) {
+  return new Intl.NumberFormat(format, {
+    style: "currency",
+    currency: currency,
+  }).format(number);
+}
+
+export function handleScrollToBottom() {
+  setTimeout(() => {
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: "smooth",
+    });
+  }, 100);
+}

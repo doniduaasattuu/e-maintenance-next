@@ -21,4 +21,12 @@ export type Equipment = {
     id: number;
     name: string;
   } | null;
+  equipmentMaterials: {
+    material: {
+      id: string;
+      name: string;
+      price: number;
+    };
+    quantity: number;
+  }[];
 };

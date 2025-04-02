@@ -6,6 +6,7 @@ import Link from "next/link";
 import React from "react";
 import TableLayout from "@/layouts/table-layout";
 import { getEquipment } from "@/actions/equipment-action";
+import MaterialList from "@/components/material-list";
 
 export default async function EquipmentPage({
   params,
@@ -32,11 +33,11 @@ export default async function EquipmentPage({
           </HeaderCard>
 
           <div className="space-y-4">
-            <div className="grid w-full max-w-md items-center gap-2">
+            <div className="grid w-full max-w-xl items-center gap-2">
               <Label htmlFor="id">ID</Label>
               <Input readOnly id="id" defaultValue={equipment.id} />
             </div>
-            <div className="grid w-full max-w-md items-center gap-2">
+            <div className="grid w-full max-w-xl items-center gap-2">
               <Label htmlFor="classification">Classification</Label>
               <Input
                 readOnly
@@ -44,7 +45,7 @@ export default async function EquipmentPage({
                 defaultValue={equipment.classification.description}
               />
             </div>
-            <div className="grid w-full max-w-md items-center gap-2">
+            <div className="grid w-full max-w-xl items-center gap-2">
               <Label htmlFor="status">Status</Label>
               <Input
                 readOnly
@@ -52,7 +53,7 @@ export default async function EquipmentPage({
                 defaultValue={equipment.equipmentStatus.description}
               />
             </div>
-            <div className="grid w-full max-w-md items-center gap-2">
+            <div className="grid w-full max-w-xl items-center gap-2">
               <Label htmlFor="functional_location">Functional location</Label>
               <Input
                 readOnly
@@ -60,7 +61,7 @@ export default async function EquipmentPage({
                 defaultValue={equipment.functionalLocation?.id}
               />
             </div>
-            <div className="grid w-full max-w-md items-center gap-2">
+            <div className="grid w-full max-w-xl items-center gap-2">
               <Label htmlFor="sort_field">Sort field</Label>
               <Input
                 readOnly
@@ -68,7 +69,7 @@ export default async function EquipmentPage({
                 defaultValue={equipment.sortField}
               />
             </div>
-            <div className="grid w-full max-w-md items-center gap-2">
+            <div className="grid w-full max-w-xl items-center gap-2">
               <Label htmlFor="description">Description</Label>
               <Input
                 readOnly
@@ -79,10 +80,13 @@ export default async function EquipmentPage({
           </div>
         </Card>
 
-        {false ? (
+        {equipment.equipmentMaterials.length >= 1 ? (
           <Card className="py-8 px-5 md:p-8 rounded-md">
-            <HeaderCard header="Materials" content="List of material used" />
-            {/* <MaterialList materials={equipment.materials} /> */}
+            <HeaderCard
+              header="Materials"
+              content="A list of materials that used in this equipment."
+            />
+            <MaterialList items={equipment?.equipmentMaterials} />
           </Card>
         ) : (
           <p className="text-sm font-normal text-muted-foreground">

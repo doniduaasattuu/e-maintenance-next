@@ -133,6 +133,11 @@
   transform: rotate(3deg) translate(0px, -4px);
 } */
 
+.link:hover {
+  text-decoration-line: underline;
+  text-underline-offset: 3px;
+}
+
 #nprogress .bar {
   background: #f13d30 !important;
 }
