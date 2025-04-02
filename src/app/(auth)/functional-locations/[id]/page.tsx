@@ -7,6 +7,8 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import React from "react";
 import TableLayout from "@/layouts/table-layout";
+import OptionsDropdown from "@/components/options-dropdown";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
 export default async function FunctionalLocationPage({
   params,
@@ -30,9 +32,16 @@ export default async function FunctionalLocationPage({
             header="Detail"
             content="Functional location data and relations"
           >
-            <Link className="text-sm" href={`/functional-locations/${id}/edit`}>
-              Edit
-            </Link>
+            <OptionsDropdown>
+              <DropdownMenuItem asChild>
+                <Link
+                  className="text-sm"
+                  href={`/functional-locations/${id}/edit`}
+                >
+                  Edit
+                </Link>
+              </DropdownMenuItem>
+            </OptionsDropdown>
           </HeaderCard>
 
           <div className="space-y-4">

@@ -5,16 +5,15 @@ import { Separator } from "./ui/separator";
 import { APP_NAME } from "@/lib/config";
 import AvatarNavbar from "./avatar";
 import Link from "next/link";
-import { useAuth } from "@/hooks/useAuth";
 import NavSheet from "./nav-sheet";
 import { Route, useFilteredRoutes } from "@/hooks/useFilteredRoutes";
 import { usePathname } from "next/navigation";
 import Navlink from "./nav-link";
+import { Skeleton } from "./ui/skeleton";
 
 export default function Navbar({ className }: { className: unknown }) {
-  const { user, status } = useAuth();
   const pathname = usePathname();
-  const filteredRoutes = useFilteredRoutes(user);
+  const filteredRoutes = useFilteredRoutes();
 
   return (
     <nav className="w-full py-3 bg-background shadow-md">
@@ -33,8 +32,7 @@ export default function Navbar({ className }: { className: unknown }) {
 
         <div className="hidden lg:flex items-center space-x-4">
           <div className="space-x-6 items-center text-sm flex">
-            {status === "authenticated" &&
-              user &&
+            {filteredRoutes && filteredRoutes.length >= 1 ? (
               filteredRoutes.map((route: Route, index: number) => (
                 <Navlink
                   key={index}
@@ -42,7 +40,17 @@ export default function Navbar({ className }: { className: unknown }) {
                   pathname={pathname}
                   isMobile={false}
                 />
-              ))}
+              ))
+            ) : (
+              <div className="space-x-6 flex">
+                <Skeleton className="w-[50px] h-[20px] rounded-full" />
+                <Skeleton className="w-[40px] h-[20px] rounded-full" />
+                <Skeleton className="w-[80px] h-[20px] rounded-full" />
+                <Skeleton className="w-[60px] h-[20px] rounded-full" />
+                <Skeleton className="w-[40px] h-[20px] rounded-full" />
+                <Skeleton className="w-[40px] h-[20px] rounded-full" />
+              </div>
+            )}
           </div>
           <div className="flex h-5 items-center space-x-4 text-sm">
             <Separator orientation="vertical" />

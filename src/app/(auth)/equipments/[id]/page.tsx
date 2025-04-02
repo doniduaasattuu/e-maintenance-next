@@ -7,6 +7,9 @@ import React from "react";
 import TableLayout from "@/layouts/table-layout";
 import { getEquipment } from "@/actions/equipment-action";
 import MaterialList from "@/components/material-list";
+import OptionsDropdown from "@/components/options-dropdown";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { Edit } from "lucide-react";
 
 export default async function EquipmentPage({
   params,
@@ -27,9 +30,14 @@ export default async function EquipmentPage({
       <div className="space-y-6">
         <Card className="py-8 px-5 md:p-8 rounded-md">
           <HeaderCard header="Detail" content="Equipment data and relations">
-            <Link className="text-sm" href={`/equipments/${id}/edit`}>
-              Edit
-            </Link>
+            <OptionsDropdown>
+              <DropdownMenuItem asChild>
+                <Link className="text-sm" href={`/equipments/${id}/edit`}>
+                  <Edit />
+                  Edit
+                </Link>
+              </DropdownMenuItem>
+            </OptionsDropdown>
           </HeaderCard>
 
           <div className="space-y-4">

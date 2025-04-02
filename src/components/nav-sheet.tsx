@@ -17,7 +17,7 @@ import { Route } from "@/hooks/useFilteredRoutes";
 export default function NavSheet({
   filteredRoutes,
 }: {
-  filteredRoutes: Route[];
+  filteredRoutes: Route[] | undefined;
 }) {
   const [isOpen, setIsOpen] = React.useState(false);
   const pathname = usePathname();
@@ -31,11 +31,12 @@ export default function NavSheet({
       </SheetTrigger>
       <SheetContent side="left" className="p-6">
         <div className="flex flex-col space-y-3 mt-6">
-          {filteredRoutes.map((route: Route, index: number) => (
-            <SheetClose key={index} asChild>
-              <Navlink isMobile={true} route={route} pathname={pathname} />
-            </SheetClose>
-          ))}
+          {filteredRoutes &&
+            filteredRoutes.map((route: Route, index: number) => (
+              <SheetClose key={index} asChild>
+                <Navlink isMobile={true} route={route} pathname={pathname} />
+              </SheetClose>
+            ))}
         </div>
 
         <div className="ms-auto mt-auto border-1 rounded-sm">
