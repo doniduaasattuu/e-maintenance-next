@@ -35,6 +35,7 @@ model User {
   role                Role                 @relation(fields: [roleId], references: [id])
   equipments          Equipment[]
   functionalLocations FunctionalLocation[]
+  files               File[]
 
   @@map("users")
 }
@@ -89,6 +90,7 @@ model Equipment {
   equipmentStatus    EquipmentStatus     @relation(fields: [equipmentStatusId], references: [id])
   functionalLocation FunctionalLocation? @relation(fields: [functionalLocationId], references: [id])
   classification     Classification      @relation(fields: [classificationId], references: [id])
+  equipmentFile      EquipmentFile[]
 
   @@index([id, sortField, description])
   @@map("equipments")
@@ -129,4 +131,30 @@ model Material {
 
   @@index([id, name, price])
   @@map("materials")
+}
+
+model File {
+  id            String          @id @default(uuid())
+  name          String          @unique
+  tags          String?
+  type          String
+  path          String
+  userId        Int?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  user          User?           @relation(fields: [userId], references: [id])
+  equipmentFile EquipmentFile[]
+
+  @@index([name, tags])
+  @@map("files")
+}
+
+model EquipmentFile {
+  equipmentId String
+  fileId      String
+  equipment   Equipment @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+  file        File      @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  @@id([equipmentId, fileId])
+  @@map("equipment_file")
 }

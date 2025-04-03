@@ -10,6 +10,7 @@ import {
   BreadcrumbSeparator,
   BreadcrumbPage,
 } from "@/components/ui/breadcrumb";
+import { uppercaseFirstLetter } from "@/lib/utils";
 
 type BreadcrumbItem = {
   name: string;
@@ -52,10 +53,14 @@ export default function DynamicBreadcrumb() {
             <React.Fragment key={index}>
               <BreadcrumbSeparator />
               {index === breadcrumbItems.length - 1 ? (
-                <BreadcrumbPage>{item.name}</BreadcrumbPage>
+                <BreadcrumbPage>
+                  {uppercaseFirstLetter(item.name)}
+                </BreadcrumbPage>
               ) : (
                 <BreadcrumbLink asChild>
-                  <Link href={item.href}>{item.name}</Link>
+                  <Link href={item.href}>
+                    {uppercaseFirstLetter(item.name)}
+                  </Link>
                 </BreadcrumbLink>
               )}
             </React.Fragment>

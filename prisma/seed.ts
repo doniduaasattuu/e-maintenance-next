@@ -567,6 +567,28 @@ async function main() {
     skipDuplicates: true,
   });
 
+  await prisma.file.createMany({
+    data: [
+      {
+        id: "6f709c6e-cb30-45ff-aba4-28c97b13b1ee",
+        name: "SCHEMATIC DIAGRAM ALL PANEL TURBO VACUUM PAPER MACHINE #7 AND LAYOUT POSITION TRANSFORMER & PANEL",
+        tags: "Turbo Panel Schematic",
+        type: "pdf",
+        path: "/files/6f709c6e-cb30-45ff-aba4-28c97b13b1ee.pdf",
+        userId: doni.id,
+      },
+    ],
+  });
+
+  await prisma.equipmentFile.createMany({
+    data: [
+      {
+        equipmentId: "ELP003787",
+        fileId: "6f709c6e-cb30-45ff-aba4-28c97b13b1ee",
+      },
+    ],
+  });
+
   console.log("Seeding selesai!");
 }
 

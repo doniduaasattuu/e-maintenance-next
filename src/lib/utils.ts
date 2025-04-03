@@ -43,3 +43,8 @@ export function handleScrollToBottom() {
     });
   }, 100);
 }
+
+export function uppercaseFirstLetter(str: string) {
+  if (!str) return str;
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}

@@ -44,8 +44,8 @@ export default function Navbar({ className }: { className: unknown }) {
             ) : (
               <div className="space-x-6 flex">
                 <Skeleton className="w-[50px] h-[20px] rounded-full" />
+                <Skeleton className="w-[50px] h-[20px] rounded-full" />
                 <Skeleton className="w-[40px] h-[20px] rounded-full" />
-                <Skeleton className="w-[80px] h-[20px] rounded-full" />
                 <Skeleton className="w-[60px] h-[20px] rounded-full" />
                 <Skeleton className="w-[40px] h-[20px] rounded-full" />
                 <Skeleton className="w-[40px] h-[20px] rounded-full" />
