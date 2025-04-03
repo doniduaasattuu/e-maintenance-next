@@ -17,12 +17,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import LoadingButton from "./loading-button";
 import { useFormState } from "react-dom";
-import { CreateFileSchema } from "@/validations/file-validation";
-import { createFile } from "@/actions/file-action";
+import { editFile } from "@/actions/file-action";
+import { EditFileSchema } from "@/validations/file-validation";
 import { ALLOWED_FILE_TYPES, MAX_FILE_SIZE } from "@/lib/config";
 
-const createFileFormSchema = CreateFileSchema;
-type CreateFileSchema = z.infer<typeof createFileFormSchema>;
+const editFileFormSchema = EditFileSchema;
+type EditFileSchema = z.infer<typeof editFileFormSchema>;
 
 const initialState = {
   success: false,
@@ -30,57 +30,59 @@ const initialState = {
   errors: null,
 };
 
-export default function FileCreateForm() {
-  const [state, formAction, pending] = useFormState(createFile, initialState);
-  const form = useForm<CreateFileSchema>({
-    resolver: zodResolver(createFileFormSchema),
+type FileEditProps = {
+  file: {
+    id: string;
+    name: string;
+    createdAt: Date;
+    updatedAt: Date;
+    userId: number | null;
+    tags: string | null;
+    type: string;
+    path: string;
+  };
+};
+
+export default function FileEditForm({ file }: FileEditProps) {
+  const [state, formAction, pending] = useFormState(editFile, initialState);
+  const form = useForm<EditFileSchema>({
+    resolver: zodResolver(editFileFormSchema),
+    defaultValues: {
+      id: file.id,
+      name: file.name,
+      tags: file.tags ?? "",
+    },
   });
 
-  const {
-    control,
-    setError,
-    setFocus,
-    reset,
-    handleSubmit,
-    getValues,
-    clearErrors,
-  } = form;
+  const { control, setError, reset, handleSubmit, clearErrors } = form;
 
   React.useEffect(() => {
     if (state.errors) {
-      Object.entries(state.errors).forEach(([field, errors], index: number) => {
-        if (index === 0) {
-          setFocus(field as keyof CreateFileSchema);
-        }
-
+      Object.entries(state.errors).forEach(([field, errors]) => {
         if (errors && errors.length > 0) {
-          setError(field as keyof CreateFileSchema, {
+          setError(field as keyof EditFileSchema, {
             message: errors[0],
           });
         }
       });
     }
-  }, [setError, setFocus, state]);
+  }, [setError, state]);
 
   React.useEffect(() => {
     if (state.success) {
       toast.success("Success", {
         description: state.message,
       });
-
-      reset({
-        name: "",
-        tags: "",
-        file: undefined,
-      });
     }
-  }, [state, reset, getValues]);
+  }, [state, reset]);
 
-  const onUpload = handleSubmit((values) => {
+  const onUpdate = handleSubmit((values) => {
     const formData = new FormData();
 
     Object.entries(values).forEach(([key, value]) => {
-      formData.append(key, value);
+      if (value !== undefined) {
+        formData.append(key, value);
+      }
     });
 
     React.startTransition(() => {
@@ -90,7 +92,12 @@ export default function FileCreateForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={onUpload} className="space-y-4">
+      <form onSubmit={onUpdate} className="space-y-4">
+        <FormField
+          control={control}
+          name="id"
+          render={({ field }) => <Input {...field} hidden />}
+        />
         <FormField
           control={control}
           name="name"
@@ -113,11 +120,11 @@ export default function FileCreateForm() {
               <FormControl>
                 <Input {...field} />
               </FormControl>
+              <FormMessage />{" "}
               <FormDescription>
                 Add tags separated by spaces (&quot; &quot;) for categorization
                 and search optimization.
               </FormDescription>
-              <FormMessage />
             </FormItem>
           )}
         />
@@ -126,6 +133,7 @@ export default function FileCreateForm() {
           name="file"
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           render={({ field: { onChange, value, ref, ...rest } }) => (
+            // render={({ field }) => (
             <FormItem className="max-w-xl">
               <FormLabel>File</FormLabel>
               <FormControl>
@@ -157,7 +165,7 @@ export default function FileCreateForm() {
         />
 
         <div className="pt-3">
-          <LoadingButton processing={pending} label="Submit" type="submit" />
+          <LoadingButton processing={pending} label="Update" type="submit" />
         </div>
       </form>
     </Form>

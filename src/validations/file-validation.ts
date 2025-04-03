@@ -2,6 +2,7 @@ import { ALLOWED_FILE_TYPES, MAX_FILE_SIZE } from "@/lib/config";
 import { z } from "zod";
 
 export const BaseFileSchema = z.object({
+  id: z.string().uuid(),
   name: z.string({ message: "File name is required" }).min(3).max(100),
   tags: z
     .string()
@@ -27,7 +28,14 @@ export const CreateFileSchema = BaseFileSchema.pick({
   file: true,
 });
 
-export const EditFileSchema = BaseFileSchema;
+export const EditFileSchema = BaseFileSchema.pick({
+  id: true,
+  name: true,
+  tags: true,
+  file: true,
+}).partial({
+  file: true,
+});
 
 export class FileValidation {
   static readonly CREATE: z.ZodType = CreateFileSchema;

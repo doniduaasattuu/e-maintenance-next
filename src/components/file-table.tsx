@@ -22,11 +22,10 @@ export default function FileTable({ files }: { files: File[] }) {
       <TableHeader>
         <TableRow>
           <TableHead className="text-muted-foreground">Name</TableHead>
+          <TableHead className="text-muted-foreground">Ext.</TableHead>
           <TableHead className="text-muted-foreground">Tags</TableHead>
-          <TableHead className="w-[110px] text-muted-foreground">
-            Uploaded at
-          </TableHead>
-          <TableHead className="w-[110px] text-right text-muted-foreground">
+          <TableHead className="text-muted-foreground">Uploaded at</TableHead>
+          <TableHead className="text-right text-muted-foreground">
             Action
           </TableHead>
         </TableRow>
@@ -41,7 +40,10 @@ export default function FileTable({ files }: { files: File[] }) {
                   {file.name}
                 </Link>
               </TableCell>
-              <TableCell className="max-w-[200px] flex overflow-x-scroll space-x-1 scrollbar-hide">
+              <TableCell className="max-w-[20px]">
+                {`.${file?.path.split(".").pop()}`}
+              </TableCell>
+              <TableCell className="flex overflow-x-scroll max-w-[200px] mt-1 space-x-1 scrollbar-hide align-middle">
                 {file.tags &&
                   file.tags.split(" ").map((tag) => (
                     <Badge key={tag} variant={"secondary"}>
@@ -49,7 +51,7 @@ export default function FileTable({ files }: { files: File[] }) {
                     </Badge>
                   ))}
               </TableCell>
-              <TableCell className="text-muted-foreground">
+              <TableCell className="w-[110px] text-muted-foreground">
                 {formatDate(file.createdAt)}
               </TableCell>
               <FileAction file={file} />

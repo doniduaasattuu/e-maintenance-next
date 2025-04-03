@@ -10,7 +10,7 @@ import {
   BreadcrumbSeparator,
   BreadcrumbPage,
 } from "@/components/ui/breadcrumb";
-import { uppercaseFirstLetter } from "@/lib/utils";
+import { isUUID, uppercaseFirstLetter } from "@/lib/utils";
 
 type BreadcrumbItem = {
   name: string;
@@ -52,7 +52,7 @@ export default function DynamicBreadcrumb() {
           {breadcrumbItems.map((item, index) => (
             <React.Fragment key={index}>
               <BreadcrumbSeparator />
-              {index === breadcrumbItems.length - 1 ? (
+              {index === breadcrumbItems.length - 1 || isUUID(item.name) ? (
                 <BreadcrumbPage>
                   {uppercaseFirstLetter(item.name)}
                 </BreadcrumbPage>

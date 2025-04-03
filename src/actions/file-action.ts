@@ -1,7 +1,10 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { CreateFileSchema } from "@/validations/file-validation";
+import {
+  CreateFileSchema,
+  EditFileSchema,
+} from "@/validations/file-validation";
 import fs from "fs/promises";
 import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
@@ -72,10 +75,7 @@ export async function createFile(prevState: unknown, formData: FormData) {
     const result = await prisma.file.create({
       data: {
         name: name,
-        tags:
-          tags === "undefined"
-            ? `${fileExtension}`
-            : `${fileExtension} ${tags}`,
+        tags: tags === "undefined" ? null : tags,
         type: String(fileExtension).toLowerCase(),
         path: "/files",
       },
@@ -172,4 +172,96 @@ export async function deleteFileFromFilesystem(fileName: string) {
       message: "Failed to delete file.",
     };
   }
+}
+
+export async function editFile(prevState: unknown, formData: FormData) {
+  try {
+    const rawData = Object.fromEntries(formData.entries());
+    const validatedData = EditFileSchema.safeParse(rawData);
+
+    if (!validatedData.success) {
+      return {
+        success: false,
+        message: null,
+        errors: validatedData.error.flatten().fieldErrors,
+      };
+    }
+
+    const { id, name, tags, file } = validatedData.data;
+
+    const currentFile = await prisma.file.findUnique({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!currentFile) {
+      return {
+        success: false,
+        message: null,
+        errors: { name: ["File is not exists"] },
+      };
+    }
+
+    if (file) {
+      const fileExtension = file.name.split(".").pop();
+      deleteFileFromFilesystem(currentFile.path);
+      const fileName = `${currentFile.id}.${fileExtension}`;
+      const path = `/files/${fileName}`;
+
+      saveFile(file, fileName);
+
+      await prisma.file.update({
+        where: {
+          id: currentFile.id,
+        },
+        data: {
+          name: name,
+          tags: tags === "undefined" ? null : tags,
+          type: String(fileExtension).toLowerCase(),
+          path: path,
+        },
+      });
+    } else {
+      await prisma.file.update({
+        where: {
+          id: currentFile.id,
+        },
+        data: {
+          name: name,
+          tags: tags === "undefined" ? null : tags,
+        },
+      });
+    }
+
+    return {
+      success: true,
+      message: "File updated successfully",
+      errors: null,
+    };
+  } catch (error) {
+    if (error instanceof Error) {
+      return {
+        success: false,
+        message: error.message,
+        errors: null,
+      };
+    }
+
+    return {
+      success: false,
+      message: "Something went wrong",
+      errors: null,
+    };
+  }
+}
+
+export async function getFileById(id: string) {
+  const file = await prisma.file.findUnique({
+    where: {
+      id: id,
+    },
+  });
+
+  return file;
 }
