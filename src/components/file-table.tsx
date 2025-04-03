@@ -13,6 +13,7 @@ import React from "react";
 import { Badge } from "./ui/badge";
 import { File } from "@/types/file";
 import { formatDate, uppercaseFirstLetter } from "@/lib/utils";
+import FileAction from "./file-action";
 
 export default function FileTable({ files }: { files: File[] }) {
   return (
@@ -51,14 +52,7 @@ export default function FileTable({ files }: { files: File[] }) {
               <TableCell className="text-muted-foreground">
                 {formatDate(file.createdAt)}
               </TableCell>
-              <TableCell className="text-right">
-                <Link
-                  href={`/files/${file.id}/edit`}
-                  className="font-sm text-muted-foreground link"
-                >
-                  Edit
-                </Link>
-              </TableCell>
+              <FileAction file={file} />
             </TableRow>
           ))}
       </TableBody>

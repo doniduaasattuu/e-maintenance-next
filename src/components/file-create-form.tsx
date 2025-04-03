@@ -114,7 +114,8 @@ export default function FileCreateForm() {
                 <Input {...field} />
               </FormControl>
               <FormDescription>
-                Add tags separated by spaces (&quot; &quot;) for categorization.
+                Add tags separated by spaces (&quot; &quot;) for categorization
+                and search optimization.
               </FormDescription>
               <FormMessage />
             </FormItem>

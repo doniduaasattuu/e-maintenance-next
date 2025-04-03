@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { CreateFileSchema } from "@/validations/file-validation";
 import fs from "fs/promises";
 import { getServerSession } from "next-auth";
+import { revalidatePath } from "next/cache";
 import path from "path";
 
 type getFileParams = {
@@ -71,7 +72,10 @@ export async function createFile(prevState: unknown, formData: FormData) {
     const result = await prisma.file.create({
       data: {
         name: name,
-        tags: tags === "undefined" ? null : tags,
+        tags:
+          tags === "undefined"
+            ? `${fileExtension}`
+            : `${fileExtension} ${tags}`,
         type: String(fileExtension).toLowerCase(),
         path: "/files",
       },
@@ -124,5 +128,48 @@ async function saveFile(file: File, fileName: string): Promise<string> {
   } catch (error) {
     console.error("Error saving file:", error);
     throw error;
+  }
+}
+
+export async function deleteFileById(id: string) {
+  try {
+    const file = await prisma.file.delete({
+      where: {
+        id: id,
+      },
+    });
+
+    await deleteFileFromFilesystem(file.path);
+    revalidatePath("/files");
+
+    return {
+      success: true,
+      message: "File deleted successfully",
+    };
+  } catch (error) {
+    if (error instanceof Error) {
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
+
+    return {
+      success: false,
+      message: "Something went wrong",
+    };
+  }
+}
+
+export async function deleteFileFromFilesystem(fileName: string) {
+  try {
+    const filePath = path.join(process.cwd(), "public", fileName);
+    await fs.unlink(filePath); // Hapus file dari sistem file
+  } catch (error) {
+    console.error("Error deleting file:", error);
+    return {
+      success: false,
+      message: "Failed to delete file.",
+    };
   }
 }
