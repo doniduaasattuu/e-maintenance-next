@@ -7,7 +7,9 @@ import EquipmentEditForm from "@/components/equipment-edit-form";
 import { getClassifications } from "@/actions/classification-action";
 import { getEquipmentStatuses } from "@/actions/equipment-status-action";
 import MaterialDetachment from "@/components/material-detachment";
-import SearchMaterialPage from "@/components/search-material-page";
+import SearchMaterialDialog from "@/components/search-material-dialog";
+import FileDetachment from "@/components/file-detachment";
+import SearchFileDialog from "@/components/search-file-dialog";
 
 export default async function EquipmentEditPage({
   params,
@@ -35,18 +37,38 @@ export default async function EquipmentEditPage({
             equipmentStatuses={equipmentStatuses}
           />
         </Card>
+
+        {/* MATERIALS */}
         <Card className="py-8 px-5 md:p-8 rounded-md">
           <HeaderCard
             header="Material"
             content="A list of materials that used in this equipment."
           >
-            <SearchMaterialPage equipment={equipment} />
+            <SearchMaterialDialog equipment={equipment} />
           </HeaderCard>
 
-          {equipment.equipmentMaterials.length >= 1 && (
-            <MaterialDetachment
+          {equipment.equipmentMaterials &&
+            equipment.equipmentMaterials.length >= 1 && (
+              <MaterialDetachment
+                equipment={equipment}
+                items={equipment.equipmentMaterials}
+              />
+            )}
+        </Card>
+
+        {/* DOCUMENTS */}
+        <Card className="py-8 px-5 md:p-8 rounded-md">
+          <HeaderCard
+            header="Document"
+            content="A list of related equipment document."
+          >
+            <SearchFileDialog equipment={equipment} />
+          </HeaderCard>
+
+          {equipment.equipmentFiles && equipment.equipmentFiles.length >= 1 && (
+            <FileDetachment
               equipment={equipment}
-              items={equipment.equipmentMaterials}
+              items={equipment.equipmentFiles}
             />
           )}
         </Card>

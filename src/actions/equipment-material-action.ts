@@ -1,4 +1,3 @@
-// app/actions/deleteMaterialFromEquipment.ts
 "use server";
 
 import prisma from "@/lib/prisma";
@@ -22,7 +21,7 @@ export async function deleteMaterialFromEquipment(
 
     return {
       success: true,
-      message: "Material berhasil dihapus dari equipment.",
+      message: "Material successfully removed from related equipment",
     };
   } catch (error) {
     console.error("Error deleting material from equipment:", error);

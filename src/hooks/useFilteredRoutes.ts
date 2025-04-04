@@ -21,7 +21,7 @@ export const routes: Route[] = [
     ],
     restricted: false,
   },
-  { label: "Documents", url: "/documents", restricted: false },
+  { label: "Files", url: "/files", restricted: false },
   { label: "Findings", url: "/findings", restricted: false },
   { label: "Users", url: "/users", restricted: true },
   { label: "Roles", url: "/roles", restricted: true },
@@ -40,11 +40,13 @@ export function useFilteredRoutes(): Route[] | undefined {
       const response = getSession();
 
       response.then((result) => {
-        setRole(result?.user.role);
-        setLoaded(true);
+        if (result?.user.role) {
+          setRole(result?.user.role);
+          setLoaded(true);
+        }
       });
 
-      if (loaded) {
+      if (loaded && role) {
         const filtered = routes.filter((route) => {
           return !route.restricted || role === "Admin";
         });

@@ -96,6 +96,28 @@ CREATE TABLE "materials" (
     CONSTRAINT "materials_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "files" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "tags" TEXT,
+    "type" TEXT NOT NULL,
+    "path" TEXT NOT NULL,
+    "userId" INTEGER,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "files_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "equipment_file" (
+    "equipmentId" TEXT NOT NULL,
+    "fileId" TEXT NOT NULL,
+
+    CONSTRAINT "equipment_file_pkey" PRIMARY KEY ("equipmentId","fileId")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "roles_name_key" ON "roles"("name");
 
@@ -113,6 +135,12 @@ CREATE INDEX "equipments_id_sortField_description_idx" ON "equipments"("id", "so
 
 -- CreateIndex
 CREATE INDEX "materials_id_name_price_idx" ON "materials"("id", "name", "price");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "files_name_key" ON "files"("name");
+
+-- CreateIndex
+CREATE INDEX "files_name_tags_idx" ON "files"("name", "tags");
 
 -- AddForeignKey
 ALTER TABLE "users" ADD CONSTRAINT "users_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "roles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -140,3 +168,12 @@ ALTER TABLE "equipment_material" ADD CONSTRAINT "equipment_material_materialId_f
 
 -- AddForeignKey
 ALTER TABLE "materials" ADD CONSTRAINT "materials_unitId_fkey" FOREIGN KEY ("unitId") REFERENCES "units"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "files" ADD CONSTRAINT "files_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "equipment_file" ADD CONSTRAINT "equipment_file_equipmentId_fkey" FOREIGN KEY ("equipmentId") REFERENCES "equipments"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "equipment_file" ADD CONSTRAINT "equipment_file_fileId_fkey" FOREIGN KEY ("fileId") REFERENCES "files"("id") ON DELETE CASCADE ON UPDATE CASCADE;

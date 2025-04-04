@@ -120,10 +120,21 @@ export async function getEquipment({
           quantity: true,
         },
       },
+      equipmentFiles: {
+        select: {
+          file: {
+            select: {
+              id: true,
+              name: true,
+              path: true,
+            },
+          },
+        },
+      },
     },
   });
 
-  return equipment;
+  return equipment as unknown as Equipment;
 }
 
 export async function editEquipment(prevState: unknown, formData: FormData) {
