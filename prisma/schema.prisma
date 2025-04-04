@@ -90,7 +90,7 @@ model Equipment {
   equipmentStatus    EquipmentStatus     @relation(fields: [equipmentStatusId], references: [id])
   functionalLocation FunctionalLocation? @relation(fields: [functionalLocationId], references: [id])
   classification     Classification      @relation(fields: [classificationId], references: [id])
-  equipmentFile      EquipmentFile[]
+  equipmentFiles     EquipmentFile[]
 
   @@index([id, sortField, description])
   @@map("equipments")
@@ -134,16 +134,16 @@ model Material {
 }
 
 model File {
-  id            String          @id @default(uuid())
-  name          String          @unique
-  tags          String?
-  type          String
-  path          String
-  userId        Int?
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  user          User?           @relation(fields: [userId], references: [id])
-  equipmentFile EquipmentFile[]
+  id             String          @id @default(uuid())
+  name           String          @unique
+  tags           String?
+  type           String
+  path           String
+  userId         Int?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  user           User?           @relation(fields: [userId], references: [id])
+  equipmentFiles EquipmentFile[]
 
   @@index([name, tags])
   @@map("files")

@@ -10,6 +10,7 @@ import MaterialList from "@/components/material-list";
 import OptionsDropdown from "@/components/options-dropdown";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Edit } from "lucide-react";
+import FileList from "@/components/file-list";
 
 export default async function EquipmentPage({
   params,
@@ -88,7 +89,8 @@ export default async function EquipmentPage({
           </div>
         </Card>
 
-        {equipment.equipmentMaterials.length >= 1 ? (
+        {equipment.equipmentMaterials &&
+        equipment.equipmentMaterials.length >= 1 ? (
           <Card className="py-8 px-5 md:p-8 rounded-md">
             <HeaderCard
               header="Materials"
@@ -98,7 +100,21 @@ export default async function EquipmentPage({
           </Card>
         ) : (
           <p className="text-sm font-normal text-muted-foreground">
-            This equipment doesn&apos;t have any relations.
+            This equipment doesn&apos;t have any related material.
+          </p>
+        )}
+
+        {equipment.equipmentFiles && equipment.equipmentFiles.length >= 1 ? (
+          <Card className="py-8 px-5 md:p-8 rounded-md">
+            <HeaderCard
+              header="Files"
+              content="A list of related equipment documentation."
+            />
+            <FileList items={equipment?.equipmentFiles} />
+          </Card>
+        ) : (
+          <p className="text-sm font-normal text-muted-foreground">
+            This equipment doesn&apos;t have any related document.
           </p>
         )}
       </div>

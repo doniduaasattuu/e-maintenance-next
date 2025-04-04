@@ -12,41 +12,35 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useDebouncedCallback } from "use-debounce";
-import {
-  getMaterialsByKeyword,
-  MaterialSearchResult,
-} from "@/actions/material-action";
-import { Roboto_Mono } from "next/font/google";
+import { FileSearchResult, getFilesByKeyword } from "@/actions/file-action";
 import { Separator } from "./ui/separator";
-import { addMaterialToEquipment } from "@/actions/equipment-material-action";
+import { addFileToEquipment } from "@/actions/equipment-file-action";
 import { toast } from "sonner";
 import { Equipment } from "@/types/equipment";
 import { Plus } from "lucide-react";
 
-const robotoMono = Roboto_Mono({ subsets: ["latin"] });
-
-export default function SearchMaterialPage({
+export default function SearchFileDialog({
   equipment,
 }: {
   equipment: Equipment;
 }) {
-  const [materialSearchResult, setMaterialSearchResult] = React.useState<
-    MaterialSearchResult[] | null
+  const [fileSearchResult, setFileSearchResult] = React.useState<
+    FileSearchResult[] | null
   >(null);
 
-  const handleSearchMaterial = useDebouncedCallback((term: string) => {
+  const handleSearchFile = useDebouncedCallback((term: string) => {
     if (term) {
-      const result = getMaterialsByKeyword(term);
+      const result = getFilesByKeyword(term);
       result.then((values) => {
-        setMaterialSearchResult(values);
+        setFileSearchResult(values);
       });
     } else {
-      setMaterialSearchResult(null);
+      setFileSearchResult(null);
     }
   }, 300);
 
-  const handleAddMaterial = (equipmentId: string, materialId: string) => {
-    const result = addMaterialToEquipment(equipmentId, materialId);
+  const handleAddFile = (equipmentId: string, fileId: string) => {
+    const result = addFileToEquipment(equipmentId, fileId);
     result
       .then((res) => {
         if (res.success) {
@@ -85,32 +79,23 @@ export default function SearchMaterialPage({
               Search
             </Label>
             <Input
-              onChange={(e) => handleSearchMaterial(e.target.value)}
+              onChange={(e) => handleSearchFile(e.target.value)}
               id="search_material"
               placeholder="Search material by id or name..."
             />
           </div>
           <div className="overflow-y-scroll h-80 space-y-3 scrollbar-hide">
-            {materialSearchResult ? (
-              materialSearchResult.length >= 1 ? (
-                materialSearchResult.map((material) => (
+            {fileSearchResult ? (
+              fileSearchResult.length >= 1 ? (
+                fileSearchResult.map((material) => (
                   <div
                     key={material.id}
                     className="flex justify-between text-sm max-w-xl space-x-3"
                   >
-                    <div className="flex justify-start space-x-3">
-                      <div className={`${robotoMono.className}`}>
-                        {material.id}
-                      </div>
-                      <div className="max-w-[250px] truncate text-muted-foreground">
-                        {material.name}
-                      </div>
-                    </div>
+                    <div className="truncate">{material.name}</div>
                     <div
                       className="text-sm cursor-pointer link"
-                      onClick={() =>
-                        handleAddMaterial(equipment.id, material.id)
-                      }
+                      onClick={() => handleAddFile(equipment.id, material.id)}
                     >
                       Attach
                     </div>
@@ -126,7 +111,7 @@ export default function SearchMaterialPage({
                 Search result will be displayed here.
               </p>
             )}
-            {materialSearchResult && materialSearchResult.length >= 1 && (
+            {fileSearchResult && fileSearchResult.length >= 1 && (
               <>
                 <Separator />
                 <p className="mt-3 text-sm text-muted-foreground text-center">

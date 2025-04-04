@@ -140,6 +140,13 @@ export async function deleteFileById(id: string) {
     });
 
     await deleteFileFromFilesystem(file.path);
+
+    await prisma.equipmentFile.deleteMany({
+      where: {
+        fileId: id,
+      },
+    });
+
     revalidatePath("/files");
 
     return {
@@ -265,3 +272,29 @@ export async function getFileById(id: string) {
 
   return file;
 }
+
+export async function getFilesByKeyword(
+  keyword: string
+): Promise<FileSearchResult[] | null> {
+  const files = await prisma.file.findMany({
+    where: {
+      OR: [
+        { name: { contains: keyword, mode: "insensitive" } },
+        { tags: { contains: keyword, mode: "insensitive" } },
+      ],
+    },
+    select: {
+      id: true,
+      name: true,
+      path: true,
+    },
+  });
+
+  return files;
+}
+
+export type FileSearchResult = {
+  id: string;
+  name: string;
+  path: string;
+};
