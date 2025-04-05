@@ -3,7 +3,7 @@
 import { ModeSwitch } from "@/components/mode-toggle";
 import { Separator } from "./ui/separator";
 import { APP_NAME } from "@/lib/config";
-import AvatarNavbar from "./avatar";
+import AvatarNavbar from "./avatar-navbar";
 import Link from "next/link";
 import NavSheet from "./nav-sheet";
 import { Route, useFilteredRoutes } from "@/hooks/useFilteredRoutes";

@@ -70,7 +70,7 @@ export const authOptions: NextAuthOptions = {
         token.image = user.image;
       }
 
-      if (trigger === "update") {
+      if (trigger === "update" && session) {
         token.sub = session.user.id as string;
         token.email = session.user.email;
         token.name = session.user.name;

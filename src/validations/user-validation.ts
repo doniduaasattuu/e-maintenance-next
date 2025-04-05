@@ -4,7 +4,13 @@ const MAX_FILE_IN_MB: number = 5;
 const MAX_FILE_SIZE: number = MAX_FILE_IN_MB * 1024 * 1024;
 
 export const BaseUserSchema = z.object({
-  nik: z.string({ message: "NIK is required" }).min(3).max(8).trim(),
+  nik: z
+    .string({ message: "NIK is required" })
+    .trim()
+    .length(8, { message: "NIK should be 8 characters long" })
+    .refine((value) => /^\d+$/.test(value), {
+      message: "NIK should be numeric",
+    }),
   name: z.string({ message: "Name is required" }).min(3).max(100).trim(),
   email: z.coerce
     .string()
@@ -14,7 +20,15 @@ export const BaseUserSchema = z.object({
     .refine((value: string) => !/\s/.test(value), {
       message: "String cannot contain spaces",
     }),
-  image: z.instanceof(File).optional(),
+  image: z
+    .instanceof(File)
+    .refine((image) => !image || image.size <= MAX_FILE_SIZE, {
+      message: `File size has exceeded it max limit of ${
+        MAX_FILE_SIZE / 1024 / 1024
+      }MB`,
+      path: ["image"],
+    })
+    .optional(),
   roleId: z.number({ message: "Role can't be empty" }),
   password: z.string({ message: "Password is required" }).min(8),
   new_password: z.string({ message: "New Password is required" }).min(8),
@@ -44,13 +58,7 @@ export const UpdateUserSchema = BaseUserSchema.pick({
   nik: true,
   name: true,
   image: true,
-}).refine(
-  (data) => !data.image || data.image.size <= MAX_FILE_SIZE, // 2MB
-  {
-    message: `File size has exceeded it max limit of ${MAX_FILE_IN_MB}MB`,
-    path: ["image"],
-  }
-);
+});
 
 export const UpdatePasswordSchema = BaseUserSchema.pick({
   password: true,

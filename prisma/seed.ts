@@ -32,7 +32,7 @@ async function main() {
         email: "doni@gmail.com",
         name: "Doni Darmawan",
         nik: "55000154",
-        image: "https://github.com/shadcn.png",
+        image: "/images/users/55000154.jpg",
         password: await bcrypt.hash("password", 10),
         roleId: adminRole.id,
       },

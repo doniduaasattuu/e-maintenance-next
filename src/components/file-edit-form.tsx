@@ -133,7 +133,6 @@ export default function FileEditForm({ file }: FileEditProps) {
           name="file"
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           render={({ field: { onChange, value, ref, ...rest } }) => (
-            // render={({ field }) => (
             <FormItem className="max-w-xl">
               <FormLabel>File</FormLabel>
               <FormControl>
