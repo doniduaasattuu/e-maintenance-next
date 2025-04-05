@@ -1,30 +1,17 @@
 "use client";
 import React from "react";
 
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import LoadingButton from "./loading-button";
 import { CreateFunctionalLocationSchema } from "@/validations/functional-location-validation";
 import { useFormState } from "react-dom";
 import { createFunctionalLocation } from "@/actions/functional-location-action";
-import Link from "next/link";
+import FunctionalLocationForm from "./functional-location-form";
 
-const createFunctionalLocationFormSchema = CreateFunctionalLocationSchema;
-type CreateFunctionalLocationSchema = z.infer<
-  typeof createFunctionalLocationFormSchema
->;
+const createFunclocFormSchema = CreateFunctionalLocationSchema;
+type CreateFunctionalLocationSchema = z.infer<typeof createFunclocFormSchema>;
 
 const initialState = {
   success: false,
@@ -39,7 +26,7 @@ export default function FunctionalLocationCreateForm() {
     initialState
   );
   const form = useForm<CreateFunctionalLocationSchema>({
-    resolver: zodResolver(createFunctionalLocationFormSchema),
+    resolver: zodResolver(createFunclocFormSchema),
   });
 
   const { control, setError, setFocus, reset, handleSubmit, getValues } = form;
@@ -88,56 +75,12 @@ export default function FunctionalLocationCreateForm() {
   });
 
   return (
-    <Form {...form}>
-      <form onSubmit={onCreate} className="space-y-4">
-        <FormField
-          control={control}
-          name="id"
-          render={({ field }) => (
-            <FormItem className="max-w-xl">
-              <FormLabel>ID</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  onChange={(e) => {
-                    const upperValue = e.target.value.toUpperCase();
-                    field.onChange(upperValue);
-                  }}
-                />
-              </FormControl>
-              {lastInserted && (
-                <FormDescription>
-                  <span>Last inserted: </span>
-                  <Link
-                    className="hover:text-foreground"
-                    href={`/functional-locations/${lastInserted}`}
-                  >
-                    {lastInserted}
-                  </Link>
-                </FormDescription>
-              )}
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="description"
-          render={({ field }) => (
-            <FormItem className="max-w-xl">
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className="pt-3">
-          <LoadingButton processing={pending} label="Submit" type="submit" />
-        </div>
-      </form>
-    </Form>
+    <FunctionalLocationForm
+      form={form}
+      control={control}
+      onSubmit={onCreate}
+      pending={pending}
+      lastInserted={lastInserted}
+    />
   );
 }

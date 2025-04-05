@@ -7,6 +7,7 @@ import { getServerSession } from "next-auth";
 import AuthProvider from "@/context/AuthProvider";
 import { APP_NAME } from "@/lib/config";
 import ProgressBar from "@/components/progress-bar";
+import { authOptions } from "./api/auth/[...nextauth]/route";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -19,7 +20,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
 
   return (
     <html lang="en">

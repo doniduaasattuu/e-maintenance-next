@@ -47,7 +47,7 @@ export default function FunctionalLocationTable({
                     {funcloc.id}
                   </Link>
                 </TableCell>
-                <TableCell className="font-light">
+                <TableCell className="font-light max-w-sm truncate">
                   {funcloc.description}
                 </TableCell>
                 <TableCell className="font-light">

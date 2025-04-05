@@ -9,7 +9,7 @@ export default function TableLayout({
   return (
     <div className="space-y-4">
       <DynamicBreadcrumb />
-      {children}
+      <div className="space-y-8 mb-4">{children}</div>
     </div>
   );
 }

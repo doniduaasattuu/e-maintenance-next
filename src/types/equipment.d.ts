@@ -41,3 +41,9 @@ export type Equipment = {
       }[]
     | null;
 };
+
+export type SimpleEquipment = {
+  id: string;
+  sortField: string;
+  description: string;
+};

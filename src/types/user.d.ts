@@ -2,7 +2,7 @@ export type SessionUser = IntrinsicAttributes & {
   id: string;
   role: string;
 } & {
-  name?: string | null | undefined;
-  email?: string | null | undefined;
-  image?: string | null | undefined;
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
 };

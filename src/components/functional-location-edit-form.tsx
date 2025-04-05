@@ -1,23 +1,14 @@
 "use client";
 import React from "react";
 
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import LoadingButton from "./loading-button";
 import { EditFunctionalLocationSchema } from "@/validations/functional-location-validation";
 import { useFormState } from "react-dom";
 import { editFunctionalLocation } from "@/actions/functional-location-action";
+import FunctionalLocationForm from "./functional-location-form";
 
 const editFunctionalLocationFormSchema = EditFunctionalLocationSchema;
 type EditFunctionalLocationSchema = z.infer<
@@ -87,39 +78,12 @@ export default function FunctionalLocationEditForm({
   });
 
   return (
-    <Form {...form}>
-      <form onSubmit={onUpdate} className="space-y-4">
-        <FormField
-          control={control}
-          name="id"
-          render={({ field }) => (
-            <FormItem className="max-w-xl">
-              <FormLabel>ID</FormLabel>
-              <FormControl>
-                <Input {...field} disabled />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="description"
-          render={({ field }) => (
-            <FormItem className="max-w-xl">
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className="pt-3">
-          <LoadingButton processing={pending} label="Update" type="submit" />
-        </div>
-      </form>
-    </Form>
+    <FunctionalLocationForm
+      form={form}
+      onSubmit={onUpdate}
+      control={control}
+      pending={pending}
+      isEditing={true}
+    />
   );
 }

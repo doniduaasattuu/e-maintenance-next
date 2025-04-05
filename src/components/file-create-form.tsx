@@ -151,6 +151,16 @@ export default function FileCreateForm() {
                   {...rest}
                 />
               </FormControl>
+              <FormDescription>
+                Allowed file types:{" "}
+                {ALLOWED_FILE_TYPES.map(
+                  (extension, index) =>
+                    `${
+                      extension +
+                      (index !== ALLOWED_FILE_TYPES.length - 1 ? ", " : ".")
+                    }`
+                )}
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}

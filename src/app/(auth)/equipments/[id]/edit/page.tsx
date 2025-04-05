@@ -1,5 +1,4 @@
 import React from "react";
-import { Card } from "@/components/ui/card";
 import { getEquipment } from "@/actions/equipment-action";
 import HeaderCard from "@/components/header-card";
 import TableLayout from "@/layouts/table-layout";
@@ -10,6 +9,7 @@ import MaterialDetachment from "@/components/material-detachment";
 import SearchMaterialDialog from "@/components/search-material-dialog";
 import FileDetachment from "@/components/file-detachment";
 import SearchFileDialog from "@/components/search-file-dialog";
+import FormCard from "@/components/form-card";
 
 export default async function EquipmentEditPage({
   params,
@@ -28,51 +28,49 @@ export default async function EquipmentEditPage({
 
   return (
     <TableLayout>
-      <div className="space-y-8 mb-4">
-        <Card className="py-8 px-5 md:p-8 rounded-md">
-          <HeaderCard header="Edit" content="Update equipment data" />
-          <EquipmentEditForm
-            equipment={equipment}
-            classifications={classifications}
-            equipmentStatuses={equipmentStatuses}
-          />
-        </Card>
+      <FormCard>
+        <HeaderCard header="Edit" content="Update equipment data" />
+        <EquipmentEditForm
+          equipment={equipment}
+          classifications={classifications}
+          equipmentStatuses={equipmentStatuses}
+        />
+      </FormCard>
 
-        {/* MATERIALS */}
-        <Card className="py-8 px-5 md:p-8 rounded-md">
-          <HeaderCard
-            header="Material"
-            content="A list of materials that used in this equipment."
-          >
-            <SearchMaterialDialog equipment={equipment} />
-          </HeaderCard>
+      {/* MATERIALS */}
+      <FormCard>
+        <HeaderCard
+          header="Material"
+          content="A list of materials that used in this equipment."
+        >
+          <SearchMaterialDialog equipment={equipment} />
+        </HeaderCard>
 
-          {equipment.equipmentMaterials &&
-            equipment.equipmentMaterials.length >= 1 && (
-              <MaterialDetachment
-                equipment={equipment}
-                items={equipment.equipmentMaterials}
-              />
-            )}
-        </Card>
-
-        {/* DOCUMENTS */}
-        <Card className="py-8 px-5 md:p-8 rounded-md">
-          <HeaderCard
-            header="Document"
-            content="A list of related equipment document."
-          >
-            <SearchFileDialog equipment={equipment} />
-          </HeaderCard>
-
-          {equipment.equipmentFiles && equipment.equipmentFiles.length >= 1 && (
-            <FileDetachment
+        {equipment.equipmentMaterials &&
+          equipment.equipmentMaterials.length >= 1 && (
+            <MaterialDetachment
               equipment={equipment}
-              items={equipment.equipmentFiles}
+              items={equipment.equipmentMaterials}
             />
           )}
-        </Card>
-      </div>
+      </FormCard>
+
+      {/* DOCUMENTS */}
+      <FormCard>
+        <HeaderCard
+          header="Document"
+          content="A list of related equipment document."
+        >
+          <SearchFileDialog equipment={equipment} />
+        </HeaderCard>
+
+        {equipment.equipmentFiles && equipment.equipmentFiles.length >= 1 && (
+          <FileDetachment
+            equipment={equipment}
+            items={equipment.equipmentFiles}
+          />
+        )}
+      </FormCard>
     </TableLayout>
   );
 }

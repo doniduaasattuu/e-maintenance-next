@@ -5,5 +5,6 @@ export const ALLOWED_FILE_TYPES: readonly [string, ...string[]] = [
   "xlsx",
   "docx",
   "jpg",
+  "jpeg",
   "png",
 ];

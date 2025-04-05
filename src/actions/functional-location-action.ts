@@ -1,60 +1,78 @@
 "use server";
 
+import { getUserSession } from "@/hooks/useUserSession";
 import prisma from "@/lib/prisma";
-import { CreateFunctionalLocationSchema } from "@/validations/functional-location-validation";
+import {
+  FunctionalLocation,
+  FunclocWithEquipment,
+} from "@/types/functional-location";
+import {
+  CreateFunctionalLocationSchema,
+  EditFunctionalLocationSchema,
+} from "@/validations/functional-location-validation";
 
-type getFunclocParams = {
-  destinationPage?: number;
+type GetFunclocsParams = {
+  page?: number;
   perPage?: string;
   orderBy?: string;
   sortBy?: "id" | "description" | string;
   query?: string;
 };
 
+type PaginatedFunctionalLocations = {
+  functionalLocations: FunctionalLocation[]; // Asumsikan FunctionalLocation adalah tipe model Anda
+  totalPages: number;
+};
+
 export async function getFunctionalLocations({
-  destinationPage = 1,
+  page = 1,
   perPage = "15",
   orderBy = "desc",
   sortBy = "id",
   query,
-}: getFunclocParams) {
-  const skip = (destinationPage - 1) * Number(perPage);
+}: GetFunclocsParams): Promise<PaginatedFunctionalLocations> {
+  const skip = (page - 1) * Number(perPage);
+  const take = Number(perPage);
 
-  const allFunctionalLocations = await prisma.functionalLocation.findMany({
-    orderBy: { [sortBy]: orderBy as "asc" | "desc" },
-    ...(query && {
-      where: {
-        OR: [
-          { id: { contains: query, mode: "insensitive" } },
-          { description: { contains: query, mode: "insensitive" } },
-        ],
-      },
+  const [functionalLocations, total] = await prisma.$transaction([
+    prisma.functionalLocation.findMany({
+      skip,
+      take,
+      orderBy: { [sortBy]: orderBy as "asc" | "desc" },
+      ...(query && {
+        where: {
+          OR: [
+            { id: { contains: query, mode: "insensitive" } },
+            { description: { contains: query, mode: "insensitive" } },
+          ],
+        },
+      }),
     }),
-  });
-
-  const total = allFunctionalLocations.length;
-
-  const paginatedFunctionalLocations = allFunctionalLocations.slice(
-    skip,
-    skip + Number(perPage)
-  );
+    prisma.functionalLocation.count({
+      ...(query && {
+        where: {
+          OR: [
+            { id: { contains: query, mode: "insensitive" } },
+            { description: { contains: query, mode: "insensitive" } },
+          ],
+        },
+      }),
+    }),
+  ]);
 
   return {
-    functionalLocations: paginatedFunctionalLocations,
-    total,
-    destinationPage,
-    perPage,
+    functionalLocations,
     totalPages: Math.ceil(total / Number(perPage)),
   };
 }
 
-type getFunctionalLocationProps = {
+type GetFunclocParams = {
   id: string;
 };
 
 export async function getFunctionalLocation({
   id,
-}: getFunctionalLocationProps) {
+}: GetFunclocParams): Promise<FunclocWithEquipment | null> {
   const functionalLocation = await prisma.functionalLocation.findUnique({
     where: {
       id: id,
@@ -62,6 +80,7 @@ export async function getFunctionalLocation({
     select: {
       id: true,
       description: true,
+      userId: true,
       equipments: {
         select: {
           id: true,
@@ -75,10 +94,18 @@ export async function getFunctionalLocation({
   return functionalLocation;
 }
 
+type CreateFunclocResult = {
+  success: boolean;
+  message: string;
+  errors: { [key: string]: string[] | undefined } | null;
+};
+
 export async function createFunctionalLocation(
   prevState: unknown,
   formData: FormData
-) {
+): Promise<CreateFunclocResult> {
+  const user = await getUserSession();
+
   try {
     const rawData = Object.fromEntries(formData.entries());
     const validatedData = CreateFunctionalLocationSchema.safeParse(rawData);
@@ -86,13 +113,13 @@ export async function createFunctionalLocation(
     if (!validatedData.success) {
       return {
         success: false,
-        message: null,
+        message: "Validation Error",
         errors: validatedData.error.flatten().fieldErrors,
       };
     }
     const { id, description } = validatedData.data;
 
-    const funclocExists = await prisma.functionalLocation.findFirst({
+    const funclocExists = await prisma.functionalLocation.findUnique({
       where: {
         id: id,
       },
@@ -101,11 +128,11 @@ export async function createFunctionalLocation(
     if (funclocExists) {
       return {
         success: false,
-        message: "Functional location already exists",
+        message: "Functional location with this ID already exists.",
         errors: {
           id:
             funclocExists.id === id
-              ? ["Functional location already exists"]
+              ? ["Functional location with this ID already exists."]
               : undefined,
         },
       };
@@ -115,49 +142,53 @@ export async function createFunctionalLocation(
       data: {
         id: id,
         description: description,
+        userId: user.id ? parseInt(user.id, 10) : null,
       },
     });
 
     return {
       success: true,
-      message: "Functional location created successfully",
+      message: "Functional location created successfully.",
       errors: null,
     };
   } catch (error) {
-    if (error instanceof Error) {
-      return {
-        success: false,
-        message: error.message,
-        errors: null,
-      };
-    }
-
     return {
       success: false,
-      message: "Something went wrong",
+      message:
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred.",
       errors: null,
     };
   }
 }
 
+type EditFunclocResult = {
+  success: boolean;
+  message: string;
+  errors: { [key: string]: string[] | undefined } | null;
+};
+
 export async function editFunctionalLocation(
   prevState: unknown,
   formData: FormData
-) {
+): Promise<EditFunclocResult> {
+  const user = await getUserSession();
+
   try {
     const rawData = Object.fromEntries(formData.entries());
-    const validatedData = CreateFunctionalLocationSchema.safeParse(rawData);
+    const validatedData = EditFunctionalLocationSchema.safeParse(rawData);
 
     if (!validatedData.success) {
       return {
         success: false,
-        message: null,
+        message: "Validation Error",
         errors: validatedData.error.flatten().fieldErrors,
       };
     }
     const { id, description } = validatedData.data;
 
-    const funclocExists = await prisma.functionalLocation.findFirst({
+    const funclocExists = await prisma.functionalLocation.findUnique({
       where: {
         id: id,
       },
@@ -179,6 +210,7 @@ export async function editFunctionalLocation(
       },
       data: {
         description: description,
+        userId: user.id ? parseInt(user.id, 10) : null,
       },
     });
 
@@ -188,17 +220,12 @@ export async function editFunctionalLocation(
       errors: null,
     };
   } catch (error) {
-    if (error instanceof Error) {
-      return {
-        success: false,
-        message: error.message,
-        errors: null,
-      };
-    }
-
     return {
       success: false,
-      message: "Something went wrong",
+      message:
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred.",
       errors: null,
     };
   }

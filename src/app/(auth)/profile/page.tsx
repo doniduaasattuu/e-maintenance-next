@@ -1,10 +1,10 @@
-import { Card } from "@/components/ui/card";
 import UpdatePasswordForm from "@/components/update-password-form";
 import UpdateUserForm from "@/components/update-user-form";
 import { getServerSession } from "next-auth";
 import React from "react";
 import prisma from "@/lib/prisma";
 import HeaderCard from "@/components/header-card";
+import FormCard from "@/components/form-card";
 
 export default async function ProfilePage() {
   const session = await getServerSession();
@@ -24,21 +24,21 @@ export default async function ProfilePage() {
   }
 
   return (
-    <div className="space-y-6">
-      <Card className="py-8 px-5 md:p-8 rounded-md">
+    <div className="space-y-8">
+      <FormCard>
         <HeaderCard
           header="Profile Information"
           content="Update your account's profile information and username"
         />
         <UpdateUserForm user={user} />
-      </Card>
-      <Card className="py-8 px-5 md:p-8 rounded-md">
+      </FormCard>
+      <FormCard>
         <HeaderCard
           header="Update Password"
           content="Ensure your account is using a long, random password to stay secure"
         />
         <UpdatePasswordForm />
-      </Card>
+      </FormCard>
     </div>
   );
 }
