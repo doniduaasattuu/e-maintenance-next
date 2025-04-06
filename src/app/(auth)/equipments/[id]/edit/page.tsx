@@ -40,7 +40,7 @@ export default async function EquipmentEditPage({
       {/* MATERIALS */}
       <FormCard>
         <HeaderCard
-          header="Material"
+          header="Materials"
           content="A list of materials that used in this equipment."
         >
           <SearchMaterialDialog equipment={equipment} />
@@ -58,7 +58,7 @@ export default async function EquipmentEditPage({
       {/* DOCUMENTS */}
       <FormCard>
         <HeaderCard
-          header="Document"
+          header="Documents"
           content="A list of related equipment document."
         >
           <SearchFileDialog equipment={equipment} />

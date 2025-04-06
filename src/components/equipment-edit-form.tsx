@@ -1,33 +1,17 @@
 "use client";
-import React from "react";
 
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import React from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import LoadingButton from "./loading-button";
 import { EditEquipmentSchema } from "@/validations/equipment-validation";
 import { useFormState } from "react-dom";
 import { Classification } from "@/types/classification";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
 import { EquipmentStatus } from "@/types/equipment-status";
 import { Equipment } from "@/types/equipment";
 import { editEquipment } from "@/actions/equipment-action";
+import EquipmentForm from "./equipment-form";
 
 const editEquipmentFormSchema = EditEquipmentSchema;
 type EditEquipmentSchema = z.infer<typeof editEquipmentFormSchema>;
@@ -100,125 +84,134 @@ export default function EquipmentEditForm({
   });
 
   return (
-    <Form {...form}>
-      <form onSubmit={onUpdate} className="space-y-4">
-        <FormField
-          control={control}
-          name="id"
-          render={({ field }) => (
-            <FormItem className="max-w-xl">
-              <FormLabel>ID</FormLabel>
-              <FormControl>
-                <Input {...field} disabled />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="classificationId"
-          render={({ field }) => (
-            <FormItem className="max-w-xl">
-              <FormLabel>Classification</FormLabel>
-              <FormControl>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={String(field.value)}
-                >
-                  <FormControl>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Classification" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {classifications &&
-                      classifications.map(({ id, description }) => (
-                        <SelectItem key={id} value={String(id)}>
-                          {description}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="equipmentStatusId"
-          render={({ field }) => (
-            <FormItem className="max-w-xl">
-              <FormLabel>Status</FormLabel>
-              <FormControl>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={String(field.value)}
-                >
-                  <FormControl>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Equipment status" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {equipmentStatuses &&
-                      equipmentStatuses.map(({ id, description }) => (
-                        <SelectItem key={id} value={String(id)}>
-                          {description}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="functionalLocationId"
-          render={({ field }) => (
-            <FormItem className="max-w-xl">
-              <FormLabel>Functional location</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="sortField"
-          render={({ field }) => (
-            <FormItem className="max-w-xl">
-              <FormLabel>Sort field</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="description"
-          render={({ field }) => (
-            <FormItem className="max-w-xl">
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    <EquipmentForm
+      control={control}
+      form={form}
+      pending={pending}
+      onSubmit={onUpdate}
+      classifications={classifications}
+      equipmentStatuses={equipmentStatuses}
+      isEditing={true}
+    />
+    // <Form {...form}>
+    //   <form onSubmit={onUpdate} className="space-y-4">
+    //     <FormField
+    //       control={control}
+    //       name="id"
+    //       render={({ field }) => (
+    //         <FormItem className="max-w-xl">
+    //           <FormLabel>ID</FormLabel>
+    //           <FormControl>
+    //             <Input {...field} disabled />
+    //           </FormControl>
+    //           <FormMessage />
+    //         </FormItem>
+    //       )}
+    //     />
+    //     <FormField
+    //       control={control}
+    //       name="classificationId"
+    //       render={({ field }) => (
+    //         <FormItem className="max-w-xl">
+    //           <FormLabel>Classification</FormLabel>
+    //           <FormControl>
+    //             <Select
+    //               onValueChange={field.onChange}
+    //               defaultValue={String(field.value)}
+    //             >
+    //               <FormControl>
+    //                 <SelectTrigger className="w-full">
+    //                   <SelectValue placeholder="Classification" />
+    //                 </SelectTrigger>
+    //               </FormControl>
+    //               <SelectContent>
+    //                 {classifications &&
+    //                   classifications.map(({ id, description }) => (
+    //                     <SelectItem key={id} value={String(id)}>
+    //                       {description}
+    //                     </SelectItem>
+    //                   ))}
+    //               </SelectContent>
+    //             </Select>
+    //           </FormControl>
+    //           <FormMessage />
+    //         </FormItem>
+    //       )}
+    //     />
+    //     <FormField
+    //       control={control}
+    //       name="equipmentStatusId"
+    //       render={({ field }) => (
+    //         <FormItem className="max-w-xl">
+    //           <FormLabel>Status</FormLabel>
+    //           <FormControl>
+    //             <Select
+    //               onValueChange={field.onChange}
+    //               defaultValue={String(field.value)}
+    //             >
+    //               <FormControl>
+    //                 <SelectTrigger className="w-full">
+    //                   <SelectValue placeholder="Equipment status" />
+    //                 </SelectTrigger>
+    //               </FormControl>
+    //               <SelectContent>
+    //                 {equipmentStatuses &&
+    //                   equipmentStatuses.map(({ id, description }) => (
+    //                     <SelectItem key={id} value={String(id)}>
+    //                       {description}
+    //                     </SelectItem>
+    //                   ))}
+    //               </SelectContent>
+    //             </Select>
+    //           </FormControl>
+    //           <FormMessage />
+    //         </FormItem>
+    //       )}
+    //     />
+    //     <FormField
+    //       control={control}
+    //       name="functionalLocationId"
+    //       render={({ field }) => (
+    //         <FormItem className="max-w-xl">
+    //           <FormLabel>Functional location</FormLabel>
+    //           <FormControl>
+    //             <Input {...field} />
+    //           </FormControl>
+    //           <FormMessage />
+    //         </FormItem>
+    //       )}
+    //     />
+    //     <FormField
+    //       control={control}
+    //       name="sortField"
+    //       render={({ field }) => (
+    //         <FormItem className="max-w-xl">
+    //           <FormLabel>Sort field</FormLabel>
+    //           <FormControl>
+    //             <Input {...field} />
+    //           </FormControl>
+    //           <FormMessage />
+    //         </FormItem>
+    //       )}
+    //     />
+    //     <FormField
+    //       control={control}
+    //       name="description"
+    //       render={({ field }) => (
+    //         <FormItem className="max-w-xl">
+    //           <FormLabel>Description</FormLabel>
+    //           <FormControl>
+    //             <Input {...field} />
+    //           </FormControl>
+    //           <FormMessage />
+    //         </FormItem>
+    //       )}
+    //     />
 
-        <div className="pt-3">
-          <LoadingButton processing={pending} label="Update" type="submit" />
-        </div>
-      </form>
-    </Form>
+    //     <div className="pt-3">
+    //       <LoadingButton processing={pending} label="Update" type="submit" />
+    //     </div>
+    //   </form>
+    // </Form>
   );
 }

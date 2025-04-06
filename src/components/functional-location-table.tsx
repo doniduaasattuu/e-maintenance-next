@@ -50,10 +50,10 @@ export default function FunctionalLocationTable({
                 <TableCell className="font-light max-w-sm truncate">
                   {funcloc.description}
                 </TableCell>
-                <TableCell className="font-light">
+                <TableCell className="font-light text-muted-foreground">
                   {formatDate(funcloc.createdAt)}
                 </TableCell>
-                <TableCell className="text-right font-light">
+                <TableCell className="text-right font-light text-muted-foreground">
                   {formatDate(funcloc.updatedAt)}
                 </TableCell>
               </TableRow>

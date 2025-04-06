@@ -53,9 +53,11 @@ export default function EquipmentTable({
                     {equipment.equipmentStatus.description}
                   </div>
                 </TableCell>
-                <TableCell className="font-light flex-col text-muted-foreground">
-                  <div>{equipment.sortField}</div>
-                  <div>{equipment.description}</div>
+                <TableCell className="font-light flex-col max-w-[200px] sm:w-auto">
+                  <div className="truncate">{equipment.sortField}</div>
+                  <div className="text-muted-foreground truncate">
+                    {equipment.description}
+                  </div>
                 </TableCell>
                 <TableCell className="font-light flex-col">
                   <div>

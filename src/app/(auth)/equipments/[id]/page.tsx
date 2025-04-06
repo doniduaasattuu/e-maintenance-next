@@ -22,9 +22,7 @@ export default async function EquipmentPage({
     id,
   });
 
-  if (!equipment) {
-    return <p>Equipment is not exists</p>;
-  }
+  if (!equipment) return <p>Equipment is not exists</p>;
 
   return (
     <TableLayout>
@@ -88,34 +86,29 @@ export default async function EquipmentPage({
         </div>
       </FormCard>
 
-      {equipment.equipmentMaterials &&
-      equipment.equipmentMaterials.length >= 1 ? (
-        <FormCard>
-          <HeaderCard
-            header="Materials"
-            content="A list of materials that used in this equipment."
-          />
+      <FormCard>
+        <HeaderCard
+          header="Materials"
+          content="A list of materials that used in this equipment."
+        />
+        {equipment.equipmentMaterials &&
+        equipment.equipmentMaterials.length >= 1 ? (
           <MaterialList items={equipment?.equipmentMaterials} />
-        </FormCard>
-      ) : (
-        <p className="text-sm font-normal text-muted-foreground">
-          This equipment doesn&apos;t have any related material.
-        </p>
-      )}
-
-      {equipment.equipmentFiles && equipment.equipmentFiles.length >= 1 ? (
-        <FormCard>
-          <HeaderCard
-            header="Files"
-            content="A list of related equipment documentation."
-          />
+        ) : (
+          <p className="text-sm font-normal text-muted-foreground">Empty.</p>
+        )}
+      </FormCard>
+      <FormCard>
+        <HeaderCard
+          header="Files"
+          content="A list of related equipment documentation."
+        />
+        {equipment.equipmentFiles && equipment.equipmentFiles.length >= 1 ? (
           <FileList items={equipment?.equipmentFiles} />
-        </FormCard>
-      ) : (
-        <p className="text-sm font-normal text-muted-foreground">
-          This equipment doesn&apos;t have any related document.
-        </p>
-      )}
+        ) : (
+          <p className="text-sm font-normal text-muted-foreground">Empty.</p>
+        )}{" "}
+      </FormCard>
     </TableLayout>
   );
 }

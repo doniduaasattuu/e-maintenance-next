@@ -37,7 +37,6 @@ export async function addMaterialToEquipment(
   materialId: string
 ) {
   try {
-    // Periksa apakah kombinasi equipmentId dan materialId sudah ada
     const existingRelation = await prisma.equipmentMaterial.findUnique({
       where: {
         equipmentId_materialId: {

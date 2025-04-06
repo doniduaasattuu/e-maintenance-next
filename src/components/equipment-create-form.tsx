@@ -1,34 +1,16 @@
 "use client";
 import React from "react";
 
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import LoadingButton from "./loading-button";
 import { CreateEquipmentSchema } from "@/validations/equipment-validation";
 import { useFormState } from "react-dom";
-import Link from "next/link";
 import { Classification } from "@/types/classification";
 import { EquipmentStatus } from "@/types/equipment-status";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
 import { createEquipment } from "@/actions/equipment-action";
+import EquipmentForm from "./equipment-form";
 
 const createEquipmentFormSchema = CreateEquipmentSchema;
 type CreateEquipmentSchema = z.infer<typeof createEquipmentFormSchema>;
@@ -85,6 +67,8 @@ export default function EquipmentCreateForm({
 
       reset({
         id: "",
+        classificationId: 0,
+        equipmentStatusId: 0,
         functionalLocationId: "",
         sortField: "",
         description: "",
@@ -96,7 +80,9 @@ export default function EquipmentCreateForm({
     const formData = new FormData();
 
     Object.entries(values).forEach(([key, value]) => {
-      formData.append(key, String(value));
+      if (value !== undefined) {
+        formData.append(key, String(value));
+      }
     });
 
     React.startTransition(() => {
@@ -105,148 +91,14 @@ export default function EquipmentCreateForm({
   });
 
   return (
-    <Form {...form}>
-      <form onSubmit={onCreate} className="space-y-4">
-        <FormField
-          control={control}
-          name="id"
-          render={({ field }) => (
-            <FormItem className="max-w-xl">
-              <FormLabel>ID</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  onChange={(e) => {
-                    const upperValue = e.target.value.toUpperCase();
-                    field.onChange(upperValue);
-                  }}
-                />
-              </FormControl>
-              {lastInserted && (
-                <FormDescription>
-                  <span>Last inserted: </span>
-                  <Link
-                    className="hover:text-foreground"
-                    href={`/equipments/${lastInserted}`}
-                  >
-                    {lastInserted}
-                  </Link>
-                </FormDescription>
-              )}
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="classificationId"
-          render={({ field }) => (
-            <FormItem className="max-w-xl">
-              <FormLabel>Classification</FormLabel>
-              <FormControl>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={String(field.value)}
-                >
-                  <FormControl>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Classification" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {classifications &&
-                      classifications.map(({ id, description }) => (
-                        <SelectItem key={id} value={String(id)}>
-                          {description}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="equipmentStatusId"
-          render={({ field }) => (
-            <FormItem className="max-w-xl">
-              <FormLabel>Status</FormLabel>
-              <FormControl>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={String(field.value)}
-                >
-                  <FormControl>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Equipment status" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {equipmentStatuses &&
-                      equipmentStatuses.map(({ id, description }) => (
-                        <SelectItem key={id} value={String(id)}>
-                          {description}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="functionalLocationId"
-          render={({ field }) => (
-            <FormItem className="max-w-xl">
-              <FormLabel>Functional location</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  onChange={(e) => {
-                    const upperValue = e.target.value.toUpperCase();
-                    field.onChange(upperValue);
-                  }}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="sortField"
-          render={({ field }) => (
-            <FormItem className="max-w-xl">
-              <FormLabel>Sort field</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="description"
-          render={({ field }) => (
-            <FormItem className="max-w-xl">
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className="pt-3">
-          <LoadingButton processing={pending} label="Submit" type="submit" />
-        </div>
-      </form>
-    </Form>
+    <EquipmentForm
+      control={control}
+      form={form}
+      pending={pending}
+      onSubmit={onCreate}
+      lastInserted={lastInserted}
+      classifications={classifications}
+      equipmentStatuses={equipmentStatuses}
+    />
   );
 }

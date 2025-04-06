@@ -16,19 +16,24 @@ export const BaseEquipmentSchema = z.object({
   functionalLocationId: z
     .string()
     .optional()
-    .transform((val) => (val?.trim() === "" ? undefined : val)),
+    .transform((val) =>
+      val?.trim() == "" || val === "undefined" ? undefined : val
+    ),
   sortField: z.string().min(3).max(50),
   description: z.string({ message: "Description is required" }).min(3).max(100),
 });
 
-export const EditEquipmentSchema = BaseEquipmentSchema.superRefine(
+export const CreateEquipmentSchema = BaseEquipmentSchema.superRefine(
   async (data, ctx) => {
     try {
       const status = await getEquipmentStatus({ id: data.equipmentStatusId });
       const statusDescription = status?.description;
       const functionalLocationRegex = /^[A-Z0-9]+(-[A-Z0-9]+)*$/;
 
-      if (statusDescription === "Installed") {
+      if (
+        statusDescription === "Installed" &&
+        data.functionalLocationId === undefined
+      ) {
         if (!data.functionalLocationId) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
@@ -43,33 +48,18 @@ export const EditEquipmentSchema = BaseEquipmentSchema.superRefine(
             path: ["functionalLocationId"],
           });
         }
-      } else {
-        if (data.functionalLocationId === undefined) {
-          console.log("Data undefined"); // printed
-        } else if (data.functionalLocationId === "undefined") {
-          console.log("String undefined");
-        } else if (data.functionalLocationId.trim() === "") {
-          console.log("Empty string"); // printed
-        } else {
-          console.log(`Data: ${data.functionalLocationId}`);
-        }
+      }
 
-        const validFunctinonalLocation =
-          data.functionalLocationId !== "undefined" &&
-          data.functionalLocationId !== undefined &&
-          data.functionalLocationId !== null &&
-          data.functionalLocationId.trim() !== "";
-
-        console.log(`RESULT: ${validFunctinonalLocation}`);
-
-        if (validFunctinonalLocation) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message:
-              "Functional location is prohibited unless status is 'Installed'",
-            path: ["functionalLocationId"],
-          });
-        }
+      if (
+        statusDescription !== "Installed" &&
+        data.functionalLocationId !== undefined
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message:
+            "Functional location is prohibited unless status is 'Installed'",
+          path: ["functionalLocationId"],
+        });
       }
     } catch (error) {
       ctx.addIssue({
@@ -82,4 +72,4 @@ export const EditEquipmentSchema = BaseEquipmentSchema.superRefine(
   }
 );
 
-export const CreateEquipmentSchema = EditEquipmentSchema;
+export const EditEquipmentSchema = CreateEquipmentSchema;

@@ -26,18 +26,14 @@ export default async function EquipmentPage({
   const equipmentStatuses = await getEquipmentStatuses();
 
   const { equipments, totalPages } = await getEquipments({
-    destinationPage: Number(page ?? 1),
+    page: parseInt(page ?? 1),
     orderBy: order,
     query: query,
     sortBy: sortBy,
     perPage: perPage,
-    classification: classification,
+    classificationId: classification,
     status: status,
   });
-
-  if (!equipments) {
-    return null;
-  }
 
   return (
     <TableLayout>

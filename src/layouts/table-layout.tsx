@@ -7,9 +7,9 @@ export default function TableLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 mb-4">
       <DynamicBreadcrumb />
-      <div className="space-y-8 mb-4">{children}</div>
+      {children}
     </div>
   );
 }

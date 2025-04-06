@@ -1,89 +1,119 @@
 "use server";
 
+import { getUserSession } from "@/hooks/useUserSession";
 import prisma from "@/lib/prisma";
-import { Equipment } from "@/types/equipment";
+import { Equipment, EquipmentWitRelations } from "@/types/equipment";
 import {
   CreateEquipmentSchema,
   EditEquipmentSchema,
 } from "@/validations/equipment-validation";
 
-type getEquipmentParams = {
-  destinationPage?: number;
+type GetEquipmentParams = {
+  page?: number;
   perPage?: string;
   orderBy?: string;
   sortBy?: string;
   query?: string;
-  classification?: string;
+  classificationId?: string;
   status?: string;
 };
 
+export type PaginatedEquipments = {
+  equipments: Equipment[];
+  totalPages: number;
+};
+
 export async function getEquipments({
-  destinationPage = 1,
+  page = 1,
   perPage = "10",
   orderBy = "desc",
   sortBy = "id",
   query,
-  classification,
+  classificationId,
   status,
-}: getEquipmentParams) {
-  const skip = (destinationPage - 1) * Number(perPage);
-  const allEquipments = await prisma.equipment.findMany({
-    orderBy: { [sortBy]: orderBy as "asc" | "desc" },
-    where: {
-      // Query Param (ID or Description)
-      ...(query && {
-        OR: [
-          { id: { contains: query, mode: "insensitive" } },
-          { sortField: { contains: query, mode: "insensitive" } },
-          { description: { contains: query, mode: "insensitive" } },
-        ],
-      }),
+}: GetEquipmentParams): Promise<PaginatedEquipments> {
+  const skip = (page - 1) * parseInt(perPage);
+  const take = parseInt(perPage);
 
-      // Classification Filter
-      ...(classification && {
-        classificationId: Number(classification),
-      }),
-
-      // Equipment Status Filter
-      ...(status && {
-        equipmentStatusId: Number(status),
-      }),
-    },
-    include: {
-      classification: true,
-      equipmentStatus: true,
-      functionalLocation: true,
-      user: {
-        select: {
-          id: true,
-          name: true,
-        },
-      },
-      equipmentMaterials: {
-        select: {
-          material: {
-            select: {
-              id: true,
-              name: true,
-              price: true,
+  const [equipments, total] = await prisma.$transaction([
+    prisma.equipment.findMany({
+      skip,
+      take,
+      orderBy: { [sortBy]: orderBy as "asc" | "desc" },
+      where: {
+        ...(query && {
+          OR: [
+            { id: { contains: query, mode: "insensitive" } },
+            { sortField: { contains: query, mode: "insensitive" } },
+            { description: { contains: query, mode: "insensitive" } },
+            {
+              functionalLocation: {
+                OR: [
+                  { id: { contains: query, mode: "insensitive" } },
+                  { description: { contains: query, mode: "insensitive" } },
+                ],
+              },
             },
+          ],
+        }),
+        ...(classificationId && {
+          classificationId: parseInt(classificationId),
+        }),
+        ...(status && {
+          equipmentStatusId: parseInt(status),
+        }),
+      },
+      include: {
+        classification: {
+          select: {
+            id: true,
+            description: true,
           },
-          quantity: true,
+        },
+        equipmentStatus: {
+          select: {
+            id: true,
+            description: true,
+          },
+        },
+        functionalLocation: {
+          select: {
+            id: true,
+            description: true,
+          },
         },
       },
-    },
-  });
-
-  const total = allEquipments.length;
-
-  const paginatedEquipments = allEquipments.slice(skip, skip + Number(perPage));
+    }),
+    prisma.equipment.count({
+      where: {
+        ...(query && {
+          OR: [
+            { id: { contains: query, mode: "insensitive" } },
+            { sortField: { contains: query, mode: "insensitive" } },
+            { description: { contains: query, mode: "insensitive" } },
+            {
+              functionalLocation: {
+                OR: [
+                  { id: { contains: query, mode: "insensitive" } },
+                  { description: { contains: query, mode: "insensitive" } },
+                ],
+              },
+            },
+          ],
+        }),
+        ...(classificationId && {
+          classificationId: parseInt(classificationId),
+        }),
+        ...(status && {
+          equipmentStatusId: parseInt(status),
+        }),
+      },
+    }),
+  ]);
 
   return {
-    equipments: paginatedEquipments,
-    total,
-    destinationPage,
-    perPage,
-    totalPages: Math.ceil(total / Number(perPage)),
+    equipments,
+    totalPages: Math.ceil(total / parseInt(perPage)),
   };
 }
 
@@ -93,7 +123,7 @@ type getEquipmentProps = {
 
 export async function getEquipment({
   id,
-}: getEquipmentProps): Promise<Equipment | null> {
+}: getEquipmentProps): Promise<EquipmentWitRelations | null> {
   const equipment = await prisma.equipment.findUnique({
     where: {
       id: id,
@@ -134,18 +164,19 @@ export async function getEquipment({
     },
   });
 
-  return equipment as unknown as Equipment;
+  return equipment;
 }
 
-export async function editEquipment(prevState: unknown, formData: FormData) {
+export async function createEquipment(prevState: unknown, formData: FormData) {
+  const user = await getUserSession();
   try {
     const rawData = Object.fromEntries(formData.entries());
-    const validatedData = await EditEquipmentSchema.safeParseAsync(rawData);
+    const validatedData = await CreateEquipmentSchema.safeParseAsync(rawData);
 
     if (!validatedData.success) {
       return {
         success: false,
-        message: null,
+        message: "Validation Error",
         errors: validatedData.error.flatten().fieldErrors,
       };
     }
@@ -159,7 +190,94 @@ export async function editEquipment(prevState: unknown, formData: FormData) {
       description,
     } = validatedData.data;
 
-    const equipmentExists = await prisma.equipment.findFirst({
+    const equipmentExists = await prisma.equipment.findUnique({
+      where: {
+        id: id,
+      },
+    });
+
+    if (equipmentExists) {
+      return {
+        success: false,
+        message: "Equipment already exists",
+        errors: {
+          id: ["Equipment already exists"],
+        },
+      };
+    }
+
+    if (functionalLocationId) {
+      const functionalLocation = await prisma.functionalLocation.findUnique({
+        where: {
+          id: functionalLocationId,
+        },
+      });
+
+      if (!functionalLocation) {
+        return {
+          success: false,
+          message: "Functional location is not exists",
+          errors: {
+            functionalLocationId: ["Functional location is not exists"],
+          },
+        };
+      }
+    }
+
+    await prisma.equipment.create({
+      data: {
+        id: id,
+        classificationId: classificationId,
+        equipmentStatusId: equipmentStatusId,
+        functionalLocationId:
+          functionalLocationId === undefined ? null : functionalLocationId,
+        sortField: sortField,
+        description: description,
+        userId: user?.id ? parseInt(user.id) : null,
+      },
+    });
+
+    return {
+      success: true,
+      message: "Equipment created successfully",
+      errors: null,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message:
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred.",
+      errors: null,
+    };
+  }
+}
+
+export async function editEquipment(prevState: unknown, formData: FormData) {
+  const user = await getUserSession();
+  try {
+    const rawData = Object.fromEntries(formData.entries());
+    const validatedData = await EditEquipmentSchema.safeParseAsync(rawData);
+
+    if (!validatedData.success) {
+      return {
+        success: false,
+        message: "Validation Error",
+        errors: validatedData.error.flatten().fieldErrors,
+      };
+    }
+
+    const {
+      id,
+      classificationId,
+      equipmentStatusId,
+      functionalLocationId,
+      sortField,
+      description,
+    } = validatedData.data;
+
+    const equipmentExists = await prisma.equipment.findUnique({
       where: {
         id: id,
       },
@@ -175,11 +293,7 @@ export async function editEquipment(prevState: unknown, formData: FormData) {
       };
     }
 
-    if (
-      functionalLocationId !== "undefined" &&
-      functionalLocationId &&
-      functionalLocationId?.length > 1
-    ) {
+    if (functionalLocationId) {
       const functionalLocation = await prisma.functionalLocation.findUnique({
         where: {
           id: functionalLocationId,
@@ -205,9 +319,10 @@ export async function editEquipment(prevState: unknown, formData: FormData) {
         classificationId: classificationId,
         equipmentStatusId: equipmentStatusId,
         functionalLocationId:
-          functionalLocationId === "undefined" ? null : functionalLocationId,
+          functionalLocationId === undefined ? null : functionalLocationId,
         sortField: sortField,
         description: description,
+        userId: user?.id ? parseInt(user.id) : null,
       },
     });
 
@@ -217,111 +332,12 @@ export async function editEquipment(prevState: unknown, formData: FormData) {
       errors: null,
     };
   } catch (error) {
-    if (error instanceof Error) {
-      return {
-        success: false,
-        message: error.message,
-        errors: null,
-      };
-    }
-
     return {
       success: false,
-      message: "Something went wrong",
-      errors: null,
-    };
-  }
-}
-
-export async function createEquipment(prevState: unknown, formData: FormData) {
-  try {
-    const rawData = Object.fromEntries(formData.entries());
-    const validatedData = await CreateEquipmentSchema.safeParseAsync(rawData);
-
-    if (!validatedData.success) {
-      return {
-        success: false,
-        message: null,
-        errors: validatedData.error.flatten().fieldErrors,
-      };
-    }
-
-    const {
-      id,
-      classificationId,
-      equipmentStatusId,
-      functionalLocationId,
-      sortField,
-      description,
-    } = validatedData.data;
-
-    const equipmentExists = await prisma.equipment.findFirst({
-      where: {
-        id: id,
-      },
-    });
-
-    if (equipmentExists) {
-      return {
-        success: false,
-        message: "Equipment already exists",
-        errors: {
-          id: ["Equipment already exists"],
-        },
-      };
-    }
-
-    if (
-      functionalLocationId !== "undefined" &&
-      functionalLocationId &&
-      functionalLocationId?.length > 1
-    ) {
-      const functionalLocation = await prisma.functionalLocation.findUnique({
-        where: {
-          id: functionalLocationId,
-        },
-      });
-
-      if (!functionalLocation) {
-        return {
-          success: false,
-          message: "Functional location is not exists",
-          errors: {
-            functionalLocationId: ["Functional location is not exists"],
-          },
-        };
-      }
-    }
-
-    await prisma.equipment.create({
-      data: {
-        id: id,
-        classificationId: classificationId,
-        equipmentStatusId: equipmentStatusId,
-        functionalLocationId:
-          functionalLocationId === "undefined" ? null : functionalLocationId,
-        sortField: sortField,
-        description: description,
-      },
-    });
-
-    return {
-      success: true,
-      message: "Equipment created successfully",
-      errors: null,
-    };
-  } catch (error) {
-    if (error instanceof Error) {
-      return {
-        success: false,
-        message: error.message,
-        errors: null,
-      };
-    }
-
-    return {
-      success: false,
-      message: "Something went wrong",
+      message:
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred.",
       errors: null,
     };
   }

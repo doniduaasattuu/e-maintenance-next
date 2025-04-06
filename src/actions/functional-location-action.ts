@@ -31,8 +31,8 @@ export async function getFunctionalLocations({
   sortBy = "id",
   query,
 }: GetFunclocsParams): Promise<PaginatedFunctionalLocations> {
-  const skip = (page - 1) * Number(perPage);
-  const take = Number(perPage);
+  const skip = (page - 1) * parseInt(perPage);
+  const take = parseInt(perPage);
 
   const [functionalLocations, total] = await prisma.$transaction([
     prisma.functionalLocation.findMany({
@@ -62,7 +62,7 @@ export async function getFunctionalLocations({
 
   return {
     functionalLocations,
-    totalPages: Math.ceil(total / Number(perPage)),
+    totalPages: Math.ceil(total / parseInt(perPage)),
   };
 }
 

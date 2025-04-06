@@ -19,7 +19,7 @@ export default async function FunctionalLocationIndexPage({
   const { query, order, sortBy, page, perPage } = await searchParams;
 
   const { functionalLocations, totalPages } = await getFunctionalLocations({
-    page: Number(page ?? 1),
+    page: parseInt(page ?? 1),
     orderBy: order,
     query: query,
     sortBy: sortBy,
