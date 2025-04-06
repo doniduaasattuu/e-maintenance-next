@@ -71,8 +71,3 @@ export const UpdatePasswordSchema = BaseUserSchema.pick({
     message: "Password don't match",
     path: ["confirm"],
   });
-
-export class UserValidation {
-  static readonly REGISTER: z.ZodType = RegisterUserSchema;
-  static readonly LOGIN: z.ZodType = LoginUserSchema;
-}

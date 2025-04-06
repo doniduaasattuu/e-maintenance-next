@@ -17,7 +17,7 @@ import Link from "next/link";
 
 type FunclocFields = { id: string; description: string };
 
-type FunctionalLocationProps = {
+type FunctionalLocationFormProps = {
   form: UseFormReturn<FunclocFields, unknown, undefined>;
   onSubmit: React.FormEventHandler<HTMLFormElement>;
   control: Control<FunclocFields, unknown>;
@@ -33,7 +33,7 @@ export default function FunctionalLocationForm({
   pending,
   lastInserted,
   isEditing = false,
-}: FunctionalLocationProps) {
+}: FunctionalLocationFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={onSubmit} className="space-y-4">

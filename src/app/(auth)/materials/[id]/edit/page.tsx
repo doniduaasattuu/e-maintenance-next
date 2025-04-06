@@ -5,6 +5,7 @@ import { getMaterial } from "@/actions/material-action";
 import MaterialEditForm from "@/components/material-edit-form";
 import { getUnits } from "@/actions/unit-action";
 import FormCard from "@/components/form-card";
+import { Unit } from "@/types/unit";
 
 export default async function MaterialEditPage({
   params,
@@ -16,7 +17,7 @@ export default async function MaterialEditPage({
   const material = await getMaterial({
     id: id,
   });
-  const units = await getUnits();
+  const units: Unit[] | null = await getUnits();
 
   if (!material) {
     return <p>Material is not exists</p>;

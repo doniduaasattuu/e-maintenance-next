@@ -28,10 +28,6 @@ export default async function MaterialPage({
     unitId: Number(unitId),
   });
 
-  if (!materials) {
-    return null;
-  }
-
   return (
     <TableLayout>
       <MaterialHeader />

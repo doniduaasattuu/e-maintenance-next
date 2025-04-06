@@ -121,7 +121,7 @@ model Unit {
 model Material {
   id                 String              @id @db.Char(8)
   name               String
-  price              Int
+  price              Int                 @default(0)
   equipmentMaterials EquipmentMaterial[]
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt

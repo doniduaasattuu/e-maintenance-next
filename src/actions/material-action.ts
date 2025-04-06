@@ -1,13 +1,13 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { MaterialWithEquipments } from "@/types/prisma-types";
+import { Material, MaterialWithRelations } from "@/types/material";
 import {
   CreateMaterialSchema,
   EditMateriaSchema,
 } from "@/validations/material-validation";
 
-type getMaterialParams = {
+type GetMaterialParams = {
   page?: number;
   perPage?: string;
   orderBy?: string;
@@ -17,6 +17,11 @@ type getMaterialParams = {
   includeEquipments?: boolean;
 };
 
+type PaginatedMaterials = {
+  materials: Material[];
+  totalPages: number;
+};
+
 export async function getMaterials({
   page = 1,
   perPage = "15",
@@ -24,82 +29,160 @@ export async function getMaterials({
   sortBy = "id",
   query,
   unitId,
-  includeEquipments = false,
-}: getMaterialParams) {
+}: GetMaterialParams): Promise<PaginatedMaterials> {
   const skip = (page - 1) * Number(perPage);
-  const allMaterials = await prisma.material.findMany({
-    orderBy: { [sortBy]: orderBy as "asc" | "desc" },
-    where: {
-      ...(query && {
-        OR: [
-          { id: { contains: query, mode: "insensitive" } },
-          { name: { contains: query, mode: "insensitive" } },
-        ],
-      }),
-      ...(unitId && {
-        unitId: unitId,
-      }),
-    },
-    include: {
-      unit: true,
-      equipmentMaterials: includeEquipments
-        ? {
-            select: {
-              equipment: {
-                select: {
-                  id: true,
-                  description: true,
+  const take = parseInt(perPage);
+
+  const [materials, total] = await prisma.$transaction([
+    prisma.material.findMany({
+      skip,
+      take,
+      orderBy: { [sortBy]: orderBy as "asc" | "desc" },
+      where: {
+        ...(query && {
+          OR: [
+            { id: { contains: query, mode: "insensitive" } },
+            { name: { contains: query, mode: "insensitive" } },
+            {
+              equipmentMaterials: {
+                some: {
+                  equipment: {
+                    OR: [
+                      { id: { contains: query, mode: "insensitive" } },
+                      { sortField: { contains: query, mode: "insensitive" } },
+                    ],
+                  },
                 },
               },
-              quantity: true,
             },
-          }
-        : false,
-    },
-  });
-
-  const total = allMaterials.length;
-
-  const paginatedMaterials = allMaterials.slice(skip, skip + Number(perPage));
+          ],
+        }),
+      },
+      include: {
+        unit: {
+          select: {
+            id: true,
+            description: true,
+          },
+        },
+      },
+    }),
+    prisma.material.count({
+      where: {
+        ...(query && {
+          OR: [
+            { id: { contains: query, mode: "insensitive" } },
+            { name: { contains: query, mode: "insensitive" } },
+            {
+              equipmentMaterials: {
+                some: {
+                  equipment: {
+                    OR: [
+                      { id: { contains: query, mode: "insensitive" } },
+                      { sortField: { contains: query, mode: "insensitive" } },
+                    ],
+                  },
+                },
+              },
+            },
+          ],
+        }),
+        ...(unitId && {
+          unitId: unitId,
+        }),
+      },
+    }),
+  ]);
 
   return {
-    materials: paginatedMaterials,
-    total,
-    page,
-    perPage,
-    totalPages: Math.ceil(total / Number(perPage)),
+    materials,
+    totalPages: Math.ceil(total / parseInt(perPage)),
   };
 }
 
 export async function getMaterial({
   id,
-  includeEquipments,
 }: {
   id: string;
   includeEquipments?: boolean;
-}): Promise<MaterialWithEquipments | null> {
+}): Promise<MaterialWithRelations | null> {
   const material = await prisma.material.findUnique({
     where: { id },
     include: {
       unit: true,
-      equipmentMaterials: includeEquipments
-        ? {
+      equipmentMaterials: {
+        select: {
+          equipment: {
             select: {
-              equipment: {
-                select: {
-                  id: true,
-                  sortField: true,
-                  description: true,
-                },
-              },
-              quantity: true,
+              id: true,
+              sortField: true,
+              description: true,
             },
-          }
-        : false,
+          },
+          quantity: true,
+        },
+      },
     },
   });
 
-  return material as MaterialWithEquipments;
+  return material;
+}
+
+export async function createMaterial(prevState: unknown, formData: FormData) {
+  try {
+    const rawData = Object.fromEntries(formData.entries());
+    const validatedData = CreateMaterialSchema.safeParse(rawData);
+
+    if (!validatedData.success) {
+      return {
+        success: false,
+        message: "Validation Error",
+        errors: validatedData.error.flatten().fieldErrors,
+      };
+    }
+
+    const { id, name, price, unitId } = validatedData.data;
+
+    const materialExists = await prisma.material.findUnique({
+      where: {
+        id: id,
+      },
+    });
+
+    if (materialExists) {
+      return {
+        success: false,
+        message: "Material already exists",
+        errors: {
+          id: ["Material already exists"],
+        },
+      };
+    }
+
+    await prisma.material.create({
+      data: {
+        id: id,
+        name: name,
+        price: Number(price),
+        unitId: Number(unitId),
+      },
+    });
+
+    return {
+      success: true,
+      message: "Material created successfully",
+      errors: null,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message:
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred.",
+      errors: null,
+    };
+  }
 }
 
 export async function editMaterial(prevState: unknown, formData: FormData) {
@@ -110,14 +193,14 @@ export async function editMaterial(prevState: unknown, formData: FormData) {
     if (!validatedData.success) {
       return {
         success: false,
-        message: null,
+        message: "Validation Error",
         errors: validatedData.error.flatten().fieldErrors,
       };
     }
 
     const { id, name, price, unitId } = validatedData.data;
 
-    const materialExists = await prisma.material.findFirst({
+    const materialExists = await prisma.material.findUnique({
       where: {
         id: id,
       },
@@ -140,7 +223,7 @@ export async function editMaterial(prevState: unknown, formData: FormData) {
       data: {
         name: name,
         price: Number(price),
-        unitId: unitId === "undefined" ? null : Number(unitId),
+        unitId: Number(unitId),
       },
     });
 
@@ -150,79 +233,12 @@ export async function editMaterial(prevState: unknown, formData: FormData) {
       errors: null,
     };
   } catch (error) {
-    if (error instanceof Error) {
-      return {
-        success: false,
-        message: error.message,
-        errors: null,
-      };
-    }
-
     return {
       success: false,
-      message: "Something went wrong",
-      errors: null,
-    };
-  }
-}
-
-export async function createMaterial(prevState: unknown, formData: FormData) {
-  try {
-    const rawData = Object.fromEntries(formData.entries());
-    const validatedData = CreateMaterialSchema.safeParse(rawData);
-
-    if (!validatedData.success) {
-      return {
-        success: false,
-        message: null,
-        errors: validatedData.error.flatten().fieldErrors,
-      };
-    }
-
-    const { id, name, price, unitId } = validatedData.data;
-
-    const materialExists = await prisma.material.findFirst({
-      where: {
-        id: id,
-      },
-    });
-
-    if (materialExists) {
-      return {
-        success: false,
-        message: "Material already exists",
-        errors: {
-          id: ["Material already exists"],
-        },
-      };
-    }
-
-    await prisma.material.create({
-      data: {
-        id: id,
-        name: name,
-        price: Number(price),
-        unitId: unitId === "undefined" ? null : Number(unitId),
-      },
-    });
-
-    return {
-      success: true,
-      message: "Material created successfully",
-      errors: null,
-    };
-  } catch (error) {
-    if (error instanceof Error) {
-      return {
-        success: false,
-        message: error.message,
-        errors: null,
-      };
-    }
-
-    return {
-      success: false,
-      message: "Something went wrong",
+      message:
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred.",
       errors: null,
     };
   }

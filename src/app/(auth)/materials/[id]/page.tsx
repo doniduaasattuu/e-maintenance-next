@@ -7,8 +7,8 @@ import TableLayout from "@/layouts/table-layout";
 import { getMaterial } from "@/actions/material-action";
 import { formatCurrency } from "@/lib/utils";
 import EquipmentList from "@/components/equipment-list";
-import { Material } from "@/types/material";
 import FormCard from "@/components/form-card";
+import { SimpleEquipment } from "@/types/equipment";
 
 export default async function MaterialPage({
   params,
@@ -21,15 +21,16 @@ export default async function MaterialPage({
     includeEquipments: true,
   });
 
-  if (!material) {
-    return <p>Material is not exists</p>;
-  }
+  if (!material) return <p>Material is not exists</p>;
 
-  const data = material as unknown as Material;
-  const equipments =
-    data.equipmentMaterials.map((item) => {
-      return item.equipment;
-    }) || [];
+  let equipments: SimpleEquipment[] | [] = [];
+
+  if (material.equipmentMaterials) {
+    equipments =
+      material.equipmentMaterials.map((item) => {
+        return item.equipment as SimpleEquipment;
+      }) || [];
+  }
 
   return (
     <TableLayout>
@@ -67,20 +68,17 @@ export default async function MaterialPage({
           </div>
         </div>
       </FormCard>
-
-      {equipments && equipments.length >= 1 ? (
-        <FormCard>
-          <HeaderCard
-            header="Equipments"
-            content="List of equipment that uses this material"
-          />
+      <FormCard>
+        <HeaderCard
+          header="Equipments"
+          content="List of equipment that uses this material"
+        />
+        {equipments && equipments.length >= 1 ? (
           <EquipmentList equipments={equipments} />
-        </FormCard>
-      ) : (
-        <p className="text-sm font-normal text-muted-foreground">
-          This material doesn&apos;t have any relations.
-        </p>
-      )}
+        ) : (
+          <p className="text-sm font-normal text-muted-foreground">Empty.</p>
+        )}
+      </FormCard>
     </TableLayout>
   );
 }

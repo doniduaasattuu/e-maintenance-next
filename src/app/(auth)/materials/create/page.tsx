@@ -4,9 +4,10 @@ import HeaderCard from "@/components/header-card";
 import TableLayout from "@/layouts/table-layout";
 import { getUnits } from "@/actions/unit-action";
 import FormCard from "@/components/form-card";
+import { Unit } from "@/types/unit";
 
 export default async function MaterialCreatePage() {
-  const units = await getUnits();
+  const units: Unit[] | null = await getUnits();
 
   return (
     <TableLayout>

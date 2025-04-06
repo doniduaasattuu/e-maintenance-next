@@ -12,32 +12,14 @@ import {
 import { formatCurrency, formatDate } from "@/lib/utils";
 import Link from "next/link";
 import { Roboto_Mono } from "next/font/google";
+import { Material } from "@/types/material";
 
 const robotoMono = Roboto_Mono({ subsets: ["latin"] });
 
 export default function MaterialTable({
   materials,
 }: {
-  materials: ({
-    unit: {
-      id: number;
-      createdAt: Date;
-      updatedAt: Date;
-      description: string;
-    } | null;
-    equipmentMaterials: {
-      equipmentId: string;
-      materialId: string;
-      quantity: number;
-    }[];
-  } & {
-    id: string;
-    name: string;
-    price: number;
-    createdAt: Date;
-    updatedAt: Date;
-    unitId: number | null;
-  })[];
+  materials: Material[];
 }) {
   return (
     <Table>
@@ -71,7 +53,7 @@ export default function MaterialTable({
                     {material.id}
                   </Link>
                 </TableCell>
-                <TableCell className="font-light max-w-xl truncate">
+                <TableCell className="font-light max-w-sm truncate">
                   {material.name}
                 </TableCell>
                 <TableCell className="font-light text-muted-foreground">

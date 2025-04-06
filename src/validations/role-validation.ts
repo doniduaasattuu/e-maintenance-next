@@ -5,7 +5,3 @@ export const BaseRoleSchema = z.object({
 });
 
 export const CreateRoleSchema = BaseRoleSchema;
-
-export class RoleValidation {
-  static readonly CREATE: z.ZodType = CreateRoleSchema;
-}

@@ -20,9 +20,7 @@ export default async function FunctionalLocationPage({
     id,
   });
 
-  if (!functionalLocation) {
-    return <p>Functinoal location is not exists</p>;
-  }
+  if (!functionalLocation) return <p>Functinoal location is not exists</p>;
 
   return (
     <TableLayout>

@@ -36,7 +36,3 @@ export const EditFileSchema = BaseFileSchema.pick({
 }).partial({
   file: true,
 });
-
-export class FileValidation {
-  static readonly CREATE: z.ZodType = CreateFileSchema;
-}
