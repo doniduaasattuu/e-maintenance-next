@@ -1,5 +1,4 @@
 "use client";
-import React from "react";
 
 import {
   Form,
@@ -9,95 +8,47 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
+} from "./ui/form";
+import { Input } from "./ui/input";
 import LoadingButton from "./loading-button";
-import { useFormState } from "react-dom";
-import { editFile } from "@/actions/file-action";
-import { EditFileSchema } from "@/validations/file-validation";
+import {
+  Control,
+  UseFormClearErrors,
+  UseFormReturn,
+  UseFormSetError,
+} from "react-hook-form";
+import React from "react";
 import { ALLOWED_FILE_TYPES, MAX_FILE_SIZE } from "@/lib/config";
 
-const editFileFormSchema = EditFileSchema;
-type EditFileSchema = z.infer<typeof editFileFormSchema>;
-
-const initialState = {
-  success: false,
-  message: "",
-  errors: null,
+type FileFields = {
+  id?: string;
+  name: string;
+  tags?: string | undefined;
+  file: File;
 };
 
-type FileEditProps = {
-  file: {
-    id: string;
-    name: string;
-    createdAt: Date;
-    updatedAt: Date;
-    userId: number | null;
-    tags: string | null;
-    type: string;
-    path: string;
-  };
+type FileFormProps = {
+  form: UseFormReturn<FileFields, unknown, undefined>;
+  onSubmit: React.FormEventHandler<HTMLFormElement>;
+  control: Control<FileFields, unknown>;
+  pending: boolean | undefined;
+  setError: UseFormSetError<FileFields>;
+  clearErrors: UseFormClearErrors<FileFields>;
+  isEditing?: boolean | undefined;
 };
 
-export default function FileEditForm({ file }: FileEditProps) {
-  const [state, formAction, pending] = useFormState(editFile, initialState);
-  const form = useForm<EditFileSchema>({
-    resolver: zodResolver(editFileFormSchema),
-    defaultValues: {
-      id: file.id,
-      name: file.name,
-      tags: file.tags ?? "",
-    },
-  });
-
-  const { control, setError, reset, handleSubmit, clearErrors } = form;
-
-  React.useEffect(() => {
-    if (state.errors) {
-      Object.entries(state.errors).forEach(([field, errors]) => {
-        if (errors && errors.length > 0) {
-          setError(field as keyof EditFileSchema, {
-            message: errors[0],
-          });
-        }
-      });
-    }
-  }, [setError, state]);
-
-  React.useEffect(() => {
-    if (state.success) {
-      toast.success("Success", {
-        description: state.message,
-      });
-    }
-  }, [state, reset]);
-
-  const onUpdate = handleSubmit((values) => {
-    const formData = new FormData();
-
-    Object.entries(values).forEach(([key, value]) => {
-      if (value !== undefined) {
-        formData.append(key, value);
-      }
-    });
-
-    React.startTransition(() => {
-      formAction(formData);
-    });
-  });
-
+export default function FileForm({
+  form,
+  onSubmit,
+  control,
+  pending,
+  setError,
+  clearErrors,
+  isEditing = false,
+}: FileFormProps) {
   return (
     <Form {...form}>
-      <form onSubmit={onUpdate} className="space-y-4">
-        <FormField
-          control={control}
-          name="id"
-          render={({ field }) => <Input {...field} hidden />}
-        />
+      <form onSubmit={onSubmit} className="space-y-4">
         <FormField
           control={control}
           name="name"
@@ -120,11 +71,11 @@ export default function FileEditForm({ file }: FileEditProps) {
               <FormControl>
                 <Input {...field} />
               </FormControl>
-              <FormMessage />{" "}
               <FormDescription>
                 Add tags separated by spaces (&quot; &quot;) for categorization
                 and search optimization.
               </FormDescription>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -174,7 +125,11 @@ export default function FileEditForm({ file }: FileEditProps) {
         />
 
         <div className="pt-3">
-          <LoadingButton processing={pending} label="Update" type="submit" />
+          <LoadingButton
+            processing={pending}
+            label={isEditing ? "Update" : "Submit"}
+            type="submit"
+          />
         </div>
       </form>
     </Form>

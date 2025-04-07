@@ -1,25 +1,14 @@
 "use client";
 import React from "react";
 
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import LoadingButton from "./loading-button";
 import { useFormState } from "react-dom";
 import { CreateFileSchema } from "@/validations/file-validation";
 import { createFile } from "@/actions/file-action";
-import { ALLOWED_FILE_TYPES, MAX_FILE_SIZE } from "@/lib/config";
+import FileForm from "./file-form";
 
 const createFileFormSchema = CreateFileSchema;
 type CreateFileSchema = z.infer<typeof createFileFormSchema>;
@@ -80,7 +69,9 @@ export default function FileCreateForm() {
     const formData = new FormData();
 
     Object.entries(values).forEach(([key, value]) => {
-      formData.append(key, value);
+      if (value !== undefined) {
+        formData.append(key, value);
+      }
     });
 
     React.startTransition(() => {
@@ -89,87 +80,13 @@ export default function FileCreateForm() {
   });
 
   return (
-    <Form {...form}>
-      <form onSubmit={onUpload} className="space-y-4">
-        <FormField
-          control={control}
-          name="name"
-          render={({ field }) => (
-            <FormItem className="max-w-xl">
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="tags"
-          render={({ field }) => (
-            <FormItem className="max-w-xl">
-              <FormLabel>Tags</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormDescription>
-                Add tags separated by spaces (&quot; &quot;) for categorization
-                and search optimization.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="file"
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          render={({ field: { onChange, value, ref, ...rest } }) => (
-            <FormItem className="max-w-xl">
-              <FormLabel>File</FormLabel>
-              <FormControl>
-                <Input
-                  type="file"
-                  accept={ALLOWED_FILE_TYPES.map((ext) => `.${ext}`).join(", ")}
-                  onChange={(e) => {
-                    const file = e.target.files?.[0] || undefined;
-                    if (file) {
-                      if (file.size > MAX_FILE_SIZE) {
-                        setError("file", {
-                          message: `File size has exceeded it max limit of ${
-                            MAX_FILE_SIZE / 1024 / 1024
-                          }MB`,
-                        });
-                      } else {
-                        clearErrors("file");
-                        onChange(file);
-                      }
-                    }
-                  }}
-                  ref={ref}
-                  {...rest}
-                />
-              </FormControl>
-              <FormDescription>
-                Allowed file types:{" "}
-                {ALLOWED_FILE_TYPES.map(
-                  (extension, index) =>
-                    `${
-                      extension +
-                      (index !== ALLOWED_FILE_TYPES.length - 1 ? ", " : ".")
-                    }`
-                )}
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className="pt-3">
-          <LoadingButton processing={pending} label="Submit" type="submit" />
-        </div>
-      </form>
-    </Form>
+    <FileForm
+      form={form}
+      onSubmit={onUpload}
+      control={control}
+      pending={pending}
+      setError={setError}
+      clearErrors={clearErrors}
+    />
   );
 }

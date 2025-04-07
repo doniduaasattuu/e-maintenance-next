@@ -44,6 +44,16 @@ export async function getFunctionalLocations({
           OR: [
             { id: { contains: query, mode: "insensitive" } },
             { description: { contains: query, mode: "insensitive" } },
+            {
+              equipments: {
+                some: {
+                  OR: [
+                    { id: { contains: query, mode: "insensitive" } },
+                    { description: { contains: query, mode: "insensitive" } },
+                  ],
+                },
+              },
+            },
           ],
         },
       }),
@@ -54,6 +64,16 @@ export async function getFunctionalLocations({
           OR: [
             { id: { contains: query, mode: "insensitive" } },
             { description: { contains: query, mode: "insensitive" } },
+            {
+              equipments: {
+                some: {
+                  OR: [
+                    { id: { contains: query, mode: "insensitive" } },
+                    { description: { contains: query, mode: "insensitive" } },
+                  ],
+                },
+              },
+            },
           ],
         },
       }),
