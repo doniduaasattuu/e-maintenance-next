@@ -8,6 +8,8 @@ import { getServerSession } from "next-auth";
 import { v4 as uuid } from "uuid";
 import fs from "fs/promises";
 import path from "path";
+import { deleteFileFromFilesystem } from "./file-action";
+import { revalidatePath } from "next/cache";
 
 type getFindingsParams = {
   page?: number;
@@ -244,5 +246,63 @@ async function saveFile(file: File, fileName: string): Promise<string> {
   } catch (error) {
     console.error("Error saving file:", error);
     throw error;
+  }
+}
+
+export async function deleteFindingById(id: string) {
+  try {
+    const finding = await prisma.finding.findUnique({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!finding) {
+      return {
+        success: false,
+        message: "Finding not found",
+      };
+    }
+
+    const images = await prisma.findingImage.findMany({
+      where: {
+        findingId: finding.id,
+      },
+    });
+
+    if (images) {
+      // DELETE IMAGES FROM SYSTEM
+      images.map((image) => {
+        deleteFileFromFilesystem(image.path);
+      });
+
+      // DELETE IMAGE DB RELATION
+      await prisma.findingImage.deleteMany({
+        where: {
+          findingId: finding.id,
+        },
+      });
+    }
+
+    await prisma.finding.delete({
+      where: {
+        id: finding.id,
+      },
+    });
+
+    revalidatePath("/findings");
+
+    return {
+      success: true,
+      message: "Finding deleted successfully",
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message:
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred.",
+    };
   }
 }

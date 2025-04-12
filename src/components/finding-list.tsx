@@ -11,12 +11,10 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import { FindingStatus } from "@/types/finding-status";
-import { Edit, ImageOff, MoreHorizontal, Trash2 } from "lucide-react";
+import { ImageOff } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { Separator } from "./ui/separator";
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import OptionsDropdown from "./options-dropdown";
-import Link from "next/link";
+import FindingAction from "./finding-action";
 
 export default function FindingList({
   findings,
@@ -98,23 +96,7 @@ export default function FindingList({
                 <p className="text-xs text-muted-foreground">
                   {formatDate(finding.createdAt)}
                 </p>
-                <OptionsDropdown
-                  trigger={<MoreHorizontal className="text-muted-foreground" />}
-                >
-                  <DropdownMenuItem asChild>
-                    <Link
-                      href={`/findings/${finding.id}/edit`}
-                      className="font-sm link"
-                    >
-                      <Edit />
-                      Edit
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Trash2 />
-                    Delete
-                  </DropdownMenuItem>
-                </OptionsDropdown>
+                <FindingAction finding={finding} />
               </div>
             </CardContent>
           </Card>
