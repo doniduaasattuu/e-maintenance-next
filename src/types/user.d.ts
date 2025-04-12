@@ -6,3 +6,9 @@ export type SessionUser = IntrinsicAttributes & {
   email?: string | null;
   image?: string | null;
 };
+
+export type SimpleUser = {
+  id: number;
+  name: string;
+  email: string;
+};

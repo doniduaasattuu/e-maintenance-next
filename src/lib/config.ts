@@ -8,3 +8,13 @@ export const ALLOWED_FILE_TYPES: readonly [string, ...string[]] = [
   "jpeg",
   "png",
 ];
+
+export const ALLOWED_IMAGE_TYPES: readonly [string, ...string[]] = [
+  "jpg",
+  "jpeg",
+  "png",
+  "webp",
+  "gif",
+];
+
+export const MAX_FILE_COUNT = 5;

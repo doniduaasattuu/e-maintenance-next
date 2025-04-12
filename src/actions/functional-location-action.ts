@@ -15,7 +15,7 @@ type GetFunclocsParams = {
   page?: number;
   perPage?: string;
   orderBy?: string;
-  sortBy?: "id" | "description" | string;
+  sortBy?: string;
   query?: string;
 };
 

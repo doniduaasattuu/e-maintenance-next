@@ -589,6 +589,99 @@ async function main() {
     ],
   });
 
+  await prisma.findingStatus.createMany({
+    data: [
+      {
+        description: "Open",
+      },
+      {
+        description: "Close",
+      },
+    ],
+  });
+
+  const [open, close] = await Promise.all([
+    prisma.findingStatus.findFirst({
+      where: {
+        description: "Open",
+      },
+    }),
+    prisma.findingStatus.findFirst({
+      where: {
+        description: "Close",
+      },
+    }),
+  ]);
+
+  if (!open || !close) {
+    throw new Error("Finding status failed to seed");
+  }
+
+  await prisma.finding.createMany({
+    data: [
+      {
+        description:
+          "Out terminal phase R module P-2-3-A SP7 panas lebih dari 90 degree",
+        equipmentId: "ELP001074",
+        findingStatusId: close.id,
+      },
+      {
+        description:
+          "Bearing DE indikasi motor housing, tambah grease 2x50 masih tetap kasar",
+        equipmentId: "EMO000123",
+        findingStatusId: open.id,
+      },
+      {
+        description:
+          "Penambahan platform untuk mempermudah pekerjaan maintenance slip ring pulper SP-03 SP3.",
+        equipmentId: "EMO003218",
+        findingStatusId: open.id,
+      },
+      {
+        description: "Replacement contactor and module set for P-B-9 SP7",
+        findingStatusId: open.id,
+      },
+    ],
+  });
+
+  const [first, second] = await Promise.all([
+    prisma.finding.findFirst({
+      where: {
+        equipmentId: "ELP001074",
+      },
+    }),
+    prisma.finding.findFirst({
+      where: {
+        equipmentId: "EMO000123",
+      },
+    }),
+  ]);
+
+  if (!first || !second) {
+    throw new Error("Finding not found");
+  }
+
+  await prisma.findingImage.createMany({
+    data: [
+      {
+        findingId: first.id,
+        path: "/images/findings/27c55fb8-79aa-384d-9d8d-6051b9858cf3.jpg",
+      },
+      {
+        findingId: first.id,
+        path: "/images/findings/670ade30-fe2b-372a-94a2-0409e61c9753.jpg",
+      },
+      {
+        findingId: second.id,
+        path: "/images/findings/670ade30-fe2b-372a-94a2-0409e61c9753.jpg",
+      },
+      {
+        findingId: second.id,
+        path: "/images/findings/27c55fb8-79aa-384d-9d8d-6051b9858cf3.jpg",
+      },
+    ],
+  });
+
   console.log("Seeding selesai!");
 }
 

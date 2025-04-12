@@ -36,6 +36,7 @@ model User {
   equipments          Equipment[]
   functionalLocations FunctionalLocation[]
   files               File[]
+  findings            Finding[]
 
   @@map("users")
 }
@@ -48,7 +49,8 @@ model FunctionalLocation {
   equipments  Equipment[]
   userId      Int?
 
-  user User? @relation(fields: [userId], references: [id])
+  user     User?     @relation(fields: [userId], references: [id])
+  findings Finding[]
 
   @@index([id, description])
   @@map("functional_locations")
@@ -91,6 +93,7 @@ model Equipment {
   functionalLocation FunctionalLocation? @relation(fields: [functionalLocationId], references: [id])
   classification     Classification      @relation(fields: [classificationId], references: [id])
   equipmentFiles     EquipmentFile[]
+  findings           Finding[]
 
   @@index([id, sortField, description])
   @@map("equipments")
@@ -157,4 +160,50 @@ model EquipmentFile {
 
   @@id([equipmentId, fileId])
   @@map("equipment_file")
+}
+
+model FindingStatus {
+  id          Int      @id @default(autoincrement())
+  description String   @db.VarChar(50)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("finding_statuses")
+}
+
+model Finding {
+  id                   String   @id @default(uuid())
+  description          String
+  notification         String?  @db.Char(8)
+  equipmentId          String?
+  functionalLocationId String?
+  userId               Int?
+  findingStatusId      Int
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  equipment          Equipment?          @relation(fields: [equipmentId], references: [id])
+  functionalLocation FunctionalLocation? @relation(fields: [functionalLocationId], references: [id])
+  user               User?               @relation(fields: [userId], references: [id])
+  findingImages      FindingImage[]
+
+  @@map("findings")
+}
+
+model FindingImage {
+  id          String      @id @default(uuid())
+  findingId   String
+  path        String
+  imageStatus ImageStatus @default(Before)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  finding Finding @relation(fields: [findingId], references: [id])
+
+  @@map("finding_images")
+}
+
+enum ImageStatus {
+  Before
+  After
 }

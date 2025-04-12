@@ -6,15 +6,15 @@ import {
   EditFileSchema,
 } from "@/validations/file-validation";
 import fs from "fs/promises";
+import path from "path";
 import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
-import path from "path";
 
 type getFileParams = {
   page?: number;
   perPage?: string;
   orderBy?: string;
-  sortBy?: "id" | "description" | string;
+  sortBy?: string;
   query?: string;
 };
 
@@ -26,29 +26,38 @@ export async function getFiles({
   query,
 }: getFileParams) {
   const skip = (page - 1) * Number(perPage);
+  const take = parseInt(perPage);
 
-  const allFiles = await prisma.file.findMany({
-    orderBy: { [sortBy]: orderBy as "asc" | "desc" },
-    ...(query && {
-      where: {
-        OR: [
-          { name: { contains: query, mode: "insensitive" } },
-          { tags: { contains: query, mode: "insensitive" } },
-        ],
-      },
+  const [files, totalPages] = await prisma.$transaction([
+    prisma.file.findMany({
+      skip,
+      take,
+      orderBy: { [sortBy]: orderBy as "asc" | "desc" },
+      ...(query && {
+        where: {
+          OR: [
+            { name: { contains: query, mode: "insensitive" } },
+            { tags: { contains: query, mode: "insensitive" } },
+          ],
+        },
+      }),
     }),
-  });
-
-  const total = allFiles.length;
-
-  const paginatedFiles = allFiles.slice(skip, skip + Number(perPage));
+    prisma.file.count({
+      orderBy: { [sortBy]: orderBy as "asc" | "desc" },
+      ...(query && {
+        where: {
+          OR: [
+            { name: { contains: query, mode: "insensitive" } },
+            { tags: { contains: query, mode: "insensitive" } },
+          ],
+        },
+      }),
+    }),
+  ]);
 
   return {
-    files: paginatedFiles,
-    total,
-    page,
-    perPage,
-    totalPages: Math.ceil(total / Number(perPage)),
+    files,
+    totalPages,
   };
 }
 
@@ -102,17 +111,12 @@ export async function createFile(prevState: unknown, formData: FormData) {
       errors: null,
     };
   } catch (error) {
-    if (error instanceof Error) {
-      return {
-        success: false,
-        message: error.message,
-        errors: null,
-      };
-    }
-
     return {
       success: false,
-      message: "Something went wrong",
+      message:
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred.",
       errors: null,
     };
   }
@@ -154,16 +158,13 @@ export async function deleteFileById(id: string) {
       message: "File deleted successfully",
     };
   } catch (error) {
-    if (error instanceof Error) {
-      return {
-        success: false,
-        message: error.message,
-      };
-    }
-
     return {
       success: false,
-      message: "Something went wrong",
+      message:
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred.",
+      errors: null,
     };
   }
 }
@@ -247,17 +248,12 @@ export async function editFile(prevState: unknown, formData: FormData) {
       errors: null,
     };
   } catch (error) {
-    if (error instanceof Error) {
-      return {
-        success: false,
-        message: error.message,
-        errors: null,
-      };
-    }
-
     return {
       success: false,
-      message: "Something went wrong",
+      message:
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred.",
       errors: null,
     };
   }
