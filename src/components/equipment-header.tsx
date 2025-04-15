@@ -6,7 +6,7 @@ import FilterDropdown from "./filter-dropdown";
 import AddButton from "./add-button";
 import { Classification } from "@/types/classification";
 import { EquipmentStatus } from "@/types/equipment-status";
-import { FilterStatus } from "./filter-status";
+import { FilterEquipmentStatus } from "./filter-equipment-status";
 import { FilterClassification } from "./filter-classification";
 import { DropdownMenuSeparator } from "./ui/dropdown-menu";
 
@@ -48,7 +48,7 @@ export default function EquipmentHeader({
           className="hidden md:flex"
           classifications={classifications}
         />
-        <FilterStatus
+        <FilterEquipmentStatus
           className="hidden md:flex"
           equipmentStatuses={equipmentStatuses}
         />
@@ -62,7 +62,7 @@ export default function EquipmentHeader({
           </span>
           <span className="md:hidden">
             <DropdownMenuSeparator />
-            <FilterStatus
+            <FilterEquipmentStatus
               className="w-full"
               equipmentStatuses={equipmentStatuses}
             />

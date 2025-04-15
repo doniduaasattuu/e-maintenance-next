@@ -17,15 +17,15 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { EquipmentStatus } from "@/types/equipment-status";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { FindingStatus } from "@/types/finding-status";
 
-export function FilterStatus({
+export function FilterFindingStatus({
   className,
-  equipmentStatuses,
+  findingStatuses,
 }: {
   className?: string | undefined;
-  equipmentStatuses: EquipmentStatus[] | null;
+  findingStatuses: FindingStatus[] | null;
 }) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -56,11 +56,11 @@ export function FilterStatus({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={cn("w-[140px] justify-between", className)}
+          className={cn("w-[120px] justify-between", className)}
         >
-          {value && equipmentStatuses
-            ? equipmentStatuses.find(
-                (equipmentStatus) => String(equipmentStatus.id) === value
+          {value && findingStatuses
+            ? findingStatuses.find(
+                (findingStatus) => String(findingStatus.id) === value
               )?.description
             : "Status"}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -71,11 +71,11 @@ export function FilterStatus({
           <CommandList>
             <CommandEmpty>No status found.</CommandEmpty>
             <CommandGroup>
-              {equipmentStatuses &&
-                equipmentStatuses.map((equipmentStatus) => (
+              {findingStatuses &&
+                findingStatuses.map((findingStatus) => (
                   <CommandItem
-                    key={equipmentStatus.id}
-                    value={String(equipmentStatus.id)}
+                    key={findingStatus.id}
+                    value={String(findingStatus.id)}
                     onSelect={(currentValue) => {
                       setValue(currentValue === value ? "" : currentValue);
                       setOpen(false);
@@ -84,12 +84,12 @@ export function FilterStatus({
                     <Check
                       className={cn(
                         "mr-2 h-4 w-4",
-                        value === String(equipmentStatus.id)
+                        value === String(findingStatus.id)
                           ? "opacity-100"
                           : "opacity-0"
                       )}
                     />
-                    {equipmentStatus.description}
+                    {findingStatus.description}
                   </CommandItem>
                 ))}
             </CommandGroup>

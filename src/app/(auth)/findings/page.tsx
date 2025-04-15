@@ -1,11 +1,9 @@
 import React from "react";
 import { getFindings } from "@/actions/finding-action";
-import AddButton from "@/components/add-button";
 import HeaderPage from "@/components/header-page";
 import GeneratePagination from "@/components/pagination";
-import SearchBar from "@/components/search-bar";
-import { Plus } from "lucide-react";
 import FindingList from "@/components/finding-list";
+import FindingHeader from "@/components/finding-header";
 
 export default async function FindingPage({
   searchParams,
@@ -16,15 +14,17 @@ export default async function FindingPage({
     sortBy: string;
     page: string;
     perPage: string;
+    status: string;
   };
 }) {
-  const { query, order, sortBy, page, perPage } = await searchParams;
+  const { query, order, sortBy, page, perPage, status } = await searchParams;
 
   const { findings, totalPages, findingStatuses } = await getFindings({
-    page: Number(page ?? 1),
+    page: parseInt(page ?? 1),
     orderBy: order,
     query: query,
     sortBy: sortBy,
+    findingStatusId: parseInt(status),
     perPage: perPage,
   });
 
@@ -34,10 +34,7 @@ export default async function FindingPage({
         header="Findings"
         content="Records of observations and issues identified during daily maintenance checks."
       />
-      <div className="flex justify-between space-x-2">
-        <SearchBar />
-        <AddButton url="/findings/create" label="New" icon={<Plus />} />
-      </div>
+      <FindingHeader findingStatuses={findingStatuses} />
       <FindingList findings={findings} findingStatuses={findingStatuses} />
       <GeneratePagination totalPages={totalPages} />
     </div>

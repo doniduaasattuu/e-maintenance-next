@@ -67,11 +67,10 @@ export default function FindingCreateForm({
       });
 
       reset({
-        notification: undefined,
-        equipmentId: undefined,
-        functionalLocationId: undefined,
+        notification: "",
+        equipmentId: "",
+        functionalLocationId: "",
         description: "",
-        images: undefined,
       });
     }
   }, [state, reset, getValues]);

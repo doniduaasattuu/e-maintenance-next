@@ -21,6 +21,7 @@ type getFindingsParams = {
   perPage?: string;
   orderBy?: string;
   sortBy?: string;
+  findingStatusId?: number;
   query?: string;
 };
 
@@ -32,9 +33,10 @@ type PaginatedFindings = {
 
 export async function getFindings({
   page = 1,
-  perPage = "15",
+  perPage = "8",
   orderBy = "desc",
   sortBy = "createdAt",
+  findingStatusId,
   query,
 }: getFindingsParams): Promise<PaginatedFindings> {
   const skip = (page - 1) * Number(perPage);
@@ -55,6 +57,11 @@ export async function getFindings({
               functionalLocationId: { contains: query, mode: "insensitive" },
             },
           ],
+        },
+      }),
+      ...(findingStatusId && {
+        where: {
+          findingStatusId: findingStatusId,
         },
       }),
       include: {
@@ -87,6 +94,9 @@ export async function getFindings({
             createdAt: true,
             updatedAt: true,
           },
+          orderBy: {
+            createdAt: "asc",
+          },
         },
       },
     }),
@@ -101,6 +111,11 @@ export async function getFindings({
               functionalLocationId: { contains: query, mode: "insensitive" },
             },
           ],
+        },
+      }),
+      ...(findingStatusId && {
+        where: {
+          findingStatusId: findingStatusId,
         },
       }),
     }),

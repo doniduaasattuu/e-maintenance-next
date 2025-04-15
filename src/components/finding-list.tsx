@@ -34,10 +34,10 @@ export default function FindingList({
                 {finding.findingImages && finding.findingImages.length > 0 ? (
                   <Carousel>
                     <CarouselContent>
-                      {finding.findingImages.map((image) => (
+                      {finding.findingImages.map((image, index: number) => (
                         <CarouselItem key={image.id}>
                           <Card className="p-0">
-                            <CardContent className="aspect-square p-0 rounded-md">
+                            <CardContent className="aspect-square p-0 rounded-md relative">
                               <div className="absolute z-10 text-xs p-2">
                                 <Badge
                                   variant={"secondary"}
@@ -45,6 +45,11 @@ export default function FindingList({
                                 >
                                   {image.imageStatus}
                                 </Badge>
+                              </div>
+                              <div className="absolute z-10 text-xs p-2 right-0">
+                                {`${index + 1} of ${
+                                  finding.findingImages?.length
+                                }`}
                               </div>
                               <div className="relative w-full h-full overflow-hidden rounded-md">
                                 <Image
@@ -92,7 +97,7 @@ export default function FindingList({
                 {finding.description}
               </p>
               <Separator className="mt-3" />
-              <div className="flex justify-between mt-3">
+              <div className="flex justify-between mt-3 items-center">
                 <p className="text-xs text-muted-foreground">
                   {formatDate(finding.createdAt)}
                 </p>

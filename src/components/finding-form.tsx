@@ -242,7 +242,6 @@ export default function FindingForm({
                           });
                         }
                       }
-                      onChange(undefined);
                     }
                   }}
                   required={!isEditing}
