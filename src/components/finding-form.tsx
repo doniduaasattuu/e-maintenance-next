@@ -16,6 +16,7 @@ import {
   UseFormClearErrors,
   UseFormReturn,
   UseFormSetError,
+  UseFormSetValue,
 } from "react-hook-form";
 import React from "react";
 import {
@@ -35,11 +36,12 @@ import { useSearchParams } from "next/navigation";
 import { FindingStatus } from "@/types/finding-status";
 
 type FindingFields = {
+  id?: string | undefined;
   description: string;
   notification?: string | undefined;
   equipmentId?: string | undefined;
   functionalLocationId?: string | undefined;
-  findingStatusId: number;
+  findingStatusId: number | string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   images?: any;
 };
@@ -50,6 +52,7 @@ type FileFormProps = {
   control: Control<FindingFields, unknown>;
   pending: boolean | undefined;
   setError: UseFormSetError<FindingFields>;
+  setValue: UseFormSetValue<FindingFields>;
   clearErrors: UseFormClearErrors<FindingFields>;
   isEditing?: boolean | undefined;
   findingStatuses: FindingStatus[] | null;
@@ -61,20 +64,43 @@ export default function FindingForm({
   control,
   pending,
   setError,
+  setValue,
   clearErrors,
   isEditing = false,
   findingStatuses,
 }: FileFormProps) {
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
-  const equipmentId: string | null = params.get("equipmentId");
-  const functionalLocationId: string | null = params.get(
+  const equipmentIdParam: string | null = params.get("equipmentId");
+  const functionalLocationIdParam: string | null = params.get(
     "functionalLocationId"
   );
+  const findingStatusId = String(
+    findingStatuses?.find((val) => val.description === "Open")?.id
+  );
+
+  React.useEffect(() => {
+    if (findingStatusId) {
+      setValue("findingStatusId", findingStatusId);
+    }
+
+    if (equipmentIdParam) {
+      setValue("equipmentId", equipmentIdParam);
+    }
+
+    if (functionalLocationIdParam) {
+      setValue("functionalLocationId", functionalLocationIdParam);
+    }
+  }, [equipmentIdParam, functionalLocationIdParam, findingStatusId, setValue]);
 
   return (
     <Form {...form}>
       <form onSubmit={onSubmit} className="space-y-4">
+        <FormField
+          control={control}
+          name="id"
+          render={({ field }) => <Input {...field} hidden />}
+        />
         <div className="grid grid-cols-2 max-w-xl space-x-2 sm:space-x-4 items-start">
           <FormField
             control={control}
@@ -88,16 +114,14 @@ export default function FindingForm({
                     defaultValue={
                       field.value
                         ? String(field.value)
-                        : String(
-                            findingStatuses?.find(
-                              (val) => val.description === "Open"
-                            )?.id ?? ""
-                          )
+                        : findingStatusId
+                        ? findingStatusId
+                        : ""
                     }
                   >
                     <FormControl>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Finding status" />
+                        <SelectValue placeholder="Status" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -137,7 +161,9 @@ export default function FindingForm({
                 <FormLabel>Equipment</FormLabel>
                 <FormControl>
                   <Input
-                    defaultValue={equipmentId ? equipmentId : undefined}
+                    defaultValue={
+                      equipmentIdParam ? equipmentIdParam : undefined
+                    }
                     {...field}
                   />
                 </FormControl>
@@ -155,7 +181,9 @@ export default function FindingForm({
                   <Input
                     {...field}
                     defaultValue={
-                      functionalLocationId ? functionalLocationId : undefined
+                      functionalLocationIdParam
+                        ? functionalLocationIdParam
+                        : undefined
                     }
                   />
                 </FormControl>
@@ -217,7 +245,7 @@ export default function FindingForm({
                       onChange(undefined);
                     }
                   }}
-                  required
+                  required={!isEditing}
                   ref={ref}
                   {...rest}
                 />

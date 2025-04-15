@@ -6,12 +6,17 @@ import {
 import { z } from "zod";
 
 export const BaseFindingSchema = z.object({
+  id: z.string().uuid(),
   description: z
     .string({ message: "Finding description is required" })
     .min(3)
     .max(500),
   notification: z.string().length(8).optional(),
-  equipmentId: z.string().min(9).max(9).toUpperCase().optional(),
+  equipmentId: z
+    .string()
+    .regex(/^[A-Z]{3}\d{6}$/, { message: "Invalid equipment format" })
+    .toUpperCase()
+    .optional(),
   functionalLocationId: z
     .string()
     .regex(/^[A-Z0-9]+(-[A-Z0-9]+)*$/, {
@@ -21,9 +26,7 @@ export const BaseFindingSchema = z.object({
     .max(100)
     .toUpperCase()
     .optional(),
-  findingStatusId: z
-    .union([z.string(), z.number()])
-    .transform((val) => Number(val)),
+  findingStatusId: z.union([z.string(), z.number()]),
   images: z
     .any()
     .refine((images) => {
@@ -54,4 +57,21 @@ export const StoreFindingSchema = BaseFindingSchema.pick({
   equipmentId: true,
   functionalLocationId: true,
   findingStatusId: true,
+});
+
+export const EditFindingSchema = BaseFindingSchema.pick({
+  id: true,
+  description: true,
+  notification: true,
+  equipmentId: true,
+  functionalLocationId: true,
+  findingStatusId: true,
+  images: true,
+}).partial({
+  id: true,
+  images: true,
+});
+
+export const UpdateFindingSchema = StoreFindingSchema.extend({
+  id: BaseFindingSchema.shape.id,
 });

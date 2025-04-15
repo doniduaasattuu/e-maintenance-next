@@ -6,13 +6,14 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useFormState } from "react-dom";
-import { CreateFindingSchema } from "@/validations/finding-validation";
-import { createFinding } from "@/actions/finding-action";
+import { EditFindingSchema } from "@/validations/finding-validation";
+import { editFinding } from "@/actions/finding-action";
 import FindingForm from "./finding-form";
 import { FindingStatus } from "@/types/finding-status";
+import { Finding } from "@/types/finding";
 
-const createFindingFormSchema = CreateFindingSchema;
-type CreateFindingSchema = z.infer<typeof createFindingFormSchema>;
+const editFindingFormSchema = EditFindingSchema;
+type EditFindingSchema = z.infer<typeof editFindingFormSchema>;
 
 const initialState = {
   success: false,
@@ -20,17 +21,24 @@ const initialState = {
   errors: null,
 };
 
-export default function FindingCreateForm({
+export default function FindingEditForm({
   findingStatuses,
+  finding,
 }: {
   findingStatuses: FindingStatus[] | null;
+  finding?: Finding;
 }) {
-  const [state, formAction, pending] = useFormState(
-    createFinding,
-    initialState
-  );
-  const form = useForm<CreateFindingSchema>({
-    resolver: zodResolver(createFindingFormSchema),
+  const [state, formAction, pending] = useFormState(editFinding, initialState);
+  const form = useForm<EditFindingSchema>({
+    resolver: zodResolver(editFindingFormSchema),
+    defaultValues: {
+      id: finding?.id ?? undefined,
+      notification: finding?.notification ?? undefined,
+      findingStatusId: finding?.findingStatusId ?? undefined,
+      equipmentId: finding?.equipment?.id ?? undefined,
+      functionalLocationId: finding?.functionalLocation?.id ?? undefined,
+      description: finding?.description ?? undefined,
+    },
   });
 
   const {
@@ -48,11 +56,11 @@ export default function FindingCreateForm({
     if (state.errors) {
       Object.entries(state.errors).forEach(([field, errors], index: number) => {
         if (index === 0) {
-          setFocus(field as keyof CreateFindingSchema);
+          setFocus(field as keyof EditFindingSchema);
         }
 
         if (errors && errors.length > 0) {
-          setError(field as keyof CreateFindingSchema, {
+          setError(field as keyof EditFindingSchema, {
             message: errors[0],
           });
         }
@@ -64,14 +72,6 @@ export default function FindingCreateForm({
     if (state.success) {
       toast.success("Success", {
         description: state.message,
-      });
-
-      reset({
-        notification: undefined,
-        equipmentId: undefined,
-        functionalLocationId: undefined,
-        description: "",
-        images: undefined,
       });
     }
   }, [state, reset, getValues]);
@@ -102,10 +102,11 @@ export default function FindingCreateForm({
       onSubmit={onUpload}
       control={control}
       pending={pending}
-      setValue={setValue}
       setError={setError}
+      setValue={setValue}
       clearErrors={clearErrors}
       findingStatuses={findingStatuses}
+      isEditing={true}
     />
   );
 }

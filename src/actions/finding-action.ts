@@ -3,13 +3,18 @@
 import prisma from "@/lib/prisma";
 import { Finding } from "@/types/finding";
 import { FindingStatus } from "@/types/finding-status";
-import { StoreFindingSchema } from "@/validations/finding-validation";
+import {
+  StoreFindingSchema,
+  UpdateFindingSchema,
+} from "@/validations/finding-validation";
 import { getServerSession } from "next-auth";
 import { v4 as uuid } from "uuid";
 import fs from "fs/promises";
 import path from "path";
 import { deleteFileFromFilesystem } from "./file-action";
 import { revalidatePath } from "next/cache";
+import { isEquipmentExist } from "./equipment-action";
+import { isFunclocExist } from "./functional-location-action";
 
 type getFindingsParams = {
   page?: number;
@@ -151,19 +156,15 @@ export async function createFinding(prevState: unknown, formData: FormData) {
     } = validatedData.data;
 
     if (equipmentId) {
-      const isEquipmentExist = await prisma.equipment.findUnique({
-        where: {
-          id: equipmentId,
-        },
-      });
+      const response = await isEquipmentExist(equipmentId);
 
-      if (!isEquipmentExist) {
+      if (!response.success) {
         return {
           success: false,
           message: "Equipment is not exists",
           errors: {
             equipmentId: [
-              "Equipment is not exists or you can leave the input blank",
+              "Equipment is not exists or you can leave the input blank.",
             ],
           },
         };
@@ -171,18 +172,14 @@ export async function createFinding(prevState: unknown, formData: FormData) {
     }
 
     if (functionalLocationId) {
-      const isFunclocExists = await prisma.functionalLocation.findUnique({
-        where: {
-          id: functionalLocationId,
-        },
-      });
+      const response = await isFunclocExist(functionalLocationId);
 
-      if (!isFunclocExists) {
+      if (!response.success) {
         return {
           success: false,
           message: "Functional location is not exists",
           errors: {
-            equipmentId: [
+            functionalLocationId: [
               "Functional location is not exists or you can leave the input blank",
             ],
           },
@@ -192,7 +189,7 @@ export async function createFinding(prevState: unknown, formData: FormData) {
 
     const storedFinding = await prisma.finding.create({
       data: {
-        findingStatusId: findingStatusId,
+        findingStatusId: parseInt(String(findingStatusId)),
         notification: notification,
         equipmentId: equipmentId,
         functionalLocationId: functionalLocationId,
@@ -303,6 +300,153 @@ export async function deleteFindingById(id: string) {
         error instanceof Error
           ? error.message
           : "An unexpected error occurred.",
+    };
+  }
+}
+
+export async function getFindingById(id: string): Promise<Finding | null> {
+  const finding = await prisma.finding.findUnique({
+    where: {
+      id: id,
+    },
+    include: {
+      equipment: {
+        select: {
+          id: true,
+          sortField: true,
+          description: true,
+        },
+      },
+      functionalLocation: {
+        select: {
+          id: true,
+          description: true,
+        },
+      },
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+      findingImages: {
+        select: {
+          id: true,
+          findingId: true,
+          path: true,
+          imageStatus: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      },
+    },
+  });
+
+  return finding;
+}
+
+export async function editFinding(prevState: unknown, formData: FormData) {
+  try {
+    const rawData = Object.fromEntries(formData.entries());
+    const validatedData = UpdateFindingSchema.safeParse(rawData);
+    const images = formData.getAll("images");
+
+    if (!validatedData.success) {
+      return {
+        success: false,
+        message: "Validation Error",
+        errors: validatedData.error.flatten().fieldErrors,
+      };
+    }
+
+    const {
+      id,
+      findingStatusId,
+      notification,
+      equipmentId,
+      functionalLocationId,
+      description,
+    } = validatedData.data;
+
+    if (equipmentId) {
+      const response = await isEquipmentExist(equipmentId);
+
+      if (!response.success) {
+        return {
+          success: false,
+          message: "Equipment is not exists",
+          errors: {
+            equipmentId: [
+              "Equipment is not exists or you can leave the input blank",
+            ],
+          },
+        };
+      }
+    }
+
+    if (functionalLocationId) {
+      const response = await isFunclocExist(functionalLocationId);
+
+      if (!response.success) {
+        return {
+          success: false,
+          message: "Functional location is not exists",
+          errors: {
+            functionalLocationId: [
+              "Functional location is not exists or you can leave the input blank",
+            ],
+          },
+        };
+      }
+    }
+
+    const updatedFinding = await prisma.finding.update({
+      where: {
+        id: id,
+      },
+      data: {
+        findingStatusId: parseInt(String(findingStatusId)),
+        notification: notification,
+        equipmentId: equipmentId,
+        functionalLocationId: functionalLocationId,
+        description: description,
+      },
+    });
+
+    if (images.length > 0) {
+      images.map(async (image) => {
+        image = image as File;
+        const fileExtension = image.name.split(".").pop()?.toLowerCase();
+        const fileName = uuid() + "." + fileExtension;
+
+        await prisma.findingImage.create({
+          data: {
+            path: `/images/findings/${fileName}`,
+            findingId: updatedFinding.id,
+            imageStatus: "After",
+          },
+        });
+
+        saveFile(image, fileName);
+      });
+    }
+
+    revalidatePath("/findings");
+
+    return {
+      success: true,
+      message: "Finding updated successfully",
+      errors: null,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message:
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred.",
+      errors: null,
     };
   }
 }
