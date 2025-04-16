@@ -1,3 +1,6 @@
+-- CreateEnum
+CREATE TYPE "ImageStatus" AS ENUM ('Before', 'After');
+
 -- CreateTable
 CREATE TABLE "roles" (
     "id" SERIAL NOT NULL,
@@ -88,7 +91,7 @@ CREATE TABLE "units" (
 CREATE TABLE "materials" (
     "id" CHAR(8) NOT NULL,
     "name" TEXT NOT NULL,
-    "price" INTEGER NOT NULL,
+    "price" INTEGER NOT NULL DEFAULT 0,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "unitId" INTEGER,
@@ -116,6 +119,43 @@ CREATE TABLE "equipment_file" (
     "fileId" TEXT NOT NULL,
 
     CONSTRAINT "equipment_file_pkey" PRIMARY KEY ("equipmentId","fileId")
+);
+
+-- CreateTable
+CREATE TABLE "finding_statuses" (
+    "id" SERIAL NOT NULL,
+    "description" VARCHAR(50) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "finding_statuses_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "findings" (
+    "id" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "notification" CHAR(8),
+    "equipmentId" TEXT,
+    "functionalLocationId" TEXT,
+    "userId" INTEGER,
+    "findingStatusId" INTEGER NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "findings_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "finding_images" (
+    "id" TEXT NOT NULL,
+    "findingId" TEXT NOT NULL,
+    "path" TEXT NOT NULL,
+    "imageStatus" "ImageStatus" NOT NULL DEFAULT 'Before',
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "finding_images_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -177,3 +217,15 @@ ALTER TABLE "equipment_file" ADD CONSTRAINT "equipment_file_equipmentId_fkey" FO
 
 -- AddForeignKey
 ALTER TABLE "equipment_file" ADD CONSTRAINT "equipment_file_fileId_fkey" FOREIGN KEY ("fileId") REFERENCES "files"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "findings" ADD CONSTRAINT "findings_equipmentId_fkey" FOREIGN KEY ("equipmentId") REFERENCES "equipments"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "findings" ADD CONSTRAINT "findings_functionalLocationId_fkey" FOREIGN KEY ("functionalLocationId") REFERENCES "functional_locations"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "findings" ADD CONSTRAINT "findings_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "finding_images" ADD CONSTRAINT "finding_images_findingId_fkey" FOREIGN KEY ("findingId") REFERENCES "findings"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -15,7 +15,7 @@ type GetFunclocsParams = {
   page?: number;
   perPage?: string;
   orderBy?: string;
-  sortBy?: "id" | "description" | string;
+  sortBy?: string;
   query?: string;
 };
 
@@ -248,5 +248,26 @@ export async function editFunctionalLocation(
           : "An unexpected error occurred.",
       errors: null,
     };
+  }
+}
+
+export type FunclocExistsResponse = { success: boolean; message: string };
+
+export async function isFunclocExist(
+  functionalLocationId: string
+): Promise<FunclocExistsResponse> {
+  const isFunclocExist = await prisma.functionalLocation.findUnique({
+    where: {
+      id: functionalLocationId,
+    },
+  });
+
+  if (isFunclocExist) {
+    return {
+      success: true,
+      message: "Functional location is found",
+    };
+  } else {
+    return { success: false, message: "Functional location is not found" };
   }
 }

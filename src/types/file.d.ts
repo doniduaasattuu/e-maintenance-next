@@ -3,7 +3,7 @@ export type File = {
   id: string;
   createdAt: Date;
   updatedAt: Date;
-  userId: number;
+  userId: number | null;
   tags: string | null;
   type: string;
   path: string;

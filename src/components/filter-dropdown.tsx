@@ -15,6 +15,7 @@ import { Button } from "./ui/button";
 type SortOption = {
   value: string;
   label: string;
+  isSelected?: boolean;
 };
 
 export default function FilterDropdown({
@@ -29,6 +30,10 @@ export default function FilterDropdown({
   const { replace } = useRouter();
   const [order, setOrder] = React.useState<string | null>(null);
   const [sort, setSort] = React.useState<string | null>(null);
+
+  const selectedSort = sortOptions.find(
+    (val) => val.isSelected === true
+  )?.value;
 
   React.useEffect(() => {
     const params = new URLSearchParams(searchParams);
@@ -73,7 +78,10 @@ export default function FilterDropdown({
         <DropdownMenuContent align="end" className="min-w-[210px]">
           <DropdownMenuLabel>Sort by</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuRadioGroup value={sort ?? "id"} onValueChange={setSort}>
+          <DropdownMenuRadioGroup
+            value={sort ?? selectedSort}
+            onValueChange={setSort}
+          >
             {sortOptions.map((option) => (
               <DropdownMenuRadioItem key={option.value} value={option.value}>
                 {option.label}

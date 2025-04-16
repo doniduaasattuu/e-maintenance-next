@@ -21,6 +21,7 @@
     "@radix-ui/react-label": "^2.1.2",
     "@radix-ui/react-navigation-menu": "^1.2.5",
     "@radix-ui/react-popover": "^1.1.6",
+    "@radix-ui/react-scroll-area": "^1.2.3",
     "@radix-ui/react-select": "^2.1.6",
     "@radix-ui/react-separator": "^1.1.2",
     "@radix-ui/react-slot": "^1.1.2",
@@ -30,6 +31,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
+    "embla-carousel-react": "^8.6.0",
     "html5-qrcode": "^2.3.8",
     "lucide-react": "^0.483.0",
     "next": "15.2.3",
@@ -48,7 +50,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@prisma/client": "^6.5.0",
+    "@prisma/client": "^6.6.0",
     "@tailwindcss/postcss": "^4",
     "@types/bcrypt": "^5.0.2",
     "@types/node": "^20",
@@ -56,7 +58,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.2.3",
-    "prisma": "^6.5.0",
+    "prisma": "^6.6.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

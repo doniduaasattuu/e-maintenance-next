@@ -8,7 +8,7 @@ import { getEquipment } from "@/actions/equipment-action";
 import MaterialList from "@/components/material-list";
 import OptionsDropdown from "@/components/options-dropdown";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { Edit } from "lucide-react";
+import { Camera, Edit } from "lucide-react";
 import FileList from "@/components/file-list";
 import FormCard from "@/components/form-card";
 
@@ -33,6 +33,21 @@ export default async function EquipmentPage({
               <Link className="text-sm" href={`/equipments/${id}/edit`}>
                 <Edit />
                 Edit
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link
+                className="text-sm"
+                href={{
+                  pathname: "/findings/create",
+                  query: {
+                    equipmentId: equipment.id,
+                    functionalLocationId: equipment.functionalLocation?.id,
+                  },
+                }}
+              >
+                <Camera />
+                New Finding
               </Link>
             </DropdownMenuItem>
           </OptionsDropdown>
