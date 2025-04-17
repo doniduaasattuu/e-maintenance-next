@@ -15,6 +15,7 @@ import { deleteFileFromFilesystem } from "./file-action";
 import { revalidatePath } from "next/cache";
 import { isEquipmentExist } from "./equipment-action";
 import { isFunclocExist } from "./functional-location-action";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 type getFindingsParams = {
   page?: number;
@@ -47,8 +48,8 @@ export async function getFindings({
       skip,
       take,
       orderBy: { [sortBy]: orderBy as "asc" | "desc" },
-      ...(query && {
-        where: {
+      where: {
+        ...(query && {
           OR: [
             { description: { contains: query, mode: "insensitive" } },
             { notification: { contains: query, mode: "insensitive" } },
@@ -57,13 +58,11 @@ export async function getFindings({
               functionalLocationId: { contains: query, mode: "insensitive" },
             },
           ],
-        },
-      }),
-      ...(findingStatusId && {
-        where: {
+        }),
+        ...(findingStatusId && {
           findingStatusId: findingStatusId,
-        },
-      }),
+        }),
+      },
       include: {
         equipment: {
           select: {
@@ -101,8 +100,8 @@ export async function getFindings({
       },
     }),
     prisma.finding.count({
-      ...(query && {
-        where: {
+      where: {
+        ...(query && {
           OR: [
             { description: { contains: query, mode: "insensitive" } },
             { notification: { contains: query, mode: "insensitive" } },
@@ -111,13 +110,11 @@ export async function getFindings({
               functionalLocationId: { contains: query, mode: "insensitive" },
             },
           ],
-        },
-      }),
-      ...(findingStatusId && {
-        where: {
+        }),
+        ...(findingStatusId && {
           findingStatusId: findingStatusId,
-        },
-      }),
+        }),
+      },
     }),
     prisma.findingStatus.findMany({
       select: {
@@ -146,7 +143,7 @@ export async function getFindingStatuses(): Promise<FindingStatus[] | null> {
 }
 
 export async function createFinding(prevState: unknown, formData: FormData) {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
   const uploader = session?.user;
 
   try {
@@ -156,6 +153,7 @@ export async function createFinding(prevState: unknown, formData: FormData) {
 
     if (!validatedData.success) {
       return {
+        id: null,
         success: false,
         message: "Validation Error",
         errors: validatedData.error.flatten().fieldErrors,
@@ -175,6 +173,7 @@ export async function createFinding(prevState: unknown, formData: FormData) {
 
       if (!response.success) {
         return {
+          id: null,
           success: false,
           message: "Equipment is not exists",
           errors: {
@@ -191,6 +190,7 @@ export async function createFinding(prevState: unknown, formData: FormData) {
 
       if (!response.success) {
         return {
+          id: null,
           success: false,
           message: "Functional location is not exists",
           errors: {
@@ -232,12 +232,14 @@ export async function createFinding(prevState: unknown, formData: FormData) {
     }
 
     return {
+      id: storedFinding.id,
       success: true,
       message: "Finding created successfully",
       errors: null,
     };
   } catch (error) {
     return {
+      id: null,
       success: false,
       message:
         error instanceof Error

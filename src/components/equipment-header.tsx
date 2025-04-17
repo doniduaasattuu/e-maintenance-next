@@ -14,6 +14,7 @@ const sortOptions = [
   {
     value: "id",
     label: "ID",
+    isSelected: true,
   },
   {
     value: "sortField",

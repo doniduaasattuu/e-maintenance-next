@@ -10,11 +10,13 @@ import { CreateFindingSchema } from "@/validations/finding-validation";
 import { createFinding } from "@/actions/finding-action";
 import FindingForm from "./finding-form";
 import { FindingStatus } from "@/types/finding-status";
+import { useRouter } from "next/navigation";
 
 const createFindingFormSchema = CreateFindingSchema;
 type CreateFindingSchema = z.infer<typeof createFindingFormSchema>;
 
 const initialState = {
+  id: null,
   success: false,
   message: "",
   errors: null,
@@ -25,6 +27,7 @@ export default function FindingCreateForm({
 }: {
   findingStatuses: FindingStatus[] | null;
 }) {
+  const router = useRouter();
   const [state, formAction, pending] = useFormState(
     createFinding,
     initialState
@@ -64,6 +67,10 @@ export default function FindingCreateForm({
     if (state.success) {
       toast.success("Success", {
         description: state.message,
+        action: {
+          label: "Edit",
+          onClick: () => router.push(`/findings/${state.id}/edit`),
+        },
       });
 
       reset({
@@ -72,8 +79,10 @@ export default function FindingCreateForm({
         functionalLocationId: "",
         description: "",
       });
+
+      router.refresh();
     }
-  }, [state, reset, getValues]);
+  }, [state, reset, getValues, router]);
 
   const onUpload = handleSubmit((values) => {
     const formData = new FormData();

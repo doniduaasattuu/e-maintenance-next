@@ -24,7 +24,6 @@ export const routes: Route[] = [
   { label: "Files", url: "/files", restricted: false },
   { label: "Findings", url: "/findings", restricted: false },
   { label: "Users", url: "/users", restricted: true },
-  { label: "Roles", url: "/roles", restricted: true },
 ];
 
 export function useFilteredRoutes(): Route[] | undefined {

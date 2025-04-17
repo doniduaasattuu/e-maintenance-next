@@ -9,6 +9,7 @@ const sortOptions = [
   {
     value: "id",
     label: "ID",
+    isSelected: true,
   },
   {
     value: "name",
@@ -34,7 +35,6 @@ export default function MaterialHeader() {
       <SearchBar />
       <div className="space-x-2 flex items-center">
         <FilterDropdown sortOptions={sortOptions} />
-
         <AddButton url="/materials/create" />
       </div>
     </div>

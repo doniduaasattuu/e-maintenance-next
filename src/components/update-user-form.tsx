@@ -20,6 +20,17 @@ import { MAX_FILE_SIZE } from "@/lib/config";
 import { useFormState } from "react-dom";
 import { editProfile } from "@/actions/user-action";
 import { useSession } from "next-auth/react";
+import { User } from "@/types/user";
+import { Position } from "@/types/position";
+import { Department } from "@/types/department";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import { useRouter } from "next/navigation";
 
 const updateFormSchema = UpdateUserSchema;
 
@@ -33,19 +44,17 @@ const initialState = {
 };
 
 type updateUserProps = {
-  user: {
-    nik: string;
-    name: string;
-    email: string;
-    image: string | null;
-    roleId: number;
-    password: string;
-    id: number;
-    createdAt: Date;
-  } | null;
+  user: User;
+  positions: Position[] | null;
+  departments: Department[] | null;
 };
 
-export default function UpdateUserForm({ user }: updateUserProps) {
+export default function UpdateUserForm({
+  user,
+  positions,
+  departments,
+}: updateUserProps) {
+  const router = useRouter();
   const { update } = useSession();
   const [state, formAction, pending] = useFormState(editProfile, initialState);
   const form = useForm<UpdateFormSchema>({
@@ -54,6 +63,9 @@ export default function UpdateUserForm({ user }: updateUserProps) {
       email: user?.email,
       nik: user?.nik,
       name: user?.name,
+      phone: user?.phone ?? undefined,
+      positionId: user?.position?.id ?? undefined,
+      departmentId: user?.department?.id ?? undefined,
       image: undefined,
     },
   });
@@ -92,12 +104,17 @@ export default function UpdateUserForm({ user }: updateUserProps) {
       reset({
         email: user.email,
         nik: user.nik,
+        phone: user.phone ?? undefined,
+        positionId: user.positionId ?? undefined,
+        departmentId: user.departmentId ?? undefined,
         name: user.name,
         image: undefined,
       });
+
+      router.refresh();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state, reset]);
+  }, [state, reset, router]);
 
   const onUpdate = handleSubmit((values) => {
     const formData = new FormData();
@@ -131,6 +148,19 @@ export default function UpdateUserForm({ user }: updateUserProps) {
         />
         <FormField
           control={control}
+          name="name"
+          render={({ field }) => (
+            <FormItem className="max-w-xl">
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
           name="nik"
           render={({ field }) => (
             <FormItem className="max-w-xl">
@@ -144,12 +174,72 @@ export default function UpdateUserForm({ user }: updateUserProps) {
         />
         <FormField
           control={control}
-          name="name"
+          name="phone"
           render={({ field }) => (
             <FormItem className="max-w-xl">
-              <FormLabel>Name</FormLabel>
+              <FormLabel>Phone</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input inputMode="numeric" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
+          name="positionId"
+          render={({ field }) => (
+            <FormItem className="max-w-xl">
+              <FormLabel>Position</FormLabel>
+              <FormControl>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value ?? undefined}
+                >
+                  <FormControl>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Position" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {positions &&
+                      positions.map(({ id, name }) => (
+                        <SelectItem key={id} value={String(id)}>
+                          {name}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
+          name="departmentId"
+          render={({ field }) => (
+            <FormItem className="max-w-xl">
+              <FormLabel>Department</FormLabel>
+              <FormControl>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value ?? undefined}
+                >
+                  <FormControl>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Department" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {departments &&
+                      departments.map(({ id, name }) => (
+                        <SelectItem key={id} value={String(id)}>
+                          {name}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
               </FormControl>
               <FormMessage />
             </FormItem>

@@ -13,6 +13,28 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Position {
+  id        String   @id @db.VarChar(5)
+  name      String   @db.VarChar(25)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users User[]
+
+  @@map("positions")
+}
+
+model Department {
+  id        String   @id @db.VarChar(5)
+  name      String   @db.VarChar(50)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users User[]
+
+  @@map("departments")
+}
+
 model Role {
   id    Int    @id @default(autoincrement())
   name  String @unique
@@ -22,17 +44,22 @@ model Role {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  nik       String   @unique
-  name      String
-  email     String   @unique
-  image     String?
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  roleId    Int
+  id           Int      @id @default(autoincrement())
+  nik          String   @unique
+  name         String
+  email        String   @unique
+  phone        String?  @unique @db.VarChar(13)
+  image        String?
+  password     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  roleId       Int
+  positionId   String?
+  departmentId String?
 
   role                Role                 @relation(fields: [roleId], references: [id])
+  position            Position?            @relation(fields: [positionId], references: [id])
+  department          Department?          @relation(fields: [departmentId], references: [id])
   equipments          Equipment[]
   functionalLocations FunctionalLocation[]
   files               File[]

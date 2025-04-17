@@ -47,8 +47,6 @@ export default function Navbar({ className }: { className: unknown }) {
                 <Skeleton className="w-[50px] h-[20px] rounded-full" />
                 <Skeleton className="w-[40px] h-[20px] rounded-full" />
                 <Skeleton className="w-[60px] h-[20px] rounded-full" />
-                <Skeleton className="w-[40px] h-[20px] rounded-full" />
-                <Skeleton className="w-[40px] h-[20px] rounded-full" />
               </div>
             )}
           </div>

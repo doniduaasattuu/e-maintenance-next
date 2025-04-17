@@ -3,17 +3,26 @@
 import * as React from "react";
 import SearchBar from "./search-bar";
 import FilterDropdown from "./filter-dropdown";
-import AddButton from "./add-button";
+import { FilterDepartment } from "./filter-department";
+import { Department } from "@/types/department";
 
 const sortOptions = [
   {
     value: "id",
     label: "ID",
+  },
+  {
+    value: "nik",
+    label: "NIK",
+  },
+  {
+    value: "name",
+    label: "Name",
     isSelected: true,
   },
   {
-    value: "description",
-    label: "Description",
+    value: "email",
+    label: "Email",
   },
   {
     value: "createdAt",
@@ -25,13 +34,17 @@ const sortOptions = [
   },
 ];
 
-export default function FunctionalLocationHeader() {
+export default function UserHeader({
+  departments,
+}: {
+  departments: Department[] | null;
+}) {
   return (
     <div className="flex justify-between items-center space-x-2">
       <SearchBar />
       <div className="space-x-2 flex items-center">
+        <FilterDepartment departments={departments} />
         <FilterDropdown sortOptions={sortOptions} />
-        <AddButton url="/functional-locations/create" />
       </div>
     </div>
   );
