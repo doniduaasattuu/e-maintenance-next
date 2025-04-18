@@ -20,6 +20,20 @@ export const BaseUserSchema = z.object({
     .refine((value: string) => !/\s/.test(value), {
       message: "String cannot contain spaces",
     }),
+  phone: z
+    .string()
+    .optional()
+    .transform((val) => (val === "" ? undefined : val))
+    .refine(
+      (val) =>
+        val === undefined ||
+        (typeof val === "string" && val.length >= 11 && val.length <= 13),
+      {
+        message: "Phone number must be between 11 and 13 character(s)",
+      }
+    ),
+  positionId: z.string().optional(),
+  departmentId: z.string().optional(),
   image: z
     .instanceof(File)
     .refine((image) => !image || image.size <= MAX_FILE_SIZE, {
@@ -57,6 +71,9 @@ export const UpdateUserSchema = BaseUserSchema.pick({
   email: true,
   nik: true,
   name: true,
+  phone: true,
+  positionId: true,
+  departmentId: true,
   image: true,
 });
 

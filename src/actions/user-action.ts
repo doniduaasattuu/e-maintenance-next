@@ -13,6 +13,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import fs from "fs/promises";
 import fSync from "fs";
 import path from "path";
+import { User } from "@/types/user";
 
 export async function createUser(prevState: unknown, formData: FormData) {
   try {
@@ -78,17 +79,12 @@ export async function createUser(prevState: unknown, formData: FormData) {
       errors: null,
     };
   } catch (error) {
-    if (error instanceof Error) {
-      return {
-        success: false,
-        message: error.message,
-        errors: null,
-      };
-    }
-
     return {
       success: false,
-      message: "Something went wrong",
+      message:
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred.",
       errors: null,
     };
   }
@@ -96,7 +92,7 @@ export async function createUser(prevState: unknown, formData: FormData) {
 
 export async function updatePassword(prevState: unknown, formData: FormData) {
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     if (!session?.user) {
       return {
         success: false,
@@ -170,20 +166,13 @@ export async function updatePassword(prevState: unknown, formData: FormData) {
       user: updatedUser,
     };
   } catch (error) {
-    if (error instanceof Error) {
-      return {
-        success: false,
-        message: error.message,
-        errors: null,
-        user: null,
-      };
-    }
-
     return {
       success: false,
-      message: "Something went wrong",
+      message:
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred.",
       errors: null,
-      user: null,
     };
   }
 }
@@ -213,12 +202,13 @@ export async function editProfile(prevState: unknown, formData: FormData) {
       };
     }
 
-    const { email, nik, name, image } = validatedData.data;
+    const { email, nik, name, image, phone, positionId, departmentId } =
+      validatedData.data;
 
     const existingUserWithEmail = await prisma.user.findFirst({
       where: {
         email: email,
-        id: { not: Number(user.id) }, // Kecualikan pengguna saat ini
+        id: { not: Number(user.id) },
       },
     });
 
@@ -233,7 +223,7 @@ export async function editProfile(prevState: unknown, formData: FormData) {
     const existingUserWithNik = await prisma.user.findFirst({
       where: {
         nik: nik,
-        id: { not: Number(user.id) }, // Kecualikan pengguna saat ini
+        id: { not: Number(user.id) },
       },
     });
 
@@ -279,6 +269,9 @@ export async function editProfile(prevState: unknown, formData: FormData) {
         email: email,
         nik: nik,
         name: name,
+        phone: phone === undefined ? null : phone,
+        positionId: positionId,
+        departmentId: departmentId,
         ...(imagePath && { image: imagePath }),
       },
       select: {
@@ -286,6 +279,9 @@ export async function editProfile(prevState: unknown, formData: FormData) {
         email: true,
         nik: true,
         name: true,
+        phone: true,
+        positionId: true,
+        departmentId: true,
         image: true,
         role: {
           select: {
@@ -303,20 +299,115 @@ export async function editProfile(prevState: unknown, formData: FormData) {
       user: JSON.parse(JSON.stringify(updatedUser)),
     };
   } catch (error) {
-    if (error instanceof Error) {
-      return {
-        success: false,
-        message: error.message,
-        errors: { email: [error.message] },
-        user: null,
-      };
-    }
-
     return {
       success: false,
-      message: "Something went wrong",
-      errors: { email: ["Something went wrong"] },
-      user: null,
+      message:
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred.",
+      errors: null,
     };
   }
+}
+
+type GetUsersParams = {
+  page?: number;
+  perPage?: string;
+  orderBy?: string;
+  sortBy?: string;
+  query?: string;
+  department?: string;
+};
+
+type PaginatedUsers = {
+  users: User[];
+  totalPages: number;
+};
+
+export async function getUsers({
+  page = 1,
+  perPage = "10",
+  orderBy = "desc",
+  sortBy = "name",
+  query,
+  department,
+}: GetUsersParams): Promise<PaginatedUsers> {
+  const skip = (page - 1) * parseInt(perPage);
+  const take = parseInt(perPage);
+
+  const [users, total] = await prisma.$transaction([
+    prisma.user.findMany({
+      skip,
+      take,
+      orderBy: { [sortBy]: orderBy as "asc" | "desc" },
+      where: {
+        ...(query && {
+          OR: [
+            {
+              nik: { contains: query, mode: "insensitive" },
+            },
+            {
+              name: { contains: query, mode: "insensitive" },
+            },
+            {
+              email: { contains: query, mode: "insensitive" },
+            },
+          ],
+        }),
+        ...(department && {
+          departmentId: department,
+        }),
+      },
+      select: {
+        id: true,
+        nik: true,
+        name: true,
+        email: true,
+        phone: true,
+        image: true,
+        role: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        position: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        department: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        createdAt: true,
+        updatedAt: true,
+      },
+    }),
+    prisma.user.count({
+      where: {
+        ...(query && {
+          OR: [
+            {
+              nik: { contains: query, mode: "insensitive" },
+            },
+            {
+              name: { contains: query, mode: "insensitive" },
+            },
+            {
+              email: { contains: query, mode: "insensitive" },
+            },
+          ],
+        }),
+      },
+    }),
+  ]);
+
+  return {
+    users,
+    totalPages: Math.ceil(total / parseInt(perPage)),
+  };
 }

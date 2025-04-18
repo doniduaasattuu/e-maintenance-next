@@ -7,9 +7,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { Avatar, AvatarImage } from "./ui/avatar";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
+import UserAvatar from "./user-avatar";
 
 export default function AvatarNavbar() {
   const handleLogout = () => {
@@ -21,12 +21,7 @@ export default function AvatarNavbar() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar className="cursor-pointer h-9 w-9">
-          <AvatarImage
-            src={` ${user?.image ?? "https://github.com/shadcn.png"} `}
-            className="object-cover"
-          />
-        </Avatar>
+        <UserAvatar user={user} />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem asChild>

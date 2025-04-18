@@ -3,6 +3,90 @@ import bcrypt from "bcrypt";
 const prisma = new PrismaClient();
 
 async function main() {
+  // POSITION CREATION
+  await prisma.position.createMany({
+    data: [
+      {
+        id: "OPR",
+        name: "Operator",
+      },
+      {
+        id: "FR",
+        name: "Foreman",
+      },
+      {
+        id: "GL",
+        name: "Group Leader",
+      },
+      {
+        id: "SPV",
+        name: "Supervisor",
+      },
+      {
+        id: "DH",
+        name: "Dept. Head",
+      },
+      {
+        id: "MGR",
+        name: "Manager",
+      },
+      {
+        id: "DIR",
+        name: "Director",
+      },
+    ],
+  });
+
+  const foreman = await prisma.position.findUnique({
+    where: {
+      id: "FR",
+    },
+  });
+
+  if (!foreman) {
+    throw new Error("Position is not found");
+  }
+
+  // DEPARTMENT CREATION
+  await prisma.department.createMany({
+    data: [
+      {
+        id: "EI1",
+        name: "ELECTRIC INSTRUMENT 1",
+      },
+      {
+        id: "EI2",
+        name: "ELECTRIC INSTRUMENT 2",
+      },
+      {
+        id: "EI3",
+        name: "ELECTRIC INSTRUMENT 3",
+      },
+      {
+        id: "EI4",
+        name: "ELECTRIC INSTRUMENT 4",
+      },
+      {
+        id: "EI5",
+        name: "ELECTRIC INSTRUMENT 5",
+      },
+      {
+        id: "EI6",
+        name: "ELECTRIC INSTRUMENT 6",
+      },
+    ],
+  });
+
+  const EI2 = await prisma.department.findUnique({
+    where: {
+      id: "EI2",
+    },
+  });
+
+  if (!EI2) {
+    throw new Error("Department is not found");
+  }
+
   // ROLE CREATION
   await prisma.role.createMany({
     data: [{ name: "User" }, { name: "Admin" }],
@@ -32,7 +116,10 @@ async function main() {
         email: "doni@gmail.com",
         name: "Doni Darmawan",
         nik: "55000154",
-        image: "/images/users/55000154.jpg",
+        phone: "08983456945",
+        image: "/images/users/550001541744816193712.jpg",
+        positionId: foreman.id,
+        departmentId: EI2.id,
         password: await bcrypt.hash("password", 10),
         roleId: adminRole.id,
       },
@@ -624,22 +711,26 @@ async function main() {
           "Out terminal phase R module P-2-3-A SP7 panas lebih dari 90 degree",
         equipmentId: "ELP001074",
         findingStatusId: close.id,
+        userId: doni.id,
       },
       {
         description:
           "Bearing DE indikasi motor housing, tambah grease 2x50 masih tetap kasar",
         equipmentId: "EMO000123",
         findingStatusId: open.id,
+        userId: doni.id,
       },
       {
         description:
           "Penambahan platform untuk mempermudah pekerjaan maintenance slip ring pulper SP-03 SP3.",
         equipmentId: "EMO003218",
         findingStatusId: open.id,
+        userId: doni.id,
       },
       {
         description: "Replacement contactor and module set for P-B-9 SP7",
         findingStatusId: open.id,
+        userId: doni.id,
       },
     ],
   });

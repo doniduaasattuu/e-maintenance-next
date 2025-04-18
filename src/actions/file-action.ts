@@ -9,6 +9,7 @@ import fs from "fs/promises";
 import path from "path";
 import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 type getFileParams = {
   page?: number;
@@ -62,7 +63,7 @@ export async function getFiles({
 }
 
 export async function createFile(prevState: unknown, formData: FormData) {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
   const uploader = session?.user;
 
   try {

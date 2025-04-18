@@ -15,6 +15,7 @@ import { ImageOff } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { Separator } from "./ui/separator";
 import FindingAction from "./finding-action";
+import { useSession } from "next-auth/react";
 
 export default function FindingList({
   findings,
@@ -23,6 +24,9 @@ export default function FindingList({
   findings: Finding[];
   findingStatuses: FindingStatus[];
 }) {
+  const { data: session } = useSession();
+  const user = session?.user;
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-2">
       {findings &&
@@ -101,7 +105,9 @@ export default function FindingList({
                 <p className="text-xs text-muted-foreground">
                   {formatDate(finding.createdAt)}
                 </p>
-                <FindingAction finding={finding} />
+                {user?.id === String(finding.user?.id) && (
+                  <FindingAction finding={finding} />
+                )}
               </div>
             </CardContent>
           </Card>
