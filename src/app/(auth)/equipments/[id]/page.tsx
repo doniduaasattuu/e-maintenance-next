@@ -1,16 +1,13 @@
 import HeaderCard from "@/components/header-card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Link from "next/link";
 import React from "react";
 import TableLayout from "@/layouts/table-layout";
 import { getEquipment } from "@/actions/equipment-action";
 import MaterialList from "@/components/material-list";
-import OptionsDropdown from "@/components/options-dropdown";
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { Camera, Edit } from "lucide-react";
 import FileList from "@/components/file-list";
 import FormCard from "@/components/form-card";
+import EquipmentOptions from "@/components/equipment-options";
 
 export default async function EquipmentPage({
   params,
@@ -28,29 +25,7 @@ export default async function EquipmentPage({
     <TableLayout>
       <FormCard>
         <HeaderCard header="Detail" content="Equipment data and relations">
-          <OptionsDropdown>
-            <DropdownMenuItem asChild>
-              <Link className="text-sm" href={`/equipments/${id}/edit`}>
-                <Edit />
-                Edit
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link
-                className="text-sm"
-                href={{
-                  pathname: "/findings/create",
-                  query: {
-                    equipmentId: equipment.id,
-                    functionalLocationId: equipment.functionalLocation?.id,
-                  },
-                }}
-              >
-                <Camera />
-                New Finding
-              </Link>
-            </DropdownMenuItem>
-          </OptionsDropdown>
+          <EquipmentOptions equipment={equipment} id={id} />
         </HeaderCard>
 
         <div className="space-y-4">
@@ -122,7 +97,7 @@ export default async function EquipmentPage({
           <FileList items={equipment?.equipmentFiles} />
         ) : (
           <p className="text-sm font-normal text-muted-foreground">Empty.</p>
-        )}{" "}
+        )}
       </FormCard>
     </TableLayout>
   );
