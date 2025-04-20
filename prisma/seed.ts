@@ -89,24 +89,33 @@ async function main() {
 
   // ROLE CREATION
   await prisma.role.createMany({
-    data: [{ name: "User" }, { name: "Admin" }],
+    data: [
+      { name: "User" },
+      { name: "Leader" },
+      { name: "Management" },
+      { name: "Admin" },
+    ],
     skipDuplicates: true, // To avoid duplicates on re-run
   });
 
-  const adminRole = await prisma.role.findUnique({
-    where: { name: "Admin" },
-  });
+  const [userRole, leaderRole, managementRole, adminRole] =
+    await prisma.$transaction([
+      prisma.role.findUnique({
+        where: { name: "User" },
+      }),
+      prisma.role.findUnique({
+        where: { name: "Leader" },
+      }),
+      prisma.role.findUnique({
+        where: { name: "Management" },
+      }),
+      prisma.role.findUnique({
+        where: { name: "Admin" },
+      }),
+    ]);
 
-  if (!adminRole) {
-    throw new Error("Admin role not found");
-  }
-
-  const userRole = await prisma.role.findUnique({
-    where: { name: "User" },
-  });
-
-  if (!userRole) {
-    throw new Error("User role not found");
+  if (!userRole || !leaderRole || !managementRole || !adminRole) {
+    throw new Error("Role not found");
   }
 
   // USER CREATION
@@ -121,12 +130,37 @@ async function main() {
         positionId: foreman.id,
         departmentId: EI2.id,
         password: await bcrypt.hash("password", 10),
+        roleId: userRole.id,
+      },
+      {
+        email: "admin@gmail.com",
+        name: "Administrator",
+        nik: "12345678",
+        image: "/images/users/123456781744816193712.jpg",
+        password: await bcrypt.hash("password", 10),
         roleId: adminRole.id,
+      },
+      {
+        email: "erry@gmail.com",
+        name: "Erry Puji Anggoro",
+        nik: "55000071",
+        image: "/images/users/550000711744816193712.jpg",
+        password: await bcrypt.hash("password", 10),
+        roleId: leaderRole.id,
+      },
+      {
+        email: "jamal@gmail.com",
+        name: "Jamal Mirdad",
+        nik: "55000153",
+        image: "/images/users/550001531744816193712.jpg",
+        password: await bcrypt.hash("password", 10),
+        roleId: managementRole.id,
       },
       {
         email: "mark@gmail.com",
         name: "Mark Morton",
         nik: "55000111",
+        image: "/images/users/550001111744816193712.jpg",
         password: await bcrypt.hash("password", 10),
         roleId: userRole.id,
       },

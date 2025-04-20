@@ -14,8 +14,8 @@ import {
   DialogTitle,
 } from "./ui/dialog";
 import { QRCodeSVG } from "qrcode.react";
-import { useSession } from "next-auth/react";
-import { SessionUser } from "@/types/user";
+import { onlyAdmin } from "@/lib/config";
+import useUserClient from "@/hooks/useUserClient";
 
 type EquipmentOptionsProps = {
   equipment: Equipment;
@@ -26,6 +26,7 @@ export default function EquipmentOptions({
   equipment,
   id,
 }: EquipmentOptionsProps) {
+  const user = useUserClient();
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
 
   const handleOpenDialog = () => {
@@ -36,19 +37,10 @@ export default function EquipmentOptions({
     setIsOpen(false);
   };
 
-  const { data, status } = useSession();
-  const [user, setUser] = React.useState<SessionUser | null>(null);
-
-  React.useEffect(() => {
-    if (status !== "loading" && data) {
-      setUser(data.user);
-    }
-  }, [data, status]);
-
   return (
     <React.Fragment>
       <OptionsDropdown>
-        {user?.role === "Admin" && (
+        {onlyAdmin.includes(user?.role) && (
           <DropdownMenuItem asChild>
             <Link className="text-sm" href={`/equipments/${id}/edit`}>
               <Edit />

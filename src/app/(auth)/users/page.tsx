@@ -1,4 +1,5 @@
 import { getDepartments } from "@/actions/department-action";
+import { getRoles } from "@/actions/role-action";
 import { getUsers } from "@/actions/user-action";
 import GeneratePagination from "@/components/pagination";
 import UserHeader from "@/components/user-header";
@@ -31,11 +32,16 @@ export default async function UserPage({
   });
 
   const departments = await getDepartments();
+  const roles = await getRoles();
+
+  if (!departments || !roles) {
+    return <p>Loading..</p>;
+  }
 
   return (
     <TableLayout>
       <UserHeader departments={departments} />
-      <UserTable users={users} />
+      <UserTable users={users} roles={roles} />
       <GeneratePagination totalPages={totalPages} />
     </TableLayout>
   );

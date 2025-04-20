@@ -18,3 +18,9 @@ export const ALLOWED_IMAGE_TYPES: readonly [string, ...string[]] = [
 ];
 
 export const MAX_FILE_COUNT = 5;
+
+export const onlyAdmin = ["Admin"];
+export const management = ["Management", "Admin"];
+export const leader = ["Leader", "Management", "Admin"];
+
+// const roles = ["User", "Leader", "Management", "Admin"];

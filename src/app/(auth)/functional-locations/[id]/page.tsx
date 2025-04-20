@@ -9,6 +9,9 @@ import TableLayout from "@/layouts/table-layout";
 import OptionsDropdown from "@/components/options-dropdown";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import FormCard from "@/components/form-card";
+import { getUserSession } from "@/hooks/useUserSession";
+import { onlyAdmin } from "@/lib/config";
+import { Edit } from "lucide-react";
 
 export default async function FunctionalLocationPage({
   params,
@@ -16,6 +19,7 @@ export default async function FunctionalLocationPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const user = await getUserSession();
   const functionalLocation = await getFunctionalLocation({
     id,
   });
@@ -30,16 +34,19 @@ export default async function FunctionalLocationPage({
             header="Detail"
             content="Functional location data and relations"
           >
-            <OptionsDropdown>
-              <DropdownMenuItem asChild>
-                <Link
-                  className="text-sm"
-                  href={`/functional-locations/${id}/edit`}
-                >
-                  Edit
-                </Link>
-              </DropdownMenuItem>
-            </OptionsDropdown>
+            {onlyAdmin.includes(user?.role) && (
+              <OptionsDropdown>
+                <DropdownMenuItem asChild>
+                  <Link
+                    className="text-sm"
+                    href={`/functional-locations/${id}/edit`}
+                  >
+                    <Edit />
+                    Edit
+                  </Link>
+                </DropdownMenuItem>
+              </OptionsDropdown>
+            )}
           </HeaderCard>
 
           <div className="space-y-4">
@@ -58,7 +65,8 @@ export default async function FunctionalLocationPage({
           </div>
         </FormCard>
 
-        {functionalLocation.equipments.length >= 1 ? (
+        {functionalLocation.equipments &&
+        functionalLocation.equipments.length >= 1 ? (
           <FormCard>
             <HeaderCard
               header="Equipments"
