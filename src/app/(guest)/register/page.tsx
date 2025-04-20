@@ -168,6 +168,19 @@ export default function RegisterPage() {
                   </FormItem>
                 )}
               />
+              <FormField
+                control={control}
+                name="register_code"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Register code</FormLabel>
+                    <FormControl>
+                      <Input type="password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
           </CardContent>
           <CardFooter className="flex-col">

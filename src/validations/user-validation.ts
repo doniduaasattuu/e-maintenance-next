@@ -44,6 +44,21 @@ export const BaseUserSchema = z.object({
     })
     .optional(),
   roleId: z.number({ message: "Role can't be empty" }),
+  register_code: z
+    .string({ message: "Register code is required" })
+    .regex(/^[a-zA-Z0-9\p{P}\s]+$/u, {
+      message:
+        "Register code must contain only alphanumeric, symbolic characters, and spaces",
+    })
+    .refine((val) => /[a-z]/.test(val), {
+      message: "Register code must contain at least one lowercase letter",
+    })
+    .refine((val) => /[A-Z]/.test(val), {
+      message: "Register code must contain at least one uppercase letter",
+    })
+    .refine((val) => /[0-9]/.test(val), {
+      message: "Register code must contain at least one number",
+    }),
   password: z.string({ message: "Password is required" }).min(8),
   new_password: z.string({ message: "New Password is required" }).min(8),
 });
@@ -53,6 +68,7 @@ export const RegisterUserSchema = BaseUserSchema.pick({
   email: true,
   name: true,
   password: true,
+  register_code: true,
 })
   .extend({
     confirm: z.string({ message: "Confirm password is required" }).min(8),
