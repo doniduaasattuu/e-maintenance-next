@@ -413,6 +413,9 @@ export async function getUsers({
             },
           ],
         }),
+        ...(department && {
+          departmentId: department,
+        }),
       },
     }),
   ]);

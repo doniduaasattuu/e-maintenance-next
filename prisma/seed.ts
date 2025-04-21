@@ -37,14 +37,46 @@ async function main() {
     ],
   });
 
-  const foreman = await prisma.position.findUnique({
-    where: {
-      id: "FR",
-    },
-  });
+  const [OPR, FR, GL, SPV, DH, MGR, DIR] = await prisma.$transaction([
+    prisma.position.findUnique({
+      where: {
+        id: "OPR",
+      },
+    }),
+    prisma.position.findUnique({
+      where: {
+        id: "FR",
+      },
+    }),
+    prisma.position.findUnique({
+      where: {
+        id: "GL",
+      },
+    }),
+    prisma.position.findUnique({
+      where: {
+        id: "SPV",
+      },
+    }),
+    prisma.position.findUnique({
+      where: {
+        id: "DH",
+      },
+    }),
+    prisma.position.findUnique({
+      where: {
+        id: "MGR",
+      },
+    }),
+    prisma.position.findUnique({
+      where: {
+        id: "DIR",
+      },
+    }),
+  ]);
 
-  if (!foreman) {
-    throw new Error("Position is not found");
+  if (!OPR || !FR || !GL || !SPV || !DH || !MGR || !DIR) {
+    throw new Error("Failed insert user position");
   }
 
   // DEPARTMENT CREATION
@@ -77,13 +109,40 @@ async function main() {
     ],
   });
 
-  const EI2 = await prisma.department.findUnique({
-    where: {
-      id: "EI2",
-    },
-  });
+  const [EI1, EI2, EI3, EI4, EI5, EI6] = await prisma.$transaction([
+    prisma.department.findUnique({
+      where: {
+        id: "EI1",
+      },
+    }),
+    prisma.department.findUnique({
+      where: {
+        id: "EI2",
+      },
+    }),
+    prisma.department.findUnique({
+      where: {
+        id: "EI3",
+      },
+    }),
+    prisma.department.findUnique({
+      where: {
+        id: "EI4",
+      },
+    }),
+    prisma.department.findUnique({
+      where: {
+        id: "EI5",
+      },
+    }),
+    prisma.department.findUnique({
+      where: {
+        id: "EI6",
+      },
+    }),
+  ]);
 
-  if (!EI2) {
+  if (!EI1 || !EI2 || !EI3 || !EI4 || !EI5 || !EI6) {
     throw new Error("Department is not found");
   }
 
@@ -127,7 +186,7 @@ async function main() {
         nik: "55000154",
         phone: "08983456945",
         image: "/images/users/550001541744816193712.jpg",
-        positionId: foreman.id,
+        positionId: FR.id,
         departmentId: EI2.id,
         password: await bcrypt.hash("password", 10),
         roleId: userRole.id,
@@ -144,6 +203,8 @@ async function main() {
         email: "erry@gmail.com",
         name: "Erry Puji Anggoro",
         nik: "55000071",
+        positionId: GL.id,
+        departmentId: EI2.id,
         image: "/images/users/550000711744816193712.jpg",
         password: await bcrypt.hash("password", 10),
         roleId: leaderRole.id,
@@ -152,6 +213,8 @@ async function main() {
         email: "jamal@gmail.com",
         name: "Jamal Mirdad",
         nik: "55000153",
+        positionId: SPV.id,
+        departmentId: EI6.id,
         image: "/images/users/550001531744816193712.jpg",
         password: await bcrypt.hash("password", 10),
         roleId: managementRole.id,
@@ -163,6 +226,236 @@ async function main() {
         image: "/images/users/550001111744816193712.jpg",
         password: await bcrypt.hash("password", 10),
         roleId: userRole.id,
+      },
+      {
+        email: "arifsunari@gmail.com",
+        name: "Arif Sunari",
+        nik: "31100003",
+        positionId: GL.id,
+        departmentId: EI2.id,
+        image: "/images/users/311000031744816193712.jpg",
+        password: await bcrypt.hash("password", 10),
+        roleId: leaderRole.id,
+      },
+      {
+        email: "rochmad@gmail.com",
+        name: "Rochmad",
+        nik: "31100035",
+        positionId: FR.id,
+        departmentId: EI2.id,
+        image: "/images/users/311000351744816193712.jpg",
+        password: await bcrypt.hash("password", 10),
+        roleId: userRole.id,
+      },
+      {
+        email: "suhaemi@gmail.com",
+        name: "Suhaemi",
+        nik: "31100099",
+        positionId: GL.id,
+        departmentId: EI2.id,
+        image: "/images/users/311000991744816193712.jpg",
+        password: await bcrypt.hash("password", 10),
+        roleId: leaderRole.id,
+      },
+      {
+        email: "sartika@gmail.com",
+        name: "Sartika",
+        nik: "31100107",
+        positionId: GL.id,
+        departmentId: EI2.id,
+        image: "/images/users/311001071744816193712.jpg",
+        password: await bcrypt.hash("password", 10),
+        roleId: leaderRole.id,
+      },
+      {
+        email: "suryanto@gmail.com",
+        name: "Suryanto",
+        nik: "31100156",
+        positionId: GL.id,
+        departmentId: EI2.id,
+        image: "/images/users/311001561744816193712.jpg",
+        password: await bcrypt.hash("password", 10),
+        roleId: leaderRole.id,
+      },
+      {
+        email: "darminto@gmail.com",
+        name: "Darminto",
+        nik: "31100171",
+        positionId: FR.id,
+        departmentId: EI2.id,
+        image: "/images/users/311001711744816193712.jpg",
+        password: await bcrypt.hash("password", 10),
+        roleId: userRole.id,
+      },
+      {
+        email: "andriyanto@gmail.com",
+        name: "Andriyanto",
+        nik: "31702025",
+        positionId: FR.id,
+        departmentId: EI2.id,
+        image: "/images/users/317020251744816193712.jpg",
+        password: await bcrypt.hash("password", 10),
+        roleId: userRole.id,
+      },
+      {
+        email: "andi@gmail.com",
+        name: "Andi Kurnia Mulyana",
+        nik: "31804007",
+        positionId: FR.id,
+        departmentId: EI2.id,
+        image: "/images/users/318040071744816193712.jpg",
+        password: await bcrypt.hash("password", 10),
+        roleId: userRole.id,
+      },
+      {
+        email: "jaka@gmail.com",
+        name: "Jaka Kumara",
+        nik: "31804008",
+        positionId: FR.id,
+        departmentId: EI2.id,
+        image: "/images/users/318040081744816193712.jpg",
+        password: await bcrypt.hash("password", 10),
+        roleId: userRole.id,
+      },
+      {
+        email: "johan@gmail.com",
+        name: "Johan Guz Zali",
+        nik: "31804024",
+        positionId: FR.id,
+        departmentId: EI2.id,
+        image: "/images/users/318040241744816193712.jpg",
+        password: await bcrypt.hash("password", 10),
+        roleId: userRole.id,
+      },
+      {
+        email: "malik@gmail.com",
+        name: "Abdul Malik",
+        nik: "31811028",
+        positionId: FR.id,
+        departmentId: EI2.id,
+        image: "/images/users/318110281744816193712.jpg",
+        password: await bcrypt.hash("password", 10),
+        roleId: userRole.id,
+      },
+      {
+        email: "nauri@gmail.com",
+        name: "Nauri Dwi Karsa",
+        nik: "31812027",
+        positionId: GL.id,
+        departmentId: EI2.id,
+        image: "/images/users/318120271744816193712.jpg",
+        password: await bcrypt.hash("password", 10),
+        roleId: leaderRole.id,
+      },
+      {
+        email: "harapan@gmail.com",
+        name: "Harapan Tua Panjaitan",
+        nik: "33000009",
+        positionId: FR.id,
+        departmentId: EI2.id,
+        image: "/images/users/330000091744816193712.jpg",
+        password: await bcrypt.hash("password", 10),
+        roleId: userRole.id,
+      },
+      {
+        email: "mbeat@gmail.com",
+        name: "R. Much Arief S",
+        nik: "55000092",
+        positionId: FR.id,
+        departmentId: EI2.id,
+        image: "/images/users/550000921744816193712.jpg",
+        password: await bcrypt.hash("password", 10),
+        roleId: userRole.id,
+      },
+      {
+        email: "saiful@gmail.com",
+        name: "Saiful Bahri",
+        nik: "55000093",
+        positionId: FR.id,
+        departmentId: EI2.id,
+        image: "/images/users/550000931744816193712.jpg",
+        password: await bcrypt.hash("password", 10),
+        roleId: userRole.id,
+      },
+      {
+        email: "suhadi@gmail.com",
+        name: "Suhadi Lesmana Bin Karsa",
+        nik: "55000097",
+        positionId: GL.id,
+        departmentId: EI2.id,
+        image: "/images/users/550000971744816193712.jpg",
+        password: await bcrypt.hash("password", 10),
+        roleId: leaderRole.id,
+      },
+      {
+        email: "ag@gmail.com",
+        name: "AG Yuanti",
+        nik: "55000099",
+        positionId: GL.id,
+        departmentId: EI2.id,
+        image: "/images/users/550000991744816193712.jpg",
+        password: await bcrypt.hash("password", 10),
+        roleId: leaderRole.id,
+      },
+      {
+        email: "arief@gmail.com",
+        name: "Arief Rahman",
+        nik: "55000125",
+        positionId: GL.id,
+        departmentId: EI2.id,
+        image: "/images/users/550001251744816193712.jpg",
+        password: await bcrypt.hash("password", 10),
+        roleId: leaderRole.id,
+      },
+      {
+        email: "edi@gmail.com",
+        name: "Edi Supriadi",
+        nik: "55000135",
+        positionId: FR.id,
+        departmentId: EI2.id,
+        image: "/images/users/550001351744816193712.jpg",
+        password: await bcrypt.hash("password", 10),
+        roleId: userRole.id,
+      },
+      {
+        email: "hendra@gmail.com",
+        name: "Hendra",
+        nik: "60000067",
+        positionId: FR.id,
+        departmentId: EI2.id,
+        image: "/images/users/600000671744816193712.jpg",
+        password: await bcrypt.hash("password", 10),
+        roleId: userRole.id,
+      },
+      {
+        email: "rosiman@gmail.com",
+        name: "Rosiman Wiraswasta",
+        nik: "60000139",
+        positionId: DH.id,
+        departmentId: EI2.id,
+        image: "/images/users/600001391744816193712.jpg",
+        password: await bcrypt.hash("password", 10),
+        roleId: managementRole.id,
+      },
+      {
+        email: "yopi@gmail.com",
+        name: "Yopi Sofyan",
+        nik: "60000158",
+        positionId: SPV.id,
+        departmentId: EI2.id,
+        image: "/images/users/600001581744816193712.jpg",
+        password: await bcrypt.hash("password", 10),
+        roleId: managementRole.id,
+      },
+      {
+        email: "agam@gmail.com",
+        name: "Agam Hermawan",
+        nik: "60000170",
+        positionId: SPV.id,
+        departmentId: EI1.id,
+        image: "/images/users/600001701744816193712.jpg",
+        password: await bcrypt.hash("password", 10),
+        roleId: managementRole.id,
       },
     ],
   });
