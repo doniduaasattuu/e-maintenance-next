@@ -62,6 +62,7 @@ CREATE TABLE "functional_locations" (
 CREATE TABLE "classifications" (
     "id" SERIAL NOT NULL,
     "description" VARCHAR(50) NOT NULL,
+    "type" VARCHAR(25) NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -195,6 +196,9 @@ CREATE UNIQUE INDEX "users_phone_key" ON "users"("phone");
 
 -- CreateIndex
 CREATE INDEX "functional_locations_id_description_idx" ON "functional_locations"("id", "description");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "classifications_type_key" ON "classifications"("type");
 
 -- CreateIndex
 CREATE INDEX "equipments_id_sortField_description_idx" ON "equipments"("id", "sortField", "description");

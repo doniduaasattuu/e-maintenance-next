@@ -65,6 +65,7 @@ model User {
   files               File[]
   findings            Finding[]
 
+  @@index([nik, name, email])
   @@map("users")
 }
 
@@ -86,6 +87,7 @@ model FunctionalLocation {
 model Classification {
   id          Int      @id @default(autoincrement())
   description String   @db.VarChar(50)
+  type        String   @unique @db.VarChar(25)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -159,7 +161,7 @@ model Material {
 
   unit Unit? @relation(fields: [unitId], references: [id], onDelete: SetNull)
 
-  @@index([id, name, price])
+  @@index([id, name])
   @@map("materials")
 }
 
@@ -214,6 +216,7 @@ model Finding {
   user               User?               @relation(fields: [userId], references: [id])
   findingImages      FindingImage[]
 
+  @@index([description, notification, equipmentId, functionalLocationId])
   @@map("findings")
 }
 

@@ -641,9 +641,11 @@ async function main() {
     data: [
       {
         description: "ELECTRICAL PANEL",
+        type: "PANEL",
       },
       {
         description: "MOTOR/DRIVE",
+        type: "MOTOR",
       },
     ],
   });

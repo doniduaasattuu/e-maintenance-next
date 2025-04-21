@@ -8,6 +8,7 @@ export async function getClassifications(): Promise<Classification[] | null> {
     select: {
       id: true,
       description: true,
+      type: true,
     },
   });
 
