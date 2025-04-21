@@ -389,7 +389,7 @@ async function main() {
       },
       {
         email: "ag@gmail.com",
-        name: "AG Yuanti",
+        name: "AG Yuanto",
         nik: "55000099",
         positionId: GL.id,
         departmentId: EI2.id,
