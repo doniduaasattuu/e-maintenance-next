@@ -328,6 +328,7 @@ type GetUsersParams = {
   sortBy?: string;
   query?: string;
   department?: string;
+  position?: string;
 };
 
 type PaginatedUsers = {
@@ -342,6 +343,7 @@ export async function getUsers({
   sortBy = "name",
   query,
   department,
+  position,
 }: GetUsersParams): Promise<PaginatedUsers> {
   const skip = (page - 1) * parseInt(perPage);
   const take = parseInt(perPage);
@@ -367,6 +369,9 @@ export async function getUsers({
         }),
         ...(department && {
           departmentId: department,
+        }),
+        ...(position && {
+          positionId: position,
         }),
       },
       select: {
@@ -415,6 +420,9 @@ export async function getUsers({
         }),
         ...(department && {
           departmentId: department,
+        }),
+        ...(position && {
+          positionId: position,
         }),
       },
     }),

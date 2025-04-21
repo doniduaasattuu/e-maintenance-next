@@ -5,6 +5,8 @@ import SearchBar from "./search-bar";
 import FilterDropdown from "./filter-dropdown";
 import { FilterDepartment } from "./filter-department";
 import { Department } from "@/types/department";
+import { Position } from "@/types/position";
+import { FilterPosition } from "./filter-position";
 
 const sortOptions = [
   {
@@ -36,13 +38,16 @@ const sortOptions = [
 
 export default function UserHeader({
   departments,
+  positions,
 }: {
   departments: Department[] | null;
+  positions: Position[] | null;
 }) {
   return (
     <div className="flex justify-between items-center space-x-2">
       <SearchBar />
       <div className="space-x-2 flex items-center">
+        <FilterPosition positions={positions} />
         <FilterDepartment departments={departments} />
         <FilterDropdown sortOptions={sortOptions} />
       </div>
