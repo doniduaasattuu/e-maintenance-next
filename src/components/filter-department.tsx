@@ -56,7 +56,7 @@ export function FilterDepartment({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={`w-[130px] justify-between ${className}`}
+          className={`w-[160px] justify-between ${className}`}
         >
           {value && departments
             ? departments.find((department) => String(department.id) === value)

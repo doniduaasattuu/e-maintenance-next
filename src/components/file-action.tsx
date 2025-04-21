@@ -1,4 +1,5 @@
 "use client";
+
 import React from "react";
 import { TableCell } from "./ui/table";
 import OptionsDropdown from "./options-dropdown";
@@ -9,8 +10,11 @@ import { File } from "@/types/file";
 import { toast } from "sonner";
 import { deleteFileById } from "@/actions/file-action";
 import { DialogDelete } from "./dialog-delete";
+import useUserClient from "@/hooks/useUserClient";
+import { onlyAdmin } from "@/lib/config";
 
 export default function FileAction({ file }: { file: File }) {
+  const user = useUserClient();
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
 
   const handleCloseDialog = () => {
@@ -39,21 +43,26 @@ export default function FileAction({ file }: { file: File }) {
     }
   };
 
+  const isAuthorized =
+    onlyAdmin.includes(user?.role) || String(file.userId) === user?.id;
+
   return (
     <React.Fragment>
       <TableCell className="text-right">
-        <OptionsDropdown>
-          <DropdownMenuItem asChild>
-            <Link href={`/files/${file.id}/edit`} className="font-sm link">
-              <Edit />
-              Edit
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleOpenDialog}>
-            <Trash2 />
-            Delete
-          </DropdownMenuItem>
-        </OptionsDropdown>
+        {isAuthorized && (
+          <OptionsDropdown>
+            <DropdownMenuItem asChild>
+              <Link href={`/files/${file.id}/edit`} className="font-sm link">
+                <Edit />
+                Edit
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleOpenDialog}>
+              <Trash2 />
+              Delete
+            </DropdownMenuItem>
+          </OptionsDropdown>
+        )}
       </TableCell>
       <DialogDelete
         isOpen={isOpen}

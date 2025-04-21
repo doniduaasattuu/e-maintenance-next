@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 
 import {
@@ -13,8 +15,26 @@ import { formatDate } from "@/lib/utils";
 import { User } from "@/types/user";
 import UserAvatar from "./user-avatar";
 import Link from "next/link";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Role } from "@/types/role";
+import { toast } from "sonner";
+import { assignRoleById } from "@/actions/role-action";
 
-export default function UserTable({ users }: { users: User[] }) {
+export default function UserTable({
+  users,
+  roles,
+}: {
+  users: User[];
+  roles: Role[];
+}) {
   return (
     <Table>
       <TableCaption>A list of registered users.</TableCaption>
@@ -40,6 +60,32 @@ export default function UserTable({ users }: { users: User[] }) {
         {users &&
           users.length >= 1 &&
           users.map((user) => {
+            const selectedRole = String(user.role?.id);
+            const handleChangeRole = async (roleId: string, userId: number) => {
+              try {
+                const response = await assignRoleById({
+                  roleId: parseInt(roleId),
+                  userId: userId,
+                });
+
+                if (response.success) {
+                  toast.success("Success", {
+                    description: `Successfully asign user role to ${
+                      roles.find((role) => String(role.id) === roleId)?.name
+                    }`,
+                  });
+                } else {
+                  throw new Error(response.message);
+                }
+              } catch (e) {
+                if (e instanceof Error) {
+                  toast.error("Error", {
+                    description: e.message,
+                  });
+                }
+              }
+            };
+
             return (
               <TableRow key={user.id}>
                 <TableCell className="w-[50px]">
@@ -78,7 +124,28 @@ export default function UserTable({ users }: { users: User[] }) {
                   </div>
                 </TableCell>
                 <TableCell className="font-light text-muted-foreground align-top">
-                  {user.role.name}
+                  <Select
+                    disabled={user.email === "admin@gmail.com"}
+                    defaultValue={selectedRole}
+                    onValueChange={(roleId) =>
+                      handleChangeRole(roleId, user.id)
+                    }
+                  >
+                    <SelectTrigger className="w-[150px]">
+                      <SelectValue placeholder="Select Role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Roles</SelectLabel>
+                        {roles &&
+                          roles.map((role) => (
+                            <SelectItem key={role.id} value={String(role.id)}>
+                              {role.name}
+                            </SelectItem>
+                          ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
                 </TableCell>
                 <TableCell className="font-light text-muted-foreground align-top">
                   {formatDate(user.createdAt)}

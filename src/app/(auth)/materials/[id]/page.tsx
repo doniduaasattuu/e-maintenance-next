@@ -9,6 +9,8 @@ import { formatCurrency } from "@/lib/utils";
 import EquipmentList from "@/components/equipment-list";
 import FormCard from "@/components/form-card";
 import { SimpleEquipment } from "@/types/equipment";
+import { getUserSession } from "@/hooks/useUserSession";
+import { onlyAdmin } from "@/lib/config";
 
 export default async function MaterialPage({
   params,
@@ -16,6 +18,7 @@ export default async function MaterialPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const user = await getUserSession();
   const material = await getMaterial({
     id: id,
     includeEquipments: true,
@@ -36,9 +39,11 @@ export default async function MaterialPage({
     <TableLayout>
       <FormCard>
         <HeaderCard header="Detail" content="Material data and relations">
-          <Link className="text-sm" href={`/materials/${id}/edit`}>
-            Edit
-          </Link>
+          {onlyAdmin.includes(user?.role) && (
+            <Link className="text-sm" href={`/materials/${id}/edit`}>
+              Edit
+            </Link>
+          )}
         </HeaderCard>
 
         <div className="space-y-4">

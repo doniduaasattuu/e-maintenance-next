@@ -15,7 +15,8 @@ import { ImageOff } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { Separator } from "./ui/separator";
 import FindingAction from "./finding-action";
-import { useSession } from "next-auth/react";
+import useUserClient from "@/hooks/useUserClient";
+import { leader } from "@/lib/config";
 
 export default function FindingList({
   findings,
@@ -24,8 +25,7 @@ export default function FindingList({
   findings: Finding[];
   findingStatuses: FindingStatus[];
 }) {
-  const { data: session } = useSession();
-  const user = session?.user;
+  const user = useUserClient();
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-2">
@@ -105,7 +105,8 @@ export default function FindingList({
                 <p className="text-xs text-muted-foreground">
                   {formatDate(finding.createdAt)}
                 </p>
-                {user?.id === String(finding.user?.id) && (
+                {(leader.includes(user?.role) ||
+                  String(finding?.userId) === user?.id) && (
                   <FindingAction finding={finding} />
                 )}
               </div>

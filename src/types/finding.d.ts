@@ -8,6 +8,7 @@ export type Finding = {
   description: string;
   notification: string | null;
   findingStatusId: number;
+  userId: number | null;
   createdAt: Date;
   updatedAt: Date;
   equipment: SimpleEquipment | null;

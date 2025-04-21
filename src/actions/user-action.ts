@@ -14,6 +14,7 @@ import fs from "fs/promises";
 import fSync from "fs";
 import path from "path";
 import { User } from "@/types/user";
+import { REGISTER_CODE } from "@/lib/config";
 
 export async function createUser(prevState: unknown, formData: FormData) {
   try {
@@ -28,7 +29,17 @@ export async function createUser(prevState: unknown, formData: FormData) {
       };
     }
 
-    const { nik, email, name, password } = validatedData.data;
+    const { nik, email, name, password, register_code } = validatedData.data;
+
+    if (register_code !== REGISTER_CODE) {
+      return {
+        success: false,
+        message: "Register error",
+        errors: {
+          register_code: ["Register code is not match"],
+        },
+      };
+    }
 
     // CHECKING USER IS EXISTS
     const userExist = await prisma.user.findFirst({
@@ -401,6 +412,9 @@ export async function getUsers({
               email: { contains: query, mode: "insensitive" },
             },
           ],
+        }),
+        ...(department && {
+          departmentId: department,
         }),
       },
     }),

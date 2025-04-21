@@ -1,3 +1,5 @@
+export const REGISTER_CODE: string =
+  process.env.NEXT_PUBLIC_REGISTER_CODE ?? "E-Maintenance Next V4.0";
 export const MAX_FILE_SIZE = 2 * 1024 * 1024; // 5MB
 export const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME ?? "NextJS App";
 export const ALLOWED_FILE_TYPES: readonly [string, ...string[]] = [
@@ -18,3 +20,9 @@ export const ALLOWED_IMAGE_TYPES: readonly [string, ...string[]] = [
 ];
 
 export const MAX_FILE_COUNT = 5;
+
+export const onlyAdmin = ["Admin"];
+export const management = ["Management", "Admin"];
+export const leader = ["Leader", "Management", "Admin"];
+
+// const roles = ["User", "Leader", "Management", "Admin"];
