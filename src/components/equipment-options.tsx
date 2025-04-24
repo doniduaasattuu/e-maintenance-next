@@ -2,9 +2,21 @@
 
 import React from "react";
 import OptionsDropdown from "./options-dropdown";
-import { DropdownMenuItem } from "./ui/dropdown-menu";
+import {
+  DropdownMenuItem,
+  DropdownMenuPortal,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+} from "./ui/dropdown-menu";
 import Link from "next/link";
-import { Camera, Edit, QrCode } from "lucide-react";
+import {
+  Camera,
+  Edit,
+  HistoryIcon,
+  NotepadTextIcon,
+  QrCode,
+} from "lucide-react";
 import { Equipment } from "@/types/equipment";
 import {
   Dialog,
@@ -39,7 +51,7 @@ export default function EquipmentOptions({
 
   return (
     <React.Fragment>
-      <OptionsDropdown>
+      <OptionsDropdown className="w-[160px]">
         {onlyAdmin.includes(user?.role) && (
           <DropdownMenuItem asChild>
             <Link className="text-sm" href={`/equipments/${id}/edit`}>
@@ -48,6 +60,36 @@ export default function EquipmentOptions({
             </Link>
           </DropdownMenuItem>
         )}
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>
+            <div className="flex gap-2 items-center">
+              <NotepadTextIcon size={16} className="text-muted-foreground" />
+              Inspection
+            </div>
+          </DropdownMenuSubTrigger>
+          <DropdownMenuPortal>
+            <DropdownMenuSubContent>
+              <DropdownMenuItem asChild>
+                <Link
+                  className="text-sm"
+                  href={`/inspections/${equipment.id}/create`}
+                >
+                  <NotepadTextIcon />
+                  New
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link
+                  className="text-sm"
+                  href={`/inspections/${equipment.id}/history`}
+                >
+                  <HistoryIcon />
+                  History
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuSubContent>
+          </DropdownMenuPortal>
+        </DropdownMenuSub>
         <DropdownMenuItem asChild>
           <Link
             className="text-sm"

@@ -57,13 +57,14 @@ model User {
   positionId   String?
   departmentId String?
 
-  role                Role                 @relation(fields: [roleId], references: [id])
-  position            Position?            @relation(fields: [positionId], references: [id])
-  department          Department?          @relation(fields: [departmentId], references: [id])
-  equipments          Equipment[]
-  functionalLocations FunctionalLocation[]
-  files               File[]
-  findings            Finding[]
+  role                    Role                      @relation(fields: [roleId], references: [id])
+  position                Position?                 @relation(fields: [positionId], references: [id])
+  department              Department?               @relation(fields: [departmentId], references: [id])
+  equipments              Equipment[]
+  functionalLocations     FunctionalLocation[]
+  files                   File[]
+  findings                Finding[]
+  equipmentInspectionForm EquipmentInspectionForm[]
 
   @@index([nik, name, email])
   @@map("users")
@@ -236,4 +237,65 @@ model FindingImage {
 enum ImageStatus {
   Before
   After
+}
+
+model EquipmentInspectionForm {
+  id           Int      @id @default(autoincrement())
+  equipmentId  String   @db.Char(9)
+  formableId   Int
+  formableType String
+  userId       Int
+  user         User     @relation(fields: [userId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("equipment_inspection_forms")
+}
+
+model MotorInspection {
+  id               Int      @id @default(autoincrement())
+  isOperated       Boolean
+  isClean          Boolean
+  numberOfGreasing Int?
+  temperatureDe    Decimal? @db.Decimal(5, 2)
+  temperatureBody  Decimal? @db.Decimal(5, 2)
+  temperatureNde   Decimal? @db.Decimal(5, 2)
+  vibrationDev     Decimal? @db.Decimal(4, 2)
+  vibrationDeh     Decimal? @db.Decimal(4, 2)
+  vibrationDea     Decimal? @db.Decimal(4, 2)
+  vibrationDef     Decimal? @db.Decimal(4, 2)
+  isNoisyDe        Boolean
+  vibrationNdev    Decimal? @db.Decimal(4, 2)
+  vibrationNdeh    Decimal? @db.Decimal(4, 2)
+  vibrationNdef    Decimal? @db.Decimal(4, 2)
+  isNoisyNde       Boolean
+  note             String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("motor_inspections")
+}
+
+model PanelInspection {
+  id                   Int      @id @default(autoincrement())
+  isOperated           Boolean
+  isClean              Boolean
+  isLabelOk            Boolean
+  isIndicatorOk        Boolean
+  temperatureIncomingR Decimal? @db.Decimal(5, 2)
+  temperatureIncomingS Decimal? @db.Decimal(5, 2)
+  temperatureIncomingT Decimal? @db.Decimal(5, 2)
+  temperatureCabinet   Decimal? @db.Decimal(5, 2)
+  temperatureOutgoingR Decimal? @db.Decimal(5, 2)
+  temperatureOutgoingS Decimal? @db.Decimal(5, 2)
+  temperatureOutgoingT Decimal? @db.Decimal(5, 2)
+  currentR             Decimal? @db.Decimal(5, 2)
+  currentS             Decimal? @db.Decimal(5, 2)
+  currentT             Decimal? @db.Decimal(5, 2)
+  isNoisy              Boolean?
+  note                 String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@map("panel_inspections")
 }

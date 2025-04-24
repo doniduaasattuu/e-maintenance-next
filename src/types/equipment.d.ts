@@ -7,6 +7,7 @@ export type Equipment = {
   classification: {
     id: number;
     description: string;
+    type: string;
   };
   equipmentStatus: {
     id: number;
@@ -27,6 +28,7 @@ export type EquipmentWitRelations = {
   classification: {
     id: number;
     description: string;
+    type: string;
   };
   equipmentStatus: {
     id: number;
