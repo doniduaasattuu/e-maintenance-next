@@ -52,10 +52,10 @@ export default function TableNote({ noteData }: { noteData: Note[] }) {
               noteData.length > 0 &&
               noteData.map((note: Note, index: number) => (
                 <TableRow key={index}>
-                  <TableCell className="font-medium align-top">
+                  <TableCell className="font-medium align-top truncate">
                     {note.inspector}
                   </TableCell>
-                  <TableCell className="whitespace-normal break-words align-top">
+                  <TableCell className="whitespace-normal break-words min-w-[250px] align-top">
                     {note.note}
                   </TableCell>
                   <TableCell className="text-right text-muted-foreground align-top">
