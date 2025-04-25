@@ -23,6 +23,9 @@ export const BaseInspectionFormSchema = z.object({
         message: "The temperature should be between 20°C and 200°C",
       }
     ),
+  current: z.string().regex(/^\d+(\.\d+)?$/, {
+    message: "The current must be a valid number",
+  }),
   vibration: z
     .string()
     .regex(/^\d+(\.\d+)?$/, {
@@ -61,5 +64,29 @@ export const CreateMotorInspectionSchema = z.object({
 });
 
 export const EditMotorInspectionSchema = CreateMotorInspectionSchema.extend({
+  inspectionId: z.string().optional(),
+});
+
+export const CreatePanelInspectionSchema = z.object({
+  equipmentId: BaseInspectionFormSchema.shape.equipmentId,
+  isOperated: BaseInspectionFormSchema.shape.bool,
+  isClean: BaseInspectionFormSchema.shape.bool,
+  isLabelOk: BaseInspectionFormSchema.shape.bool,
+  isIndicatorOk: BaseInspectionFormSchema.shape.bool,
+  temperatureIncomingR: BaseInspectionFormSchema.shape.temperature.optional(),
+  temperatureIncomingS: BaseInspectionFormSchema.shape.temperature.optional(),
+  temperatureIncomingT: BaseInspectionFormSchema.shape.temperature.optional(),
+  temperatureCabinet: BaseInspectionFormSchema.shape.temperature.optional(),
+  temperatureOutgoingR: BaseInspectionFormSchema.shape.temperature.optional(),
+  temperatureOutgoingS: BaseInspectionFormSchema.shape.temperature.optional(),
+  temperatureOutgoingT: BaseInspectionFormSchema.shape.temperature.optional(),
+  currentR: BaseInspectionFormSchema.shape.current.optional(),
+  currentS: BaseInspectionFormSchema.shape.current.optional(),
+  currentT: BaseInspectionFormSchema.shape.current.optional(),
+  isNoisy: BaseInspectionFormSchema.shape.bool,
+  note: z.string().min(9).max(1000).optional(),
+});
+
+export const EditPanelInspectionSchema = CreatePanelInspectionSchema.extend({
   inspectionId: z.string().optional(),
 });

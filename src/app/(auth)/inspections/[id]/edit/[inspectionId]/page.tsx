@@ -1,7 +1,13 @@
 import { getEquipmentById } from "@/actions/equipment-action";
-import { getMotorInspectionById } from "@/actions/inspection-action";
+import {
+  getMotorInspectionById,
+  getPanelInspectionById,
+} from "@/actions/inspection-action";
 import BackBreadcrumb from "@/components/back-breadcrumb";
 import MotorInspectionEditForm from "@/components/motor-inspection-edit-form";
+import PanelInspectionEditForm from "@/components/panel-inspection-edit-form";
+import { InspectionMotor } from "@/types/motor-inspection";
+import { InspectionPanel } from "@/types/panel-inspection";
 import React from "react";
 
 export default async function InspectionEdit({
@@ -10,40 +16,44 @@ export default async function InspectionEdit({
   params: Promise<{ id: string; inspectionId: string }>;
 }) {
   const { id, inspectionId } = await params;
-
   const equipment = await getEquipmentById(id);
-  const inspectionMotor = await getMotorInspectionById(parseInt(inspectionId));
 
-  if (!equipment || !inspectionMotor) {
-    return <p>{`Record of ${id} is not found`}</p>;
+  if (!equipment) {
+    return <p>{`Equipment ${id} is not found`}</p>;
+  }
+  const equipmentClassType = equipment.classification.type;
+  let inspection: unknown = null;
+
+  if (equipmentClassType === "MOTOR") {
+    inspection = await getMotorInspectionById(parseInt(inspectionId));
+  } else if (equipmentClassType === "PANEL") {
+    inspection = await getPanelInspectionById(parseInt(inspectionId));
+  }
+
+  if (!inspection) {
+    return <p>No record found.</p>;
   }
 
   return (
     <div className="space-y-4 mb-4">
-      <BackBreadcrumb page="Update motor inspection form" />
-      {equipment.classification.type === "MOTOR" && (
-        <MotorInspectionEditForm
-          equipment={equipment}
-          inspectionMotor={inspectionMotor}
-        />
+      {equipmentClassType === "MOTOR" && (
+        <React.Fragment>
+          <BackBreadcrumb page="Update motor inspection form" />
+          <MotorInspectionEditForm
+            equipment={equipment}
+            inspectionMotor={inspection as InspectionMotor}
+          />
+        </React.Fragment>
       )}
-      {equipment.classification.type === "PANEL" && (
-        <p>Panel Inspection Form</p>
+      {equipmentClassType === "PANEL" && (
+        <React.Fragment>
+          <BackBreadcrumb page="Update panel inspection form" />
+          <PanelInspectionEditForm
+            equipment={equipment}
+            inspectionPanel={inspection as InspectionPanel}
+          />
+        </React.Fragment>
       )}
-      {!equipment.classification.type && <p>Equipment is not classified.</p>}
     </div>
-
-    // <React.Fragment>
-    //   {equipment.classification.type === "MOTOR" && (
-    //     <MotorInspectionEditForm
-    //       equipment={equipment}
-    //       inspectionMotor={inspectionMotor}
-    //     />
-    //   )}
-    //   {equipment.classification.type === "PANEL" && (
-    //     <p>Panel Inspection Form</p>
-    //   )}
-    //   {!equipment.classification.type && <p>Equipment is not classified.</p>}
-    // </React.Fragment>
   );
 }

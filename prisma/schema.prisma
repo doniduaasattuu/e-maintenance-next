@@ -289,10 +289,10 @@ model PanelInspection {
   temperatureOutgoingR Decimal? @db.Decimal(5, 2)
   temperatureOutgoingS Decimal? @db.Decimal(5, 2)
   temperatureOutgoingT Decimal? @db.Decimal(5, 2)
-  currentR             Decimal? @db.Decimal(5, 2)
-  currentS             Decimal? @db.Decimal(5, 2)
-  currentT             Decimal? @db.Decimal(5, 2)
-  isNoisy              Boolean?
+  currentR             Decimal? @db.Decimal(6, 2)
+  currentS             Decimal? @db.Decimal(6, 2)
+  currentT             Decimal? @db.Decimal(6, 2)
+  isNoisy              Boolean
   note                 String?
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt

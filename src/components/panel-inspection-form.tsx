@@ -23,44 +23,44 @@ import FormCard from "./form-card";
 import HeaderCard from "./header-card";
 import { Textarea } from "./ui/textarea";
 
-type MotorInspectionFields = {
+type PanelInspectionFields = {
   equipmentId: string;
   isOperated: "true" | "false";
   isClean: "true" | "false";
-  numberOfGreasing?: string | undefined;
-  temperatureDe?: string | undefined;
-  temperatureBody?: string | undefined;
-  temperatureNde?: string | undefined;
-  vibrationDev?: string | undefined;
-  vibrationDeh?: string | undefined;
-  vibrationDea?: string | undefined;
-  vibrationDef?: string | undefined;
-  isNoisyDe: "true" | "false";
-  vibrationNdev?: string | undefined;
-  vibrationNdeh?: string | undefined;
-  vibrationNdef?: string | undefined;
-  isNoisyNde: "true" | "false";
+  isLabelOk: "true" | "false";
+  isIndicatorOk: "true" | "false";
+  temperatureIncomingR?: string | undefined;
+  temperatureIncomingS?: string | undefined;
+  temperatureIncomingT?: string | undefined;
+  temperatureCabinet?: string | undefined;
+  temperatureOutgoingR?: string | undefined;
+  temperatureOutgoingS?: string | undefined;
+  temperatureOutgoingT?: string | undefined;
+  currentR?: string | undefined;
+  currentS?: string | undefined;
+  currentT?: string | undefined;
+  isNoisy: "true" | "false";
   note?: string | undefined;
 };
 
-type MotorInspectionProps = {
+type PanelInspectionProps = {
   equipment: Equipment;
-  form: UseFormReturn<MotorInspectionFields, unknown, undefined>;
+  form: UseFormReturn<PanelInspectionFields, unknown, undefined>;
   onSubmit: React.FormEventHandler<HTMLFormElement>;
-  control: Control<MotorInspectionFields, unknown>;
+  control: Control<PanelInspectionFields, unknown>;
   pending: boolean | undefined;
   lastInserted?: string | null;
   isEditing?: boolean | undefined;
 };
 
-export default function MotorForm({
+export default function PanelInspectionForm({
   equipment,
   form,
   onSubmit,
   control,
   pending,
   isEditing = false,
-}: MotorInspectionProps) {
+}: PanelInspectionProps) {
   return (
     <Form {...form}>
       <form onSubmit={onSubmit} className="space-y-4">
@@ -69,8 +69,8 @@ export default function MotorForm({
             header={equipment.id}
             content={
               isEditing
-                ? "Update data motor inspection form"
-                : "Insert data motor inspection form"
+                ? "Update data panel inspection form"
+                : "Insert data panel inspection form"
             }
           />
           <FormField
@@ -139,12 +139,111 @@ export default function MotorForm({
               )}
             />
           </InputGridWrapper>
+          <InputGridWrapper className="grid-cols-2 max-w-xl">
+            <FormField
+              control={control}
+              name="isLabelOk"
+              render={({ field }) => (
+                <FormItem className="max-w-xl">
+                  <FormLabel>Labeling</FormLabel>
+                  <FormControl>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Panel Label" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="true">Good</SelectItem>
+                        <SelectItem value="false">Not Good</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="isIndicatorOk"
+              render={({ field }) => (
+                <FormItem className="max-w-xl">
+                  <FormLabel>Indicator</FormLabel>
+                  <FormControl>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Cleanliness" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="true">Good</SelectItem>
+                        <SelectItem value="false">Not Good</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </InputGridWrapper>
+        </FormCard>
+
+        <FormCard>
+          <HeaderCard header="Temperature" />
+          <InputGridWrapper className="grid-cols-3 max-w-xl">
+            <FormField
+              control={control}
+              name="temperatureIncomingR"
+              render={({ field }) => (
+                <FormItem className="max-w-xl">
+                  <FormLabel>Incoming R</FormLabel>
+                  <FormControl>
+                    <Input type="number" inputMode="numeric" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="temperatureIncomingS"
+              render={({ field }) => (
+                <FormItem className="max-w-xl">
+                  <FormLabel>Incoming S</FormLabel>
+                  <FormControl>
+                    <Input type="number" inputMode="numeric" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="temperatureIncomingT"
+              render={({ field }) => (
+                <FormItem className="max-w-xl">
+                  <FormLabel>Incoming T</FormLabel>
+                  <FormControl>
+                    <Input type="number" inputMode="numeric" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </InputGridWrapper>
           <FormField
             control={control}
-            name="numberOfGreasing"
+            name="temperatureCabinet"
             render={({ field }) => (
               <FormItem className="max-w-xl">
-                <FormLabel>Number of greasing</FormLabel>
+                <FormLabel>Cabinet</FormLabel>
                 <FormControl>
                   <Input type="number" inputMode="numeric" {...field} />
                 </FormControl>
@@ -152,16 +251,13 @@ export default function MotorForm({
               </FormItem>
             )}
           />
-        </FormCard>
-        <FormCard>
-          <HeaderCard header="Temperature" />
           <InputGridWrapper className="grid-cols-3 max-w-xl">
             <FormField
               control={control}
-              name="temperatureDe"
+              name="temperatureOutgoingR"
               render={({ field }) => (
                 <FormItem className="max-w-xl">
-                  <FormLabel>DE</FormLabel>
+                  <FormLabel>Outgoing R</FormLabel>
                   <FormControl>
                     <Input type="number" inputMode="numeric" {...field} />
                   </FormControl>
@@ -171,10 +267,10 @@ export default function MotorForm({
             />
             <FormField
               control={control}
-              name="temperatureBody"
+              name="temperatureOutgoingS"
               render={({ field }) => (
                 <FormItem className="max-w-xl">
-                  <FormLabel>Body</FormLabel>
+                  <FormLabel>Outgoing S</FormLabel>
                   <FormControl>
                     <Input type="number" inputMode="numeric" {...field} />
                   </FormControl>
@@ -184,10 +280,10 @@ export default function MotorForm({
             />
             <FormField
               control={control}
-              name="temperatureNde"
+              name="temperatureOutgoingT"
               render={({ field }) => (
                 <FormItem className="max-w-xl">
-                  <FormLabel>NDE</FormLabel>
+                  <FormLabel>Outgoing T</FormLabel>
                   <FormControl>
                     <Input type="number" inputMode="numeric" {...field} />
                   </FormControl>
@@ -199,100 +295,14 @@ export default function MotorForm({
         </FormCard>
 
         <FormCard>
-          <HeaderCard header="Vibration DE" />
-          <InputGridWrapper className="grid-cols-2 max-w-xl">
-            <FormField
-              control={control}
-              name="vibrationDev"
-              render={({ field }) => (
-                <FormItem className="max-w-xl">
-                  <FormLabel>Vertical</FormLabel>
-                  <FormControl>
-                    <Input type="number" inputMode="numeric" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={control}
-              name="vibrationDeh"
-              render={({ field }) => (
-                <FormItem className="max-w-xl">
-                  <FormLabel>Horizontal</FormLabel>
-                  <FormControl>
-                    <Input type="number" inputMode="numeric" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </InputGridWrapper>
-          <InputGridWrapper className="grid-cols-2 max-w-xl">
-            <FormField
-              control={control}
-              name="vibrationDea"
-              render={({ field }) => (
-                <FormItem className="max-w-xl">
-                  <FormLabel>Axial</FormLabel>
-                  <FormControl>
-                    <Input type="number" inputMode="numeric" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={control}
-              name="vibrationDef"
-              render={({ field }) => (
-                <FormItem className="max-w-xl">
-                  <FormLabel>Frame</FormLabel>
-                  <FormControl>
-                    <Input type="number" inputMode="numeric" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </InputGridWrapper>
-          <FormField
-            control={control}
-            name="isNoisyDe"
-            render={({ field }) => (
-              <FormItem className="max-w-xl">
-                <FormLabel>Noise DE</FormLabel>
-                <FormControl>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Noise DE" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="true">Noisy</SelectItem>
-                      <SelectItem value="false">Good</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </FormCard>
-
-        <FormCard>
-          <HeaderCard header="Vibration NDE" />
+          <HeaderCard header="Current" />
           <InputGridWrapper className="grid-cols-3 max-w-xl">
             <FormField
               control={control}
-              name="vibrationNdev"
+              name="currentR"
               render={({ field }) => (
                 <FormItem className="max-w-xl">
-                  <FormLabel>Vertical</FormLabel>
+                  <FormLabel>Current R</FormLabel>
                   <FormControl>
                     <Input type="number" inputMode="numeric" {...field} />
                   </FormControl>
@@ -302,10 +312,10 @@ export default function MotorForm({
             />
             <FormField
               control={control}
-              name="vibrationNdeh"
+              name="currentS"
               render={({ field }) => (
                 <FormItem className="max-w-xl">
-                  <FormLabel>Horizontal</FormLabel>
+                  <FormLabel>Current S</FormLabel>
                   <FormControl>
                     <Input type="number" inputMode="numeric" {...field} />
                   </FormControl>
@@ -315,10 +325,10 @@ export default function MotorForm({
             />
             <FormField
               control={control}
-              name="vibrationNdef"
+              name="currentT"
               render={({ field }) => (
                 <FormItem className="max-w-xl">
-                  <FormLabel>Frame</FormLabel>
+                  <FormLabel>Current T</FormLabel>
                   <FormControl>
                     <Input type="number" inputMode="numeric" {...field} />
                   </FormControl>
@@ -329,10 +339,10 @@ export default function MotorForm({
           </InputGridWrapper>
           <FormField
             control={control}
-            name="isNoisyNde"
+            name="isNoisy"
             render={({ field }) => (
               <FormItem className="max-w-xl">
-                <FormLabel>Noise NDE</FormLabel>
+                <FormLabel>Panel noise</FormLabel>
                 <FormControl>
                   <Select
                     onValueChange={field.onChange}
@@ -340,11 +350,11 @@ export default function MotorForm({
                   >
                     <FormControl>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Noise NDE" />
+                        <SelectValue placeholder="Cleanliness" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="true">Noisy</SelectItem>
+                      <SelectItem value="true">Noise</SelectItem>
                       <SelectItem value="false">Good</SelectItem>
                     </SelectContent>
                   </Select>
@@ -353,6 +363,7 @@ export default function MotorForm({
               </FormItem>
             )}
           />
+
           <FormField
             control={control}
             name="note"

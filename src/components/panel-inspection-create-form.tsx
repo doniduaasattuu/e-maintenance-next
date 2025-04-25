@@ -1,8 +1,8 @@
 "use client";
 
-import { storeMotorInspection } from "@/actions/inspection-action";
+import { storePanelInspection } from "@/actions/inspection-action";
 import { Equipment } from "@/types/equipment";
-import { CreateMotorInspectionSchema } from "@/validations/inspection-form-validation";
+import { CreatePanelInspectionSchema } from "@/validations/inspection-form-validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useFormState } from "react-dom";
@@ -10,10 +10,10 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import MotorInspectionForm from "./motor-inspection-form";
+import PanelInspectionForm from "./panel-inspection-form";
 
-const createMotorInspectionFormSchema = CreateMotorInspectionSchema;
-type CreateMotorInspection = z.infer<typeof createMotorInspectionFormSchema>;
+const createPanelInspectionFormSchema = CreatePanelInspectionSchema;
+type CreatePanelInspection = z.infer<typeof createPanelInspectionFormSchema>;
 
 const initialState = {
   success: false,
@@ -22,24 +22,25 @@ const initialState = {
   inspectionId: null,
 };
 
-export default function MotorInspectionCreateForm({
+export default function PanelInspectionCreateForm({
   equipment,
 }: {
   equipment: Equipment;
 }) {
   const router = useRouter();
   const [state, formAction, pending] = useFormState(
-    storeMotorInspection,
+    storePanelInspection,
     initialState
   );
-  const form = useForm<CreateMotorInspection>({
-    resolver: zodResolver(createMotorInspectionFormSchema),
+  const form = useForm<CreatePanelInspection>({
+    resolver: zodResolver(createPanelInspectionFormSchema),
     defaultValues: {
       equipmentId: equipment.id,
       isOperated: "true",
       isClean: "true",
-      isNoisyDe: "false",
-      isNoisyNde: "false",
+      isLabelOk: "true",
+      isIndicatorOk: "true",
+      isNoisy: "false",
     },
   });
 
@@ -49,7 +50,7 @@ export default function MotorInspectionCreateForm({
     if (state.errors) {
       Object.entries(state.errors).forEach(([field, errors]) => {
         if (errors && errors.length > 0) {
-          setError(field as keyof CreateMotorInspection, {
+          setError(field as keyof CreatePanelInspection, {
             message: errors[0],
           });
         }
@@ -82,7 +83,7 @@ export default function MotorInspectionCreateForm({
   });
 
   return (
-    <MotorInspectionForm
+    <PanelInspectionForm
       equipment={equipment}
       control={control}
       form={form}

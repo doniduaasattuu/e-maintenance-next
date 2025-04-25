@@ -1,6 +1,7 @@
 import { getEquipmentById } from "@/actions/equipment-action";
 import BackBreadcrumb from "@/components/back-breadcrumb";
 import MotorInspectionCreateForm from "@/components/motor-inspection-create-form";
+import PanelInspectionCreateForm from "@/components/panel-inspection-create-form";
 import React from "react";
 
 export default async function InspectionForm({
@@ -17,14 +18,18 @@ export default async function InspectionForm({
 
   return (
     <div className="space-y-4 mb-4">
-      <BackBreadcrumb page="Motor inspection form" />
       {equipment.classification.type === "MOTOR" && (
-        <MotorInspectionCreateForm equipment={equipment} />
+        <React.Fragment>
+          <BackBreadcrumb page="Motor inspection form" />
+          <MotorInspectionCreateForm equipment={equipment} />
+        </React.Fragment>
       )}
       {equipment.classification.type === "PANEL" && (
-        <p>Panel Inspection Form</p>
+        <React.Fragment>
+          <BackBreadcrumb page="Panel inspection form" />
+          <PanelInspectionCreateForm equipment={equipment} />
+        </React.Fragment>
       )}
-      {!equipment.classification.type && <p>Equipment is not classified.</p>}
     </div>
   );
 }

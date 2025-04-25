@@ -1,8 +1,8 @@
 "use client";
 
-import { updateMotorInspection } from "@/actions/inspection-action";
+import { updatePanelInspection } from "@/actions/inspection-action";
 import { Equipment } from "@/types/equipment";
-import { EditMotorInspectionSchema } from "@/validations/inspection-form-validation";
+import { EditPanelInspectionSchema } from "@/validations/inspection-form-validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useFormState } from "react-dom";
@@ -10,12 +10,12 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import { InspectionMotor } from "@/types/motor-inspection";
+import { InspectionPanel } from "@/types/panel-inspection";
 import { booleanToString } from "@/lib/utils";
-import MotorInspectionForm from "./motor-inspection-form";
+import PanelInspectionForm from "./panel-inspection-form";
 
-const editMotorInspectionFormSchema = EditMotorInspectionSchema;
-type EditMotorInspection = z.infer<typeof editMotorInspectionFormSchema>;
+const editPanelInspectionFormSchema = EditPanelInspectionSchema;
+type EditMotorInspection = z.infer<typeof editPanelInspectionFormSchema>;
 
 const initialState = {
   success: false,
@@ -24,58 +24,58 @@ const initialState = {
   inspectionId: null,
 };
 
-export default function MotorInspectionEditForm({
+export default function PanelInspectionEditForm({
   equipment,
-  inspectionMotor,
+  inspectionPanel,
 }: {
   equipment: Equipment;
-  inspectionMotor: InspectionMotor;
+  inspectionPanel: InspectionPanel;
 }) {
   const router = useRouter();
   const [state, formAction, pending] = useFormState(
-    updateMotorInspection,
+    updatePanelInspection,
     initialState
   );
 
   const {
     isOperated,
     isClean,
-    numberOfGreasing,
-    temperatureDe,
-    temperatureBody,
-    temperatureNde,
-    vibrationDev,
-    vibrationDeh,
-    vibrationDea,
-    vibrationDef,
-    isNoisyDe,
-    vibrationNdev,
-    vibrationNdeh,
-    vibrationNdef,
-    isNoisyNde,
+    isLabelOk,
+    isIndicatorOk,
+    temperatureIncomingR,
+    temperatureIncomingS,
+    temperatureIncomingT,
+    temperatureCabinet,
+    temperatureOutgoingR,
+    temperatureOutgoingS,
+    temperatureOutgoingT,
+    currentR,
+    currentS,
+    currentT,
+    isNoisy,
     note,
-  } = inspectionMotor;
+  } = inspectionPanel;
 
   const form = useForm<EditMotorInspection>({
-    resolver: zodResolver(editMotorInspectionFormSchema),
+    resolver: zodResolver(editPanelInspectionFormSchema),
     defaultValues: {
-      inspectionId: String(inspectionMotor.id),
+      inspectionId: String(inspectionPanel.id),
       equipmentId: equipment.id,
       isOperated: booleanToString(isOperated),
       isClean: booleanToString(isClean),
-      numberOfGreasing: numberOfGreasing ?? undefined,
-      temperatureDe: temperatureDe ?? undefined,
-      temperatureBody: temperatureBody ?? undefined,
-      temperatureNde: temperatureNde ?? undefined,
-      vibrationDev: vibrationDev ?? undefined,
-      vibrationDeh: vibrationDeh ?? undefined,
-      vibrationDea: vibrationDea ?? undefined,
-      vibrationDef: vibrationDef ?? undefined,
-      isNoisyDe: booleanToString(isNoisyDe),
-      vibrationNdev: vibrationNdev ?? undefined,
-      vibrationNdeh: vibrationNdeh ?? undefined,
-      vibrationNdef: vibrationNdef ?? undefined,
-      isNoisyNde: booleanToString(isNoisyNde),
+      isLabelOk: booleanToString(isLabelOk),
+      isIndicatorOk: booleanToString(isIndicatorOk),
+      temperatureIncomingR: temperatureIncomingR ?? undefined,
+      temperatureIncomingS: temperatureIncomingS ?? undefined,
+      temperatureIncomingT: temperatureIncomingT ?? undefined,
+      temperatureCabinet: temperatureCabinet ?? undefined,
+      temperatureOutgoingR: temperatureOutgoingR ?? undefined,
+      temperatureOutgoingS: temperatureOutgoingS ?? undefined,
+      temperatureOutgoingT: temperatureOutgoingT ?? undefined,
+      currentR: currentR ?? undefined,
+      currentS: currentS ?? undefined,
+      currentT: currentT ?? undefined,
+      isNoisy: booleanToString(isNoisy),
       note: note ? String(note) : undefined,
     },
   });
@@ -117,7 +117,7 @@ export default function MotorInspectionEditForm({
   });
 
   return (
-    <MotorInspectionForm
+    <PanelInspectionForm
       isEditing={true}
       equipment={equipment}
       control={control}

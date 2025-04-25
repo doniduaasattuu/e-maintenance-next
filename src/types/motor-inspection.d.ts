@@ -18,4 +18,5 @@ export type InspectionMotor = {
   note: string | null;
   createdAt: Date;
   updatedAt: Date;
+  inspector?: string | null;
 };
