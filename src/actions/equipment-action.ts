@@ -68,6 +68,7 @@ export async function getEquipments({
           select: {
             id: true,
             description: true,
+            type: true,
           },
         },
         equipmentStatus: {
@@ -159,6 +160,37 @@ export async function getEquipment({
               path: true,
             },
           },
+        },
+      },
+    },
+  });
+
+  return equipment;
+}
+
+export async function getEquipmentById(id: string): Promise<Equipment | null> {
+  const equipment = await prisma.equipment.findUnique({
+    where: {
+      id: id,
+    },
+    include: {
+      classification: {
+        select: {
+          id: true,
+          description: true,
+          type: true,
+        },
+      },
+      equipmentStatus: {
+        select: {
+          id: true,
+          description: true,
+        },
+      },
+      functionalLocation: {
+        select: {
+          id: true,
+          description: true,
         },
       },
     },

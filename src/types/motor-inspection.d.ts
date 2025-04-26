@@ -1,0 +1,22 @@
+export type InspectionMotor = {
+  id: number;
+  isOperated: boolean;
+  isClean: boolean;
+  numberOfGreasing: string | null;
+  temperatureDe: string | null;
+  temperatureBody: string | null;
+  temperatureNde: string | null;
+  vibrationDev: string | null;
+  vibrationDeh: string | null;
+  vibrationDea: string | null;
+  vibrationDef: string | null;
+  isNoisyDe: boolean;
+  vibrationNdev: string | null;
+  vibrationNdeh: string | null;
+  vibrationNdef: string | null;
+  isNoisyNde: boolean;
+  note: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  inspector?: string | null;
+};

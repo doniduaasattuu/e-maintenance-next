@@ -34,6 +34,7 @@ import {
 } from "@/lib/config";
 import { useSearchParams } from "next/navigation";
 import { FindingStatus } from "@/types/finding-status";
+import InputGridWrapper from "./input-grid-wrapper";
 
 type FindingFields = {
   id?: string | undefined;
@@ -101,7 +102,7 @@ export default function FindingForm({
           name="id"
           render={({ field }) => <Input {...field} hidden />}
         />
-        <div className="grid grid-cols-2 max-w-xl space-x-2 sm:space-x-4 items-start">
+        <InputGridWrapper className="grid-cols-2 max-w-xl">
           <FormField
             control={control}
             name="findingStatusId"
@@ -151,8 +152,8 @@ export default function FindingForm({
               </FormItem>
             )}
           />
-        </div>
-        <div className="grid grid-cols-2 max-w-xl space-x-2 sm:space-x-4 items-start">
+        </InputGridWrapper>
+        <InputGridWrapper className="grid-cols-2 max-w-xl">
           <FormField
             control={control}
             name="equipmentId"
@@ -191,7 +192,7 @@ export default function FindingForm({
               </FormItem>
             )}
           />
-        </div>
+        </InputGridWrapper>
         <FormField
           control={control}
           name="description"

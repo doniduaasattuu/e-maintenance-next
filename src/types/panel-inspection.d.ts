@@ -1,0 +1,22 @@
+export type InspectionPanel = {
+  id: number;
+  isOperated: boolean;
+  isClean: boolean;
+  isLabelOk: boolean;
+  isIndicatorOk: boolean;
+  temperatureIncomingR: string | null;
+  temperatureIncomingS: string | null;
+  temperatureIncomingT: string | null;
+  temperatureCabinet: string | null;
+  temperatureOutgoingR: string | null;
+  temperatureOutgoingS: string | null;
+  temperatureOutgoingT: string | null;
+  currentR: string | null;
+  currentS: string | null;
+  currentT: string | null;
+  isNoisy: boolean;
+  note: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  inspector?: string | null;
+};
