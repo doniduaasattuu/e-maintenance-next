@@ -7,10 +7,8 @@ import GeneratePagination from "@/components/pagination";
 import TableLayout from "@/layouts/table-layout";
 import React from "react";
 
-export default async function EquipmentPage({
-  searchParams,
-}: {
-  searchParams: {
+export default async function EquipmentPage(props: {
+  searchParams: Promise<{
     query: string;
     order: string;
     sortBy: string;
@@ -18,10 +16,12 @@ export default async function EquipmentPage({
     perPage: string;
     classification: string;
     status: string;
-  };
+  }>;
 }) {
+  const searchParams = await props.searchParams;
   const { query, order, sortBy, page, perPage, classification, status } =
-    await searchParams;
+    searchParams;
+
   const classifications = await getClassifications();
   const equipmentStatuses = await getEquipmentStatuses();
 

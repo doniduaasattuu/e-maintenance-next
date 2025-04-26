@@ -8,10 +8,8 @@ import UserTable from "@/components/user-table";
 import TableLayout from "@/layouts/table-layout";
 import React from "react";
 
-export default async function UserPage({
-  searchParams,
-}: {
-  searchParams: {
+export default async function UserPage(props: {
+  searchParams: Promise<{
     query: string;
     order: string;
     sortBy: string;
@@ -19,10 +17,11 @@ export default async function UserPage({
     perPage: string;
     department: string;
     position: string;
-  };
+  }>;
 }) {
+  const searchParams = await props.searchParams;
   const { query, order, sortBy, page, perPage, department, position } =
-    await searchParams;
+    searchParams;
 
   const { users, totalPages } = await getUsers({
     page: Number(page ?? 1),

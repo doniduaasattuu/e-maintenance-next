@@ -7,18 +7,17 @@ import SearchBar from "@/components/search-bar";
 import { Upload } from "lucide-react";
 import React from "react";
 
-export default async function FilePage({
-  searchParams,
-}: {
-  searchParams: {
+export default async function FilePage(props: {
+  searchParams: Promise<{
     query: string;
     order: string;
     sortBy: string;
     page: string;
     perPage: string;
-  };
+  }>;
 }) {
-  const { query, order, sortBy, page, perPage } = await searchParams;
+  const searchParams = await props.searchParams;
+  const { query, order, sortBy, page, perPage } = searchParams;
 
   const { files, totalPages } = await getFiles({
     page: Number(page ?? 1),

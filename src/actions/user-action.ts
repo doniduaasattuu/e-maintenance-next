@@ -8,13 +8,12 @@ import {
 } from "@/validations/user-validation";
 import bcrypt from "bcrypt";
 import { getRoleByName } from "./role-action";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import fs from "fs/promises";
 import fSync from "fs";
 import path from "path";
 import { User } from "@/types/user";
 import { REGISTER_CODE } from "@/lib/config";
+import { getUserSession } from "@/hooks/useUserSession";
 
 export async function createUser(prevState: unknown, formData: FormData) {
   try {
@@ -103,8 +102,9 @@ export async function createUser(prevState: unknown, formData: FormData) {
 
 export async function updatePassword(prevState: unknown, formData: FormData) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
+    const userSession = await getUserSession();
+
+    if (userSession) {
       return {
         success: false,
         errors: { email: ["User not found"] },
@@ -114,7 +114,7 @@ export async function updatePassword(prevState: unknown, formData: FormData) {
 
     const user = await prisma.user.findUnique({
       where: {
-        email: session.user.email as string,
+        email: userSession.email,
       },
     });
 
@@ -190,10 +190,9 @@ export async function updatePassword(prevState: unknown, formData: FormData) {
 
 export async function editProfile(prevState: unknown, formData: FormData) {
   try {
-    const session = await getServerSession(authOptions);
-    const user = session?.user;
+    const user = await getUserSession();
 
-    if (!user?.id) {
+    if (!user) {
       return {
         success: false,
         errors: { email: ["User not found"] },

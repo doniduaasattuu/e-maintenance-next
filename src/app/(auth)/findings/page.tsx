@@ -5,19 +5,18 @@ import GeneratePagination from "@/components/pagination";
 import FindingList from "@/components/finding-list";
 import FindingHeader from "@/components/finding-header";
 
-export default async function FindingPage({
-  searchParams,
-}: {
-  searchParams: {
+export default async function FindingPage(props: {
+  searchParams: Promise<{
     query: string;
     order: string;
     sortBy: string;
     page: string;
     perPage: string;
     status: string;
-  };
+  }>;
 }) {
-  const { query, order, sortBy, page, perPage, status } = await searchParams;
+  const searchParams = await props.searchParams;
+  const { query, order, sortBy, page, perPage, status } = searchParams;
 
   const { findings, totalPages, findingStatuses } = await getFindings({
     page: parseInt(page ?? 1),

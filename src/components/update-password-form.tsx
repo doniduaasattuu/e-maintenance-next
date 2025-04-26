@@ -26,7 +26,7 @@ const initialState = {
   success: false,
   message: "",
   errors: null,
-  user: null,
+  user: undefined,
 };
 
 export default function UpdatePasswordForm() {

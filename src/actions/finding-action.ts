@@ -7,7 +7,6 @@ import {
   StoreFindingSchema,
   UpdateFindingSchema,
 } from "@/validations/finding-validation";
-import { getServerSession } from "next-auth";
 import { v4 as uuid } from "uuid";
 import fs from "fs/promises";
 import path from "path";
@@ -15,7 +14,7 @@ import { deleteFileFromFilesystem } from "./file-action";
 import { revalidatePath } from "next/cache";
 import { isEquipmentExist } from "./equipment-action";
 import { isFunclocExist } from "./functional-location-action";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { getUserSession } from "@/hooks/useUserSession";
 
 type getFindingsParams = {
   page?: number;
@@ -143,8 +142,7 @@ export async function getFindingStatuses(): Promise<FindingStatus[] | null> {
 }
 
 export async function createFinding(prevState: unknown, formData: FormData) {
-  const session = await getServerSession(authOptions);
-  const uploader = session?.user;
+  const uploader = await getUserSession();
 
   try {
     const rawData = Object.fromEntries(formData.entries());

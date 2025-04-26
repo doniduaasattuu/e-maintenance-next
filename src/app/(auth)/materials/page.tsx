@@ -5,19 +5,18 @@ import GeneratePagination from "@/components/pagination";
 import TableLayout from "@/layouts/table-layout";
 import React from "react";
 
-export default async function MaterialPage({
-  searchParams,
-}: {
-  searchParams: {
+export default async function MaterialPage(props: {
+  searchParams: Promise<{
     query: string;
     order: string;
     sortBy: string;
     page: string;
     perPage: string;
     unitId: string;
-  };
+  }>;
 }) {
-  const { query, order, sortBy, page, perPage, unitId } = await searchParams;
+  const searchParams = await props.searchParams;
+  const { query, order, sortBy, page, perPage, unitId } = searchParams;
 
   const { materials, totalPages } = await getMaterials({
     page: Number(page ?? 1),

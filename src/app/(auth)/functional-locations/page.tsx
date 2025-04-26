@@ -5,18 +5,17 @@ import GeneratePagination from "@/components/pagination";
 import FunctionalLocationTable from "@/components/functional-location-table";
 import TableLayout from "@/layouts/table-layout";
 
-export default async function FunctionalLocationIndexPage({
-  searchParams,
-}: {
-  searchParams: {
+export default async function FunctionalLocationIndexPage(props: {
+  searchParams: Promise<{
     query: string;
     order: string;
     sortBy: string;
     page: string;
     perPage: string;
-  };
+  }>;
 }) {
-  const { query, order, sortBy, page, perPage } = await searchParams;
+  const searchParams = await props.searchParams;
+  const { query, order, sortBy, page, perPage } = searchParams;
 
   const { functionalLocations, totalPages } = await getFunctionalLocations({
     page: parseInt(page ?? 1),

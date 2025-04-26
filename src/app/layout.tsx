@@ -7,7 +7,7 @@ import { getServerSession } from "next-auth";
 import AuthProvider from "@/context/AuthProvider";
 import { APP_NAME } from "@/lib/config";
 import ProgressBar from "@/components/progress-bar";
-import { authOptions } from "./api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/authOptions";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
