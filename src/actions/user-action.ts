@@ -255,7 +255,7 @@ export async function editProfile(prevState: unknown, formData: FormData) {
       const fileName = `${nik}${Date.now()}.${fileExtension}`;
       const destinationPath = path.join(
         process.cwd(),
-        "public/images/users",
+        "public/assets/images/users",
         fileName
       );
 
@@ -268,7 +268,7 @@ export async function editProfile(prevState: unknown, formData: FormData) {
       }
 
       await fs.writeFile(destinationPath, buffer);
-      imagePath = `/images/users/${fileName}`;
+      imagePath = `assets/images/users/${fileName}`;
     }
 
     const updatedUser = await prisma.user.update({

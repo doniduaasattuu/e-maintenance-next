@@ -85,14 +85,14 @@ export async function createFile(prevState: unknown, formData: FormData) {
         name: name,
         tags: tags === "undefined" ? null : tags,
         type: String(fileExtension).toLowerCase(),
-        path: "/files",
+        path: "/assets/files",
       },
     });
 
     const fileName = `${result.id}.${fileExtension}`;
     saveFile(file, fileName);
 
-    const path = `/files/${fileName}`;
+    const path = `/assets/files/${fileName}`;
 
     await prisma.file.update({
       where: {
@@ -123,11 +123,11 @@ export async function createFile(prevState: unknown, formData: FormData) {
 
 async function saveFile(file: File, fileName: string): Promise<string> {
   const fileBuffer = await file.arrayBuffer();
-  const filePath = path.join(process.cwd(), "public/files", fileName);
+  const filePath = path.join(process.cwd(), "public/assets/files", fileName);
 
   try {
     await fs.writeFile(filePath, Buffer.from(fileBuffer));
-    return `/files/${fileName}`; // Return path relative to public directory
+    return `/assets/files/${fileName}`; // Return path relative to public directory
   } catch (error) {
     console.error("Error saving file:", error);
     throw error;
@@ -214,7 +214,7 @@ export async function editFile(prevState: unknown, formData: FormData) {
       const fileExtension = file.name.split(".").pop();
       deleteFileFromFilesystem(currentFile.path);
       const fileName = `${currentFile.id}.${fileExtension}`;
-      const path = `/files/${fileName}`;
+      const path = `/assets/files/${fileName}`;
 
       saveFile(file, fileName);
 

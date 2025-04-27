@@ -8,6 +8,7 @@ interface UserAvatarProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const UserAvatar = React.forwardRef<HTMLDivElement, UserAvatarProps>(
   ({ user, className, ...props }, ref) => {
+    console.log(user);
     return (
       <Avatar
         className={`cursor-pointer h-9 w-9 ${className}`}

@@ -1,19 +1,42 @@
 import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { onlyAdmin } from "./lib/config";
+import { onlyAdmin, users } from "./lib/config";
 
 // Daftar route yang dilindungi dan role yang diizinkan untuk mengaksesnya
 const protectedRoutesConfig: Record<string, string[]> = {
+  "/home": users,
+  "/profile": users,
+  "/scanner": users,
+
   "/users": onlyAdmin,
+
+  "/functional-locations": users,
+  "/functional-locations/[id]": users,
   "/functional-locations/[id]/edit": onlyAdmin,
-  "/equipments/[id]/edit": onlyAdmin,
-  "/materials/[id]/edit": onlyAdmin,
-  // "/files/[id]/edit": onlyAdmin,
-  // "/findings/[id]/edit": leader,
   "/functional-locations/create": onlyAdmin,
+
+  "/equipments": users,
+  "/equipments/[id]": users,
+  "/equipments/[id]/edit": onlyAdmin,
   "/equipments/create": onlyAdmin,
+
+  "/materials": users,
+  "/materials/[id]": users,
+  "/materials/[id]/edit": onlyAdmin,
   "/materials/create": onlyAdmin,
+
+  "/findings": users,
+  "/findings/[id]/edit": users,
+  "/findings/create": users,
+
+  "/files": users,
+  "/files/[id]/edit": users,
+  "/files/create": users,
+
+  "/inspections/[id]/create": users,
+  "/inspections/[id]/edit[inspectionId]": users,
+  "/inspections/[id]/history": users,
 };
 
 export async function middleware(req: NextRequest) {

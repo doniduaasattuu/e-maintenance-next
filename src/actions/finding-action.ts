@@ -212,6 +212,7 @@ export async function createFinding(prevState: unknown, formData: FormData) {
     });
 
     if (images.length > 0) {
+      console.log("Executed");
       images.map(async (image) => {
         image = image as File;
         const fileExtension = image.name.split(".").pop()?.toLowerCase();
@@ -219,7 +220,7 @@ export async function createFinding(prevState: unknown, formData: FormData) {
 
         await prisma.findingImage.create({
           data: {
-            path: `/images/findings/${fileName}`,
+            path: `/assets/images/findings/${fileName}`,
             findingId: storedFinding.id,
             imageStatus: "Before",
           },
@@ -250,11 +251,15 @@ export async function createFinding(prevState: unknown, formData: FormData) {
 
 async function saveFile(file: File, fileName: string): Promise<string> {
   const fileBuffer = await file.arrayBuffer();
-  const filePath = path.join(process.cwd(), "public/images/findings", fileName);
+  const filePath = path.join(
+    process.cwd(),
+    "public/assets/images/findings",
+    fileName
+  );
 
   try {
     await fs.writeFile(filePath, Buffer.from(fileBuffer));
-    return `/image/findings/${fileName}`;
+    return `/assets/images/findings/${fileName}`;
   } catch (error) {
     console.error("Error saving file:", error);
     throw error;
@@ -437,7 +442,7 @@ export async function editFinding(prevState: unknown, formData: FormData) {
 
         await prisma.findingImage.create({
           data: {
-            path: `/images/findings/${fileName}`,
+            path: `/assets/images/findings/${fileName}`,
             findingId: updatedFinding.id,
             imageStatus: "After",
           },
