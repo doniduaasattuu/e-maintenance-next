@@ -56,12 +56,12 @@ export function FilterDepartment({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={`w-[160px] justify-between ${className}`}
+          className={`w-[120px] justify-between ${className}`}
         >
           {value && departments
             ? departments.find((department) => String(department.id) === value)
                 ?.id
-            : "Department"}
+            : "Dept."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>

@@ -142,7 +142,7 @@ model EquipmentMaterial {
 
 model Unit {
   id          Int      @id @default(autoincrement())
-  description String   @db.VarChar(50)
+  description String   @unique @db.VarChar(50)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -193,10 +193,11 @@ model EquipmentFile {
 }
 
 model FindingStatus {
-  id          Int      @id @default(autoincrement())
-  description String   @db.VarChar(50)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id          Int       @id @default(autoincrement())
+  description String    @unique @db.VarChar(50)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  finding     Finding[]
 
   @@map("finding_statuses")
 }
@@ -216,6 +217,7 @@ model Finding {
   functionalLocation FunctionalLocation? @relation(fields: [functionalLocationId], references: [id])
   user               User?               @relation(fields: [userId], references: [id])
   findingImages      FindingImage[]
+  findingStatus      FindingStatus       @relation(fields: [findingStatusId], references: [id])
 
   @@index([description, notification, equipmentId, functionalLocationId])
   @@map("findings")

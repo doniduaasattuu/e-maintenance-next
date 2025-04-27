@@ -49,7 +49,7 @@ export default function UserHeader({
       <div className="space-x-2 flex items-center">
         <FilterPosition positions={positions} />
         <FilterDepartment departments={departments} />
-        <FilterDropdown sortOptions={sortOptions} />
+        <FilterDropdown sortOptions={sortOptions} selectedOrderBy="asc" />
       </div>
     </div>
   );

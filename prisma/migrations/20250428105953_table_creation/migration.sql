@@ -270,6 +270,9 @@ CREATE UNIQUE INDEX "classifications_type_key" ON "classifications"("type");
 CREATE INDEX "equipments_id_sortField_description_idx" ON "equipments"("id", "sortField", "description");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "units_description_key" ON "units"("description");
+
+-- CreateIndex
 CREATE INDEX "materials_id_name_idx" ON "materials"("id", "name");
 
 -- CreateIndex
@@ -277,6 +280,9 @@ CREATE UNIQUE INDEX "files_name_key" ON "files"("name");
 
 -- CreateIndex
 CREATE INDEX "files_name_tags_idx" ON "files"("name", "tags");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "finding_statuses_description_key" ON "finding_statuses"("description");
 
 -- CreateIndex
 CREATE INDEX "findings_description_notification_equipmentId_functionalLoc_idx" ON "findings"("description", "notification", "equipmentId", "functionalLocationId");
@@ -331,6 +337,9 @@ ALTER TABLE "findings" ADD CONSTRAINT "findings_functionalLocationId_fkey" FOREI
 
 -- AddForeignKey
 ALTER TABLE "findings" ADD CONSTRAINT "findings_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "findings" ADD CONSTRAINT "findings_findingStatusId_fkey" FOREIGN KEY ("findingStatusId") REFERENCES "finding_statuses"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "finding_images" ADD CONSTRAINT "finding_images_findingId_fkey" FOREIGN KEY ("findingId") REFERENCES "findings"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -21,9 +21,11 @@ type SortOption = {
 export default function FilterDropdown({
   children,
   sortOptions,
+  selectedOrderBy,
 }: {
   children?: React.ReactNode;
   sortOptions: SortOption[];
+  selectedOrderBy?: string;
 }) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -92,7 +94,7 @@ export default function FilterDropdown({
           <DropdownMenuLabel>Order by</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuRadioGroup
-            value={order ?? "desc"}
+            value={order ? order : selectedOrderBy ? selectedOrderBy : "desc"}
             onValueChange={setOrder}
           >
             <DropdownMenuRadioItem value="desc">

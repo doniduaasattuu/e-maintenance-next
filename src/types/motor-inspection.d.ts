@@ -20,3 +20,22 @@ export type InspectionMotor = {
   updatedAt: Date;
   inspector?: string | null;
 };
+
+// export type DataInspectionMotor = {
+//   isOperated: boolean;
+//   isClean: boolean;
+//   numberOfGreasing: number;
+//   temperatureDe: number;
+//   temperatureBody: number;
+//   temperatureNde: number;
+//   vibrationDev: number;
+//   vibrationDeh: number;
+//   vibrationDea: number;
+//   vibrationDef: number;
+//   isNoisyDe: boolean;
+//   vibrationNdev: number;
+//   vibrationNdeh: number;
+//   vibrationNdef: number;
+//   isNoisyNde: boolean;
+//   note: string | null;
+// };

@@ -68,7 +68,7 @@ export default function GeneratePagination({ totalPages }: PaginationProps) {
 
   return (
     <Pagination>
-      <PaginationContent>
+      <PaginationContent className="ms-auto">
         <PaginationItem>
           {currentPage > 1 ? (
             <Link href={createPageUrl(currentPage - 1)}>

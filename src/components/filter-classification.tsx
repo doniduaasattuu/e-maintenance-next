@@ -36,7 +36,7 @@ export function FilterClassification({
   React.useEffect(() => {
     const params = new URLSearchParams(searchParams);
 
-    const handleOrder = (value: string | undefined) => {
+    const handleClassChange = (value: string | undefined) => {
       if (value) {
         params.set("classification", value);
       } else {
@@ -46,7 +46,7 @@ export function FilterClassification({
       replace(`${pathname}?${params.toString()}`);
     };
 
-    handleOrder(value);
+    handleClassChange(value);
   }, [pathname, replace, searchParams, value]);
 
   return (
@@ -56,12 +56,12 @@ export function FilterClassification({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={`w-[200px] justify-between ${className}`}
+          className={`w-[140px] justify-between ${className}`}
         >
           {value && classifications
             ? classifications.find(
                 (classification) => String(classification.id) === value
-              )?.description
+              )?.type
             : "Classification"}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>

@@ -36,7 +36,7 @@ export function FilterEquipmentStatus({
   React.useEffect(() => {
     const params = new URLSearchParams(searchParams);
 
-    const handleOrder = (value: string | undefined) => {
+    const handleStatusChange = (value: string | undefined) => {
       if (value) {
         params.set("status", value);
       } else {
@@ -46,7 +46,7 @@ export function FilterEquipmentStatus({
       replace(`${pathname}?${params.toString()}`);
     };
 
-    handleOrder(value);
+    handleStatusChange(value);
   }, [value, pathname, replace, searchParams]);
 
   return (

@@ -338,7 +338,7 @@ type PaginatedUsers = {
 export async function getUsers({
   page = 1,
   perPage = "10",
-  orderBy = "desc",
+  orderBy = "asc",
   sortBy = "name",
   query,
   department,
