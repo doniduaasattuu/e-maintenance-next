@@ -96,6 +96,12 @@ export async function getFindings({
             createdAt: "asc",
           },
         },
+        findingStatus: {
+          select: {
+            id: true,
+            description: true,
+          },
+        },
       },
     }),
     prisma.finding.count({
@@ -358,6 +364,12 @@ export async function getFindingById(id: string): Promise<Finding | null> {
           imageStatus: true,
           createdAt: true,
           updatedAt: true,
+        },
+      },
+      findingStatus: {
+        select: {
+          id: true,
+          description: true,
         },
       },
     },
