@@ -28,7 +28,7 @@ export async function getFiles({
   const skip = (page - 1) * Number(perPage);
   const take = parseInt(perPage);
 
-  const [files, totalPages] = await prisma.$transaction([
+  const [files, total] = await prisma.$transaction([
     prisma.file.findMany({
       skip,
       take,
@@ -57,7 +57,7 @@ export async function getFiles({
 
   return {
     files,
-    totalPages,
+    totalPages: Math.ceil(total / parseInt(perPage)),
   };
 }
 

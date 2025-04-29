@@ -2,7 +2,7 @@ import { getDepartments } from "@/actions/department-action";
 import { getPositions } from "@/actions/position-action";
 import { getRoles } from "@/actions/role-action";
 import { getUsers } from "@/actions/user-action";
-import GeneratePagination from "@/components/pagination";
+import GeneratePagination from "@/components/generate-pagination";
 import UserHeader from "@/components/user-header";
 import UserTable from "@/components/user-table";
 import TableLayout from "@/layouts/table-layout";

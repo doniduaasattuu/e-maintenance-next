@@ -1,7 +1,7 @@
 import { getFunctionalLocations } from "@/actions/functional-location-action";
 import * as React from "react";
 import FunctionalLocationHeader from "@/components/functional-location-header";
-import GeneratePagination from "@/components/pagination";
+import GeneratePagination from "@/components/generate-pagination";
 import FunctionalLocationTable from "@/components/functional-location-table";
 import TableLayout from "@/layouts/table-layout";
 

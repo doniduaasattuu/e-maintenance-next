@@ -1,7 +1,7 @@
 import { getMaterials } from "@/actions/material-action";
 import MaterialHeader from "@/components/material-header";
 import MaterialTable from "@/components/material-table";
-import GeneratePagination from "@/components/pagination";
+import GeneratePagination from "@/components/generate-pagination";
 import TableLayout from "@/layouts/table-layout";
 import React from "react";
 

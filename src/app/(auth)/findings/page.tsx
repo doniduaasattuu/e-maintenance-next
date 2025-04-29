@@ -1,7 +1,7 @@
 import React from "react";
 import { getFindings } from "@/actions/finding-action";
 import HeaderPage from "@/components/header-page";
-import GeneratePagination from "@/components/pagination";
+import GeneratePagination from "@/components/generate-pagination";
 import FindingList from "@/components/finding-list";
 import FindingHeader from "@/components/finding-header";
 

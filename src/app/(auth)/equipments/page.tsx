@@ -3,7 +3,7 @@ import { getEquipments } from "@/actions/equipment-action";
 import { getEquipmentStatuses } from "@/actions/equipment-status-action";
 import EquipmentHeader from "@/components/equipment-header";
 import EquipmentTable from "@/components/equipment-table";
-import GeneratePagination from "@/components/pagination";
+import GeneratePagination from "@/components/generate-pagination";
 import TableLayout from "@/layouts/table-layout";
 import React from "react";
 

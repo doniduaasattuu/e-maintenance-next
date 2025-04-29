@@ -2,7 +2,7 @@ import { getFiles } from "@/actions/file-action";
 import AddButton from "@/components/add-button";
 import FileTable from "@/components/file-table";
 import HeaderPage from "@/components/header-page";
-import GeneratePagination from "@/components/pagination";
+import GeneratePagination from "@/components/generate-pagination";
 import SearchBar from "@/components/search-bar";
 import { Upload } from "lucide-react";
 import React from "react";
