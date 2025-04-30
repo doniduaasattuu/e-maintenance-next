@@ -27,7 +27,7 @@ async function seedAdmin() {
       email: "admin@gmail.com",
       name: "Administrator",
       nik: "12345678",
-      image: "/assets/images/users/123456781744816193712.jpg",
+      image: "/api/uploads/images/users/12345678-1745979400578.jpg",
       password: await bcrypt.hash("password", 10),
       roleId: adminRole.id,
     },

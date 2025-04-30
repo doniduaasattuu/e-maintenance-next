@@ -10,11 +10,11 @@ import {
 import { v4 as uuid } from "uuid";
 import fs from "fs/promises";
 import path from "path";
-import { deleteFileFromFilesystem } from "./file-action";
 import { revalidatePath } from "next/cache";
 import { isEquipmentExist } from "./equipment-action";
 import { isFunclocExist } from "./functional-location-action";
 import { getUserSession } from "@/hooks/useUserSession";
+import fSync from "fs";
 
 type getFindingsParams = {
   page?: number;
@@ -174,7 +174,6 @@ export async function createFinding(prevState: unknown, formData: FormData) {
 
     if (equipmentId) {
       const response = await isEquipmentExist(equipmentId);
-
       if (!response.success) {
         return {
           id: null,
@@ -191,7 +190,6 @@ export async function createFinding(prevState: unknown, formData: FormData) {
 
     if (functionalLocationId) {
       const response = await isFunclocExist(functionalLocationId);
-
       if (!response.success) {
         return {
           id: null,
@@ -209,31 +207,30 @@ export async function createFinding(prevState: unknown, formData: FormData) {
     const storedFinding = await prisma.finding.create({
       data: {
         findingStatusId: parseInt(String(findingStatusId)),
-        notification: notification,
-        equipmentId: equipmentId,
-        functionalLocationId: functionalLocationId,
-        description: description,
+        notification,
+        equipmentId,
+        functionalLocationId,
+        description,
         userId: parseInt(String(uploader?.id)) ?? null,
       },
     });
 
     if (images.length > 0) {
-      console.log("Executed");
-      images.map(async (image) => {
-        image = image as File;
+      for (const image of images) {
+        if (!(image instanceof File) || image.size === 0) continue;
         const fileExtension = image.name.split(".").pop()?.toLowerCase();
         const fileName = uuid() + "." + fileExtension;
 
+        const savedPath = await saveFindingImage(image, fileName);
+
         await prisma.findingImage.create({
           data: {
-            path: `/assets/images/findings/${fileName}`,
+            path: savedPath,
             findingId: storedFinding.id,
             imageStatus: "Before",
           },
         });
-
-        saveFile(image, fileName);
-      });
+      }
     }
 
     return {
@@ -255,21 +252,23 @@ export async function createFinding(prevState: unknown, formData: FormData) {
   }
 }
 
-async function saveFile(file: File, fileName: string): Promise<string> {
-  const fileBuffer = await file.arrayBuffer();
-  const filePath = path.join(
-    process.cwd(),
-    "public/assets/images/findings",
-    fileName
-  );
+export async function saveFindingImage(file: File, fileName: string) {
+  const bytes = await file.arrayBuffer();
+  const buffer = Buffer.from(bytes);
 
-  try {
-    await fs.writeFile(filePath, Buffer.from(fileBuffer));
-    return `/assets/images/findings/${fileName}`;
-  } catch (error) {
-    console.error("Error saving file:", error);
-    throw error;
-  }
+  const uploadsDir = path.join(
+    process.cwd(),
+    "storage",
+    "uploads",
+    "images",
+    "findings"
+  );
+  await fs.mkdir(uploadsDir, { recursive: true });
+
+  const destinationPath = path.join(uploadsDir, fileName);
+  await fs.writeFile(destinationPath, buffer);
+
+  return `/api/uploads/images/findings/${fileName}`;
 }
 
 export async function deleteFindingById(id: string) {
@@ -296,7 +295,7 @@ export async function deleteFindingById(id: string) {
     if (images) {
       // DELETE IMAGES FROM SYSTEM
       images.map((image) => {
-        deleteFileFromFilesystem(image.path);
+        deleteFindingImageFromFileSystem(image.path);
       });
 
       // DELETE IMAGE DB RELATION
@@ -326,6 +325,26 @@ export async function deleteFindingById(id: string) {
         error instanceof Error
           ? error.message
           : "An unexpected error occurred.",
+    };
+  }
+}
+
+async function deleteFindingImageFromFileSystem(imagePath: string) {
+  try {
+    const filePath = path.join(
+      process.cwd(),
+      "storage",
+      imagePath.replace("/api", "")
+    );
+
+    if (fSync.existsSync(filePath)) {
+      await fs.unlink(filePath);
+    }
+  } catch (error) {
+    console.error("Error deleting finding image:", error);
+    return {
+      success: false,
+      message: "Failed to delete finding image.",
     };
   }
 }
@@ -403,7 +422,6 @@ export async function editFinding(prevState: unknown, formData: FormData) {
 
     if (equipmentId) {
       const response = await isEquipmentExist(equipmentId);
-
       if (!response.success) {
         return {
           success: false,
@@ -419,7 +437,6 @@ export async function editFinding(prevState: unknown, formData: FormData) {
 
     if (functionalLocationId) {
       const response = await isFunclocExist(functionalLocationId);
-
       if (!response.success) {
         return {
           success: false,
@@ -434,34 +451,32 @@ export async function editFinding(prevState: unknown, formData: FormData) {
     }
 
     const updatedFinding = await prisma.finding.update({
-      where: {
-        id: id,
-      },
+      where: { id: id },
       data: {
         findingStatusId: parseInt(String(findingStatusId)),
-        notification: notification,
-        equipmentId: equipmentId,
-        functionalLocationId: functionalLocationId,
-        description: description,
+        notification,
+        equipmentId,
+        functionalLocationId,
+        description,
       },
     });
 
     if (images.length > 0) {
-      images.map(async (image) => {
-        image = image as File;
+      for (const image of images) {
+        if (!(image instanceof File) || image.size === 0) continue;
         const fileExtension = image.name.split(".").pop()?.toLowerCase();
         const fileName = uuid() + "." + fileExtension;
 
+        const savedPath = await saveFindingImage(image, fileName);
+
         await prisma.findingImage.create({
           data: {
-            path: `/assets/images/findings/${fileName}`,
+            path: savedPath,
             findingId: updatedFinding.id,
             imageStatus: "After",
           },
         });
-
-        saveFile(image, fileName);
-      });
+      }
     }
 
     revalidatePath("/findings");

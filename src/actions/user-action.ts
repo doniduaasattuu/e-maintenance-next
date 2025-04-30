@@ -251,37 +251,43 @@ export async function editProfile(prevState: unknown, formData: FormData) {
       const bytes = await image.arrayBuffer();
       const buffer = Buffer.from(bytes);
 
-      const fileExtension = image.name.split(".").pop();
-      const fileName = `${nik}${Date.now()}.${fileExtension}`;
-      const destinationPath = path.join(
+      const fileExtension = image.name.split(".").pop(); // ekstensi file
+      const fileName = `${nik}-${Date.now()}.${fileExtension}`; // 12345678-1745931455077.jpg
+      const uploadsDir = path.join(
         process.cwd(),
-        "public/assets/images/users",
-        fileName
+        "storage",
+        "uploads",
+        "images",
+        "users"
       );
+      const destinationPath = path.join(uploadsDir, fileName);
+
+      await fs.mkdir(uploadsDir, { recursive: true });
 
       if (user.image) {
-        const filePath = path.join(process.cwd(), "public", user.image);
-
-        if (fSync.existsSync(filePath)) {
-          await fs.unlink(filePath);
+        const oldImagePath = path.join(
+          process.cwd(),
+          "storage",
+          user.image.replace("/api", "")
+        );
+        if (fSync.existsSync(oldImagePath)) {
+          await fs.unlink(oldImagePath);
         }
       }
 
       await fs.writeFile(destinationPath, buffer);
-      imagePath = `assets/images/users/${fileName}`;
+      imagePath = `/api/uploads/images/users/${fileName}`;
     }
 
     const updatedUser = await prisma.user.update({
-      where: {
-        id: Number(user.id),
-      },
+      where: { id: Number(user.id) },
       data: {
-        email: email,
-        nik: nik,
-        name: name,
+        email,
+        nik,
+        name,
         phone: phone === undefined ? null : phone,
-        positionId: positionId,
-        departmentId: departmentId,
+        positionId,
+        departmentId,
         ...(imagePath && { image: imagePath }),
       },
       select: {

@@ -9,6 +9,7 @@ import fs from "fs/promises";
 import path from "path";
 import { revalidatePath } from "next/cache";
 import { getUserSession } from "@/hooks/useUserSession";
+import fSync from "fs";
 
 type getFileParams = {
   page?: number;
@@ -77,29 +78,24 @@ export async function createFile(prevState: unknown, formData: FormData) {
     }
 
     const { name, tags, file } = validatedData.data;
+    const fileExtension = file.name.split(".").pop()?.toLowerCase();
 
-    const fileExtension = file.name.split(".").pop();
-
-    const result = await prisma.file.create({
+    const createdFile = await prisma.file.create({
       data: {
-        name: name,
+        name,
         tags: tags === "undefined" ? null : tags,
-        type: String(fileExtension).toLowerCase(),
-        path: "/assets/files",
+        type: fileExtension ?? "",
+        path: "", // temporary path, will be updated after saving
       },
     });
 
-    const fileName = `${result.id}.${fileExtension}`;
-    saveFile(file, fileName);
-
-    const path = `/assets/files/${fileName}`;
+    const fileName = `${createdFile.id}.${fileExtension}`;
+    const relativePath = await saveFile(file, fileName);
 
     await prisma.file.update({
-      where: {
-        id: result.id,
-      },
+      where: { id: createdFile.id },
       data: {
-        path: path,
+        path: relativePath,
         userId: Number(uploader?.id),
       },
     });
@@ -123,31 +119,33 @@ export async function createFile(prevState: unknown, formData: FormData) {
 
 async function saveFile(file: File, fileName: string): Promise<string> {
   const fileBuffer = await file.arrayBuffer();
-  const filePath = path.join(process.cwd(), "public/assets/files", fileName);
+  const dirPath = path.join(process.cwd(), "storage", "uploads", "files");
+  const filePath = path.join(dirPath, fileName);
 
-  try {
-    await fs.writeFile(filePath, Buffer.from(fileBuffer));
-    return `/assets/files/${fileName}`; // Return path relative to public directory
-  } catch (error) {
-    console.error("Error saving file:", error);
-    throw error;
-  }
+  await fs.mkdir(dirPath, { recursive: true }); // Ensure directory exists
+  await fs.writeFile(filePath, Buffer.from(fileBuffer));
+
+  return `/api/uploads/files/${fileName}`;
 }
 
 export async function deleteFileById(id: string) {
   try {
     const file = await prisma.file.delete({
-      where: {
-        id: id,
-      },
+      where: { id },
     });
 
-    await deleteFileFromFilesystem(file.path);
+    const absolutePath = path.join(
+      process.cwd(),
+      "storage",
+      file.path.replace("/api", "")
+    );
+    if (fSync.existsSync(absolutePath)) {
+      await fs.unlink(absolutePath);
+    }
 
+    // Delete equipment relation
     await prisma.equipmentFile.deleteMany({
-      where: {
-        fileId: id,
-      },
+      where: { fileId: id },
     });
 
     revalidatePath("/files");
@@ -168,15 +166,22 @@ export async function deleteFileById(id: string) {
   }
 }
 
-export async function deleteFileFromFilesystem(fileName: string) {
+export async function deleteFileFromFilesystem(imagePath: string) {
   try {
-    const filePath = path.join(process.cwd(), "public", fileName);
-    await fs.unlink(filePath); // Hapus file dari sistem file
+    const filePath = path.join(
+      process.cwd(),
+      "storage",
+      imagePath.replace("/api", "")
+    );
+
+    if (fSync.existsSync(filePath)) {
+      await fs.unlink(filePath);
+    }
   } catch (error) {
-    console.error("Error deleting file:", error);
+    console.error("Error deleting finding image:", error);
     return {
       success: false,
-      message: "Failed to delete file.",
+      message: "Failed to delete finding image.",
     };
   }
 }
@@ -197,45 +202,53 @@ export async function editFile(prevState: unknown, formData: FormData) {
     const { id, name, tags, file } = validatedData.data;
 
     const currentFile = await prisma.file.findUnique({
-      where: {
-        id: id,
-      },
+      where: { id },
     });
 
     if (!currentFile) {
       return {
         success: false,
         message: null,
-        errors: { name: ["File is not exists"] },
+        errors: { name: ["File does not exist."] },
       };
     }
 
+    // If file is being replaced
     if (file) {
-      const fileExtension = file.name.split(".").pop();
-      deleteFileFromFilesystem(currentFile.path);
+      const fileExtension = file.name.split(".").pop()?.toLowerCase();
       const fileName = `${currentFile.id}.${fileExtension}`;
-      const path = `/assets/files/${fileName}`;
+      const relativePath = `/api/uploads/files/${fileName}`;
+      // const absolutePath = path.join(process.cwd(), "storage", relativePath);
 
-      saveFile(file, fileName);
+      // Delete old file if exists
+      const oldFilePath = path.join(
+        process.cwd(),
+        "storage",
+        currentFile.path.replace("/api", "")
+      );
+      if (fSync.existsSync(oldFilePath)) {
+        await fs.unlink(oldFilePath);
+      }
 
+      // Save new file
+      await saveFile(file, fileName);
+
+      // Update record
       await prisma.file.update({
-        where: {
-          id: currentFile.id,
-        },
+        where: { id },
         data: {
-          name: name,
+          name,
           tags: tags === "undefined" ? null : tags,
-          type: String(fileExtension).toLowerCase(),
-          path: path,
+          type: fileExtension ?? "",
+          path: relativePath,
         },
       });
     } else {
+      // Only update name/tags
       await prisma.file.update({
-        where: {
-          id: currentFile.id,
-        },
+        where: { id },
         data: {
-          name: name,
+          name,
           tags: tags === "undefined" ? null : tags,
         },
       });
