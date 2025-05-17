@@ -16,7 +16,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import LoadingButton from "./loading-button";
-import { MAX_FILE_SIZE } from "@/lib/config";
+import { ALLOWED_IMAGE_TYPES, MAX_FILE_SIZE } from "@/lib/config";
 import { useFormState } from "react-dom";
 import { editProfile } from "@/actions/user-action";
 import { useSession } from "next-auth/react";
@@ -255,7 +255,9 @@ export default function UpdateUserForm({
               <FormControl>
                 <Input
                   type="file"
-                  accept="image/jpeg, image/png, image/jpg"
+                  accept={ALLOWED_IMAGE_TYPES.map(
+                    (type) => `image/${type}`
+                  ).join(", ")}
                   onChange={(e) => {
                     const image = e.target.files?.[0] || undefined;
                     if (image) {

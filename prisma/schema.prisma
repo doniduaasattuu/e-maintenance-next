@@ -124,6 +124,7 @@ model Equipment {
   classification     Classification      @relation(fields: [classificationId], references: [id])
   equipmentFiles     EquipmentFile[]
   findings           Finding[]
+  equipmentImages    EquipmentImage[]
 
   @@index([id, sortField, description])
   @@map("equipments")
@@ -300,4 +301,24 @@ model PanelInspection {
   updatedAt            DateTime @updatedAt
 
   @@map("panel_inspections")
+}
+
+model Image {
+  id              String           @id @default(uuid())
+  path            String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  equipmentImages EquipmentImage[]
+
+  @@map("images")
+}
+
+model EquipmentImage {
+  equipmentId String
+  imageId     String
+  equipment   Equipment @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+  image       Image     @relation(fields: [imageId], references: [id], onDelete: Cascade)
+
+  @@id([equipmentId, imageId])
+  @@map("equipment_image")
 }

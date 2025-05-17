@@ -24,7 +24,7 @@ CREATE TABLE "departments" (
 -- CreateTable
 CREATE TABLE "roles" (
     "id" SERIAL NOT NULL,
-    "name" TEXT NOT NULL,
+    "name" VARCHAR(25) NOT NULL,
 
     CONSTRAINT "roles_pkey" PRIMARY KEY ("id")
 );
@@ -32,9 +32,9 @@ CREATE TABLE "roles" (
 -- CreateTable
 CREATE TABLE "users" (
     "id" SERIAL NOT NULL,
-    "nik" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "email" TEXT NOT NULL,
+    "nik" VARCHAR(8) NOT NULL,
+    "name" VARCHAR(50) NOT NULL,
+    "email" VARCHAR(50) NOT NULL,
     "phone" VARCHAR(13),
     "image" TEXT,
     "password" TEXT NOT NULL,
@@ -245,6 +245,24 @@ CREATE TABLE "panel_inspections" (
     CONSTRAINT "panel_inspections_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "images" (
+    "id" TEXT NOT NULL,
+    "path" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "images_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "equipment_image" (
+    "equipmentId" TEXT NOT NULL,
+    "imageId" TEXT NOT NULL,
+
+    CONSTRAINT "equipment_image_pkey" PRIMARY KEY ("equipmentId","imageId")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "roles_name_key" ON "roles"("name");
 
@@ -346,3 +364,9 @@ ALTER TABLE "finding_images" ADD CONSTRAINT "finding_images_findingId_fkey" FORE
 
 -- AddForeignKey
 ALTER TABLE "equipment_inspection_forms" ADD CONSTRAINT "equipment_inspection_forms_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "equipment_image" ADD CONSTRAINT "equipment_image_equipmentId_fkey" FOREIGN KEY ("equipmentId") REFERENCES "equipments"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "equipment_image" ADD CONSTRAINT "equipment_image_imageId_fkey" FOREIGN KEY ("imageId") REFERENCES "images"("id") ON DELETE CASCADE ON UPDATE CASCADE;
