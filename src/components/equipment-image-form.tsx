@@ -112,6 +112,7 @@ export default function EquipmentImageForm({
               <FormControl>
                 <div className="flex gap-2 sm:gap-3">
                   <Input
+                    capture="environment"
                     type="file"
                     accept={ALLOWED_IMAGE_TYPES.map(
                       (type) => `image/${type}`
