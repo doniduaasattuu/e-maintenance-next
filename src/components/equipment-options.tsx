@@ -14,10 +14,11 @@ import {
   Camera,
   Edit,
   HistoryIcon,
+  Image as ImageIcon,
   NotepadTextIcon,
   QrCode,
 } from "lucide-react";
-import { Equipment } from "@/types/equipment";
+import { EquipmentWitRelations } from "@/types/equipment";
 import {
   Dialog,
   DialogContent,
@@ -26,11 +27,17 @@ import {
   DialogTitle,
 } from "./ui/dialog";
 import { QRCodeSVG } from "qrcode.react";
-import { onlyAdmin } from "@/lib/config";
-import useUserClient from "@/hooks/useUserClient";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "./ui/carousel";
+import Image from "next/image";
 
 type EquipmentOptionsProps = {
-  equipment: Equipment;
+  equipment: EquipmentWitRelations;
   id: string;
 };
 
@@ -38,28 +45,34 @@ export default function EquipmentOptions({
   equipment,
   id,
 }: EquipmentOptionsProps) {
-  const user = useUserClient();
-  const [isOpen, setIsOpen] = React.useState<boolean>(false);
+  const hasImages: boolean =
+    (equipment.equipmentImages && equipment.equipmentImages.length > 0) ??
+    false;
+  const [isQROpen, setIsQROpen] = React.useState<boolean>(false);
+  const [isImageOpen, setIsImageOpen] = React.useState<boolean>(false);
 
-  const handleOpenDialog = () => {
-    setIsOpen(true);
+  const handleOpenImageDialog = () => {
+    setIsImageOpen(true);
+  };
+
+  const handleOpenQRDialog = () => {
+    setIsQROpen(true);
   };
 
   const handleCloseDialog = () => {
-    setIsOpen(false);
+    setIsQROpen(false);
+    setIsImageOpen(false);
   };
 
   return (
     <React.Fragment>
       <OptionsDropdown className="w-[160px]">
-        {onlyAdmin.includes(user?.role) && (
-          <DropdownMenuItem asChild>
-            <Link className="text-sm" href={`/equipments/${id}/edit`}>
-              <Edit />
-              Edit
-            </Link>
-          </DropdownMenuItem>
-        )}
+        <DropdownMenuItem asChild>
+          <Link className="text-sm" href={`/equipments/${id}/edit`}>
+            <Edit />
+            Edit
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
             <div className="flex gap-2 items-center">
@@ -105,10 +118,21 @@ export default function EquipmentOptions({
             New Finding
           </Link>
         </DropdownMenuItem>
+        {hasImages && (
+          <DropdownMenuItem asChild>
+            <button
+              className="w-full flex items-center gap-2"
+              onClick={handleOpenImageDialog}
+            >
+              <ImageIcon />
+              Images
+            </button>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem asChild>
           <button
             className="w-full flex items-center gap-2"
-            onClick={handleOpenDialog}
+            onClick={handleOpenQRDialog}
           >
             <QrCode />
             Show QR
@@ -116,7 +140,7 @@ export default function EquipmentOptions({
         </DropdownMenuItem>
       </OptionsDropdown>
 
-      <Dialog open={isOpen} onOpenChange={handleCloseDialog}>
+      <Dialog open={isQROpen} onOpenChange={handleCloseDialog}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{id}</DialogTitle>
@@ -127,6 +151,32 @@ export default function EquipmentOptions({
           <div className="p-2 bg-white flex justify-center">
             <QRCodeSVG value={id} className="w-full h-auto" />
           </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isImageOpen} onOpenChange={handleCloseDialog}>
+        <DialogContent className="border-none px-4 bg-black/0 sm:max-w-2xl">
+          {hasImages ? (
+            <Carousel className="p-6 w-full">
+              <CarouselContent className="rounded-md items-center">
+                {equipment.equipmentImages?.map((item, index) => (
+                  <CarouselItem key={index}>
+                    <Image
+                      src={item.image.path}
+                      alt={`Image ${index + 1} for ${equipment.id}`}
+                      width={1000}
+                      height={1000}
+                      className="object-center object-cover rounded-md"
+                    />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselNext />
+              <CarouselPrevious />
+            </Carousel>
+          ) : (
+            <p>This equipment doesn&apos;t have any images.</p>
+          )}
         </DialogContent>
       </Dialog>
     </React.Fragment>

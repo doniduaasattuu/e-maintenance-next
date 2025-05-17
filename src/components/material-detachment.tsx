@@ -83,7 +83,7 @@ export default function MaterialDetachment({
             className="flex justify-between text-sm max-w-xl space-x-3"
           >
             <div className="flex justify-start space-x-3">
-              <div className={`link ${robotoMono.className}`}>
+              <div className={`${robotoMono.className}`}>
                 {item.material.id}
               </div>
               <div className="text-muted-foreground max-w-sm truncate">
@@ -96,7 +96,7 @@ export default function MaterialDetachment({
                 handleRemoveMaterial(equipment.id, item.material.id)
               }
             >
-              Remove
+              Detach
             </div>
           </div>
         ))}

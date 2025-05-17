@@ -10,6 +10,10 @@ import SearchMaterialDialog from "@/components/search-material-dialog";
 import FileDetachment from "@/components/file-detachment";
 import SearchFileDialog from "@/components/search-file-dialog";
 import FormCard from "@/components/form-card";
+import { getUserSession } from "@/hooks/useUserSession";
+import { onlyAdmin } from "@/lib/config";
+import EquipmentImageForm from "@/components/equipment-image-form";
+import ImageDetachment from "@/components/image-detachment";
 
 export default async function EquipmentEditPage({
   params,
@@ -17,6 +21,8 @@ export default async function EquipmentEditPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const user = await getUserSession();
+  const role = user.role;
 
   const equipment = await getEquipment({ id });
   const classifications = await getClassifications();
@@ -28,12 +34,24 @@ export default async function EquipmentEditPage({
 
   return (
     <TableLayout>
+      {onlyAdmin.includes(role) && (
+        <FormCard>
+          <HeaderCard header="Edit" content="Update equipment data" />
+          <EquipmentEditForm
+            equipment={equipment}
+            classifications={classifications}
+            equipmentStatuses={equipmentStatuses}
+          />
+        </FormCard>
+      )}
+
+      {/* IMAGES */}
       <FormCard>
-        <HeaderCard header="Edit" content="Update equipment data" />
-        <EquipmentEditForm
+        <HeaderCard header="Images" content="A list of equipment images." />
+        <EquipmentImageForm equipmentId={equipment.id} />
+        <ImageDetachment
           equipment={equipment}
-          classifications={classifications}
-          equipmentStatuses={equipmentStatuses}
+          items={equipment.equipmentImages ?? []}
         />
       </FormCard>
 

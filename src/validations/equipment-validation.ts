@@ -1,4 +1,5 @@
 import { getEquipmentStatus } from "@/actions/equipment-status-action";
+import { MAX_FILE_SIZE } from "@/lib/config";
 import { z } from "zod";
 
 export const BaseEquipmentSchema = z.object({
@@ -72,3 +73,15 @@ export const CreateEquipmentSchema = BaseEquipmentSchema.superRefine(
 );
 
 export const EditEquipmentSchema = CreateEquipmentSchema;
+export const UploadEquipmentImageSchema = BaseEquipmentSchema.pick({
+  id: true,
+}).extend({
+  image: z
+    .instanceof(File, { message: "Image is required" })
+    .refine((image) => !image || image.size <= MAX_FILE_SIZE, {
+      message: `File size has exceeded it max limit of ${
+        MAX_FILE_SIZE / 1024 / 1024
+      }MB`,
+      path: ["image"],
+    }),
+});

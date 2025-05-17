@@ -85,7 +85,7 @@ export default function FileDetachment({ equipment, items }: FileListProps) {
               className="text-sm cursor-pointer link"
               onClick={() => handleRemoveFile(equipment.id, item.file.id)}
             >
-              Remove
+              Detach
             </div>
           </div>
         ))}

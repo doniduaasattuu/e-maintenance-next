@@ -10,6 +10,8 @@ import { seedEquipmentInspections } from "./seeders/InspectionSeeder";
 import { seedRandomFinding } from "./seeders/FindingSeeder";
 import { seedFile } from "./seeders/FileSeeder";
 import seedEquipmentFile from "./seeders/EquipmentFileSeeder";
+// import seedEquipmentImage from "./seeders/EquipmentImageSeeder";
+// import { seedImageEquipment } from "./seeders/ImageSeeder";
 
 async function seedAdmin() {
   const adminRole = await prisma.role.findUnique({
@@ -27,7 +29,7 @@ async function seedAdmin() {
       email: "admin@gmail.com",
       name: "Administrator",
       nik: "12345678",
-      image: "/api/uploads/images/users/12345678-1745979400578.jpg",
+      image: "/api/uploads/images/user/12345678-1745979400578.jpg",
       password: await bcrypt.hash("password", 10),
       roleId: adminRole.id,
     },
@@ -45,6 +47,8 @@ async function main() {
   await seedRandomFinding(20);
   await seedFile();
   await seedEquipmentFile();
+  // await seedImageEquipment();
+  // await seedEquipmentImage();
 }
 
 main()

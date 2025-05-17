@@ -261,14 +261,14 @@ export async function saveFindingImage(file: File, fileName: string) {
     "storage",
     "uploads",
     "images",
-    "findings"
+    "finding"
   );
   await fs.mkdir(uploadsDir, { recursive: true });
 
   const destinationPath = path.join(uploadsDir, fileName);
   await fs.writeFile(destinationPath, buffer);
 
-  return `/api/uploads/images/findings/${fileName}`;
+  return `/api/uploads/images/finding/${fileName}`;
 }
 
 export async function deleteFindingById(id: string) {

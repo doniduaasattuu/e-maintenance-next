@@ -18,7 +18,7 @@ const protectedRoutesConfig: Record<string, string[]> = {
 
   "/equipments": users,
   "/equipments/[id]": users,
-  "/equipments/[id]/edit": onlyAdmin,
+  "/equipments/[id]/edit": users,
   "/equipments/create": onlyAdmin,
 
   "/materials": users,

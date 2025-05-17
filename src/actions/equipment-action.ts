@@ -6,7 +6,10 @@ import { Equipment, EquipmentWitRelations } from "@/types/equipment";
 import {
   CreateEquipmentSchema,
   EditEquipmentSchema,
+  UploadEquipmentImageSchema,
 } from "@/validations/equipment-validation";
+import path from "path";
+import fs from "fs/promises";
 
 type GetEquipmentParams = {
   page?: number;
@@ -157,6 +160,16 @@ export async function getEquipment({
             select: {
               id: true,
               name: true,
+              path: true,
+            },
+          },
+        },
+      },
+      equipmentImages: {
+        select: {
+          image: {
+            select: {
+              id: true,
               path: true,
             },
           },
@@ -394,4 +407,89 @@ export async function isEquipmentExist(
   } else {
     return { success: false, message: "Equipment is not found" };
   }
+}
+
+export async function uploadEquipmentImage(
+  prevState: unknown,
+  formData: FormData
+) {
+  try {
+    const rawData = Object.fromEntries(formData.entries());
+    const validatedData = await UploadEquipmentImageSchema.safeParseAsync(
+      rawData
+    );
+
+    if (!validatedData.success) {
+      return {
+        success: false,
+        message: "Validation Error",
+        errors: validatedData.error.flatten().fieldErrors,
+      };
+    }
+
+    const { id, image } = validatedData.data;
+
+    if (image instanceof File && image.size != 0) {
+      const fileExtension = image.name.split(".").pop()?.toLowerCase();
+
+      await prisma.$transaction(async (tx) => {
+        const imageModel = await tx.image.create({
+          data: {
+            path: "/api/uploads/images/equipment",
+          },
+        });
+
+        const fileName = `${imageModel.id}.${fileExtension}`;
+        await saveFindingImage(image, fileName);
+
+        await tx.equipmentImage.create({
+          data: {
+            equipmentId: id,
+            imageId: imageModel.id,
+          },
+        });
+
+        await tx.image.update({
+          data: {
+            path: `/api/uploads/images/equipment/${fileName}`,
+          },
+          where: {
+            id: imageModel.id,
+          },
+        });
+      });
+    }
+
+    return {
+      success: true,
+      message: "Image uploaded successfully",
+      errors: null,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message:
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred.",
+      errors: null,
+    };
+  }
+}
+
+export async function saveFindingImage(file: File, fileName: string) {
+  const bytes = await file.arrayBuffer();
+  const buffer = Buffer.from(bytes);
+
+  const uploadsDir = path.join(
+    process.cwd(),
+    "storage",
+    "uploads",
+    "images",
+    "equipment"
+  );
+  await fs.mkdir(uploadsDir, { recursive: true });
+
+  const destinationPath = path.join(uploadsDir, fileName);
+  await fs.writeFile(destinationPath, buffer);
 }

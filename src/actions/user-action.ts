@@ -258,7 +258,7 @@ export async function editProfile(prevState: unknown, formData: FormData) {
         "storage",
         "uploads",
         "images",
-        "users"
+        "user"
       );
       const destinationPath = path.join(uploadsDir, fileName);
 
@@ -276,7 +276,7 @@ export async function editProfile(prevState: unknown, formData: FormData) {
       }
 
       await fs.writeFile(destinationPath, buffer);
-      imagePath = `/api/uploads/images/users/${fileName}`;
+      imagePath = `/api/uploads/images/user/${fileName}`;
     }
 
     const updatedUser = await prisma.user.update({
