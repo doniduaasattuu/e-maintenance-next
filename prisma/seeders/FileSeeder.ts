@@ -4,22 +4,22 @@ const prisma = new PrismaClient();
 
 const arrayFiles = [
   {
-    path: "api/uploads/files/87fa08d1-9f70-4b38-a1b9-ccc76a8cb158.pdf",
+    path: "/api/uploads/files/87fa08d1-9f70-4b38-a1b9-ccc76a8cb158.pdf",
     name: "Schematic diagram module P-2-3 SP7",
     tags: "Diagram SP7",
   },
   {
-    path: "api/uploads/files/e0e10f46-01ac-4d9a-8475-eac125c27818.pdf",
+    path: "/api/uploads/files/e0e10f46-01ac-4d9a-8475-eac125c27818.pdf",
     name: "Schematic diagram M-Clean PM7 modifikasi Soft Starter ABB",
     tags: "M-Clean Soft-Starter",
   },
   {
-    path: "api/uploads/files/e8ef1c98-6fab-4fce-92af-12578382598d.pdf",
+    path: "/api/uploads/files/e8ef1c98-6fab-4fce-92af-12578382598d.pdf",
     name: "Schematic diagram module CN-14 Drum Pulper SP#37",
     tags: "Sensor Drum Pulper Diagram",
   },
   {
-    path: "api/uploads/files/ea147d7c-fa51-4b26-95f0-b39f37186f76.pdf",
+    path: "/api/uploads/files/ea147d7c-fa51-4b26-95f0-b39f37186f76.pdf",
     name: "Master list data sensor Atmos PM#37",
     tags: "Sensor Atmos Data",
   },

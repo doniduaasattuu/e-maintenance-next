@@ -37,7 +37,7 @@ model Department {
 
 model Role {
   id    Int    @id @default(autoincrement())
-  name  String @unique
+  name  String @unique @db.VarChar(25)
   users User[]
 
   @@map("roles")
@@ -45,9 +45,9 @@ model Role {
 
 model User {
   id           Int      @id @default(autoincrement())
-  nik          String   @unique
-  name         String
-  email        String   @unique
+  nik          String   @unique @db.VarChar(8)
+  name         String   @db.VarChar(50)
+  email        String   @unique @db.VarChar(50)
   phone        String?  @unique @db.VarChar(13)
   image        String?
   password     String
