@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import imageCompression from "browser-image-compression";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -68,5 +69,21 @@ export function booleanToString(bool: boolean): "true" | "false" {
     return "true";
   } else {
     return "false";
+  }
+}
+
+export async function compressImage(image: File): Promise<File | undefined> {
+  const options = {
+    maxSizeMB: 2,
+    maxWidthOrHeight: 1920,
+    useWebWorker: true,
+  };
+
+  try {
+    const compressedImage = await imageCompression(image, options);
+
+    return compressedImage;
+  } catch (error) {
+    console.log(error);
   }
 }

@@ -14,13 +14,14 @@ import { z } from "zod";
 import { useFormState } from "react-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ALLOWED_IMAGE_TYPES, MAX_FILE_SIZE } from "@/lib/config";
+import { ALLOWED_IMAGE_TYPES } from "@/lib/config";
 import React from "react";
 import { uploadEquipmentImage } from "@/actions/equipment-action";
 import { toast } from "sonner";
 import { Upload } from "lucide-react";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
+import { compressImage } from "@/lib/utils";
 
 const equipmentImageSchema = UploadEquipmentImageSchema;
 type EquipmentImageSchema = z.infer<typeof equipmentImageSchema>;
@@ -117,19 +118,26 @@ export default function EquipmentImageForm({
                     accept={ALLOWED_IMAGE_TYPES.map(
                       (type) => `image/${type}`
                     ).join(", ")}
-                    onChange={(e) => {
+                    onChange={async (e) => {
                       const image = e.target.files?.[0] || undefined;
                       if (image) {
-                        if (image.size > MAX_FILE_SIZE) {
+                        clearErrors("image");
+                        const compressed = await compressImage(image);
+
+                        if (
+                          compressed instanceof Blob &&
+                          !(compressed instanceof File)
+                        ) {
+                          const file = new File([compressed], image.name, {
+                            type: image.type,
+                            lastModified: Date.now(),
+                          });
+                          onChange(file);
+                        } else {
                           setError("image", {
-                            message: `File size has exceeded it max limit of ${
-                              MAX_FILE_SIZE / 1024 / 1024
-                            }MB`,
+                            message: "Failed to compress image",
                           });
                           onChange(undefined);
-                        } else {
-                          clearErrors("image");
-                          onChange(image);
                         }
                       }
                     }}
