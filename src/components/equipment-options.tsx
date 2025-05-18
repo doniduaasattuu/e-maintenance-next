@@ -157,7 +157,7 @@ export default function EquipmentOptions({
       <Dialog open={isImageOpen} onOpenChange={handleCloseDialog}>
         <DialogContent className="border-none px-4 bg-black/0 sm:max-w-2xl">
           {hasImages ? (
-            <Carousel className="p-6 w-full">
+            <Carousel className="px-2 py-4 w-full">
               <CarouselContent className="rounded-md items-center">
                 {equipment.equipmentImages?.map((item, index) => (
                   <CarouselItem key={index}>
